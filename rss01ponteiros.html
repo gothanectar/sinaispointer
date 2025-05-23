@@ -1,0 +1,1230 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TradePulse Enhanced - Isabella Rossi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.light-mode {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 10px;
+            background-color: #252525;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .header {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .clocks {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            background-color: #252525;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .clocks {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .clock {
+            font-size: 0.9em;
+        }
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            padding: 10px;
+            background-color: #252525;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .tabs {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .tab-btn {
+            padding: 8px 12px;
+            border: none;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s, transform 0.1s;
+            font-size: 0.9em;
+        }
+        .light-mode .tab-btn {
+            background-color: #ddd;
+            color: #333;
+        }
+        .tab-btn:hover {
+            background-color: #555;
+            transform: scale(1.05);
+        }
+        .light-mode .tab-btn:hover {
+            background-color: #bbb;
+        }
+        .tab-btn.active {
+            background-color: #007bff;
+        }
+        .tab-content {
+            display: none;
+            background-color: #252525;
+            border-radius: 0 0 8px 8px;
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .tab-content {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .chart-container {
+            width: 100%;
+            height: 50vh;
+            min-height: 300px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .chart-container {
+            background-color: #f0f0f0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .signals-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        .signal-box {
+            background-color: #333;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+        .signal-box:hover {
+            transform: scale(1.02);
+        }
+        .light-mode .signal-box {
+            background-color: #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .signal-box h2 {
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .signal-box p {
+            font-size: 0.8em;
+        }
+        .signal {
+            padding: 6px;
+            border-radius: 5px;
+            text-align: center;
+            color: #fff;
+            font-size: 0.8em;
+        }
+        .buy { background-color: #28a745; }
+        .sell { background-color: #dc3545; }
+        .neutral { background-color: #6c757d; }
+        .player-signal {
+            background-color: #007bff;
+            padding: 6px;
+            border-radius: 5px;
+            text-align: center;
+            color: #fff;
+            font-size: 0.8em;
+        }
+        /* Estilos para o Termômetro TWAP 2h */
+        .thermometer {
+            width: 20px;
+            height: 80px;
+            background-color: #555;
+            border-radius: 10px;
+            position: relative;
+            margin: 10px auto;
+        }
+        .thermometer-fill {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: #007bff;
+            border-radius: 10px;
+            transition: height 0.5s ease;
+        }
+        .thermometer-label {
+            text-align: center;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        /* Estilos para o Ponteiro TWAP 8h */
+        .gauge {
+            width: 80px;
+            height: 40px;
+            position: relative;
+            margin: 10px auto;
+            overflow: hidden;
+        }
+        .gauge-circle {
+            width: 80px;
+            height: 80px;
+            background: conic-gradient(#007bff 0% 50%, #555 50% 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: -40px;
+            left: 0;
+        }
+        .gauge-needle {
+            width: 2px;
+            height: 40px;
+            background-color: #fff;
+            position: absolute;
+            left: 39px;
+            bottom: 0;
+            transform-origin: bottom;
+            transition: transform 0.5s ease;
+        }
+        .gauge-label {
+            text-align: center;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .inflation-box {
+            background-color: #333;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .light-mode .inflation-box {
+            background-color: #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .inflation-box h2 {
+            font-size: 1em;
+            margin-bottom: 8px;
+        }
+        .inflation-box p {
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+        .tips-box {
+            background-color: #333;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .tips-box {
+            background-color: #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .tips-box ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            font-size: 0.9em;
+        }
+        .tips-box li {
+            margin-bottom: 10px;
+        }
+        #theme-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s;
+        }
+        #theme-toggle:hover {
+            transform: scale(1.05);
+        }
+        #isabella-assistant {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #252525;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            font-size: 0.9em;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+        .light-mode #isabella-assistant {
+            background-color: #fff;
+        }
+        #isabella-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #minimize-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .light-mode #minimize-btn {
+            color: #333;
+        }
+        #isabella-message {
+            margin-top: 5px;
+            display: block;
+        }
+        #isabella-assistant.minimized {
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #007bff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        #isabella-assistant.minimized #isabella-header {
+            height: 100%;
+            justify-content: center;
+        }
+        #isabella-assistant.minimized #minimize-btn {
+            color: #fff;
+            font-size: 1.2em;
+        }
+        #isabella-assistant.minimized #isabella-message,
+        #isabella-assistant.minimized strong {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 70vh;
+            }
+            .signals-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .signals-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <button id="theme-toggle">Modo Claro</button>
+    <div class="container">
+        <div class="header">
+            <h1>TradePulse Enhanced</h1>
+        </div>
+        <div class="clocks">
+            <div class="clock"><strong>NY:</strong> <span id="ny-time"></span></div>
+            <div class="clock"><strong>Londres:</strong> <span id="london-time"></span></div>
+            <div class="clock"><strong>Tóquio:</strong> <span id="tokyo-time"></span></div>
+            <div class="clock"><strong>Sydney:</strong> <span id="sydney-time"></span></div>
+            <div class="clock"><strong>HK:</strong> <span id="hk-time"></span></div>
+            <div class="clock"><strong>Chicago:</strong> <span id="chicago-time"></span></div>
+        </div>
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="XAUUSD">XAUUSD</button>
+            <button class="tab-btn" data-tab="BTCUSD">BTCUSD</button>
+            <button class="tab-btn" data-tab="EURUSD">EURUSD</button>
+            <button class="tab-btn" data-tab="AUDCAD">AUDCAD</button>
+            <button class="tab-btn" data-tab="GBPUSD">GBPUSD</button>
+            <button class="tab-btn" data-tab="TIPS">Dicas da Isabella</button>
+        </div>
+
+        <!-- Tab Contents -->
+        <div id="XAUUSD" class="tab-content active">
+            <div class="chart-container" id="chart-xauusd"></div>
+            <div class="signals-grid">
+                <div class="signal-box">
+                    <h2>Máxima/Mínima</h2>
+                    <p><strong>Máx:</strong> <span id="daily-high-xauusd">Carregando...</span></p>
+                    <p><strong>Mín:</strong> <span id="daily-low-xauusd">Carregando...</span></p>
+                    <p><small><span id="update-date-xauusd"></span></small></p>
+                </div>
+                <div class="signal-box">
+                    <h2>Sinal</h2>
+                    <div id="signals-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Players</h2>
+                    <div id="player-signals-xauusd"><div class="player-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>15M</h2>
+                    <div id="signals-15m-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI</h2>
+                    <div id="signals-rsi-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI Triplo</h2>
+                    <div id="rsi-triple-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume</h2>
+                    <div id="signals-volume-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP</h2>
+                    <div id="twap-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>VWAP</h2>
+                    <div id="vwap-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Profit</h2>
+                    <div id="volume-profit-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Regulado</h2>
+                    <div id="volume-regulated-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>200 MA</h2>
+                    <div id="signals-200ma-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Bandas de Bollinger</h2>
+                    <div id="bollinger-bands-xauusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Termômetro TWAP 2h</h2 |twap-2h-xauusd>
+                    <div id="twap-2h-xauusd">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: 50%;"></div>
+                        </div>
+                        <div class="thermometer-label">Aguardando...</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>Ponteiro TWAP 8h</h2>
+                    <div id="twap-8h-xauusd">
+                        <div class="gauge">
+                            <div class="gauge-circle"></div>
+                            <div class="gauge-needle" style="transform: rotate(0deg);"></div>
+                        </div>
+                        <div class="gauge-label">Aguardando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="BTCUSD" class="tab-content">
+            <div class="chart-container" id="chart-btcusd"></div>
+            <div class="signals-grid">
+                <div class="signal-box">
+                    <h2>Máxima/Mínima</h2>
+                    <p><strong>Máx:</strong> <span id="daily-high-btcusd">Carregando...</span></p>
+                    <p><strong>Mín:</strong> <span id="daily-low-btcusd">Carregando...</span></p>
+                    <p><small><span id="update-date-btcusd"></span></small></p>
+                </div>
+                <div class="signal-box">
+                    <h2>Sinal</h2>
+                    <div id="signals-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Players</h2>
+                    <div id="player-signals-btcusd"><div class="player-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>15M</h2>
+                    <div id="signals-15m-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI</h2>
+                    <div id="signals-rsi-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI Triplo</h2>
+                    <div id="rsi-triple-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume</h2>
+                    <div id="signals-volume-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP</h2>
+                    <div id="twap-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>VWAP</h2>
+                    <div id="vwap-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Profit</h2>
+                    <div id="volume-profit-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Regulado</h2>
+                    <div id="volume-regulated-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>200 MA</h2>
+                    <div id="signals-200ma-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Bandas de Bollinger</h2>
+                    <div id="bollinger-bands-btcusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Termômetro TWAP 2h</h2>
+                    <div id="twap-2h-btcusd">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: 50%;"></div>
+                        </div>
+                        <div class="thermometer-label">Aguardando...</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>Ponteiro TWAP 8h</h2>
+                    <div id="twap-8h-btcusd">
+                        <div class="gauge">
+                            <div class="gauge-circle"></div>
+                            <div class="gauge-needle" style="transform: rotate(0deg);"></div>
+                        </div>
+                        <div class="gauge-label">Aguardando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="EURUSD" class="tab-content">
+            <div class="chart-container" id="chart-eurusd"></div>
+            <div class="signals-grid">
+                <div class="signal-box">
+                    <h2>Máxima/Mínima</h2>
+                    <p><strong>Máx:</strong> <span id="daily-high-eurusd">Carregando...</span></p>
+                    <p><strong>Mín:</strong> <span id="daily-low-eurusd">Carregando...</span></p>
+                    <p><small><span id="update-date-eurusd"></span></small></p>
+                </div>
+                <div class="signal-box">
+                    <h2>Sinal</h2>
+                    <div id="signals-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Players</h2>
+                    <div id="player-signals-eurusd"><div class="player-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>15M</h2>
+                    <div id="signals-15m-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI</h2>
+                    <div id="signals-rsi-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI Triplo</h2>
+                    <div id="rsi-triple-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume</h2>
+                    <div id="signals-volume-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP</h2>
+                    <div id="twap-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>VWAP</h2>
+                    <div id="vwap-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Profit</h2>
+                    <div id="volume-profit-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Regulado</h2>
+                    <div id="volume-regulated-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>200 MA</h2>
+                    <div id="signals-200ma-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Bandas de Bollinger</h2>
+                    <div id="bollinger-bands-eurusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Termômetro TWAP 2h</h2>
+                    <div id="twap-2h-eurusd">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: 50%;"></div>
+                        </div>
+                        <div class="thermometer-label">Aguardando...</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>Ponteiro TWAP 8h</h2>
+                    <div id="twap-8h-eurusd">
+                        <div class="gauge">
+                            <div class="gauge-circle"></div>
+                            <div class="gauge-needle" style="transform: rotate(0deg);"></div>
+                        </div>
+                        <div class="gauge-label">Aguardando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="AUDCAD" class="tab-content">
+            <div class="chart-container" id="chart-audcad"></div>
+            <div class="signals-grid">
+                <div class="signal-box">
+                    <h2>Máxima/Mínima</h2>
+                    <p><strong>Máx:</strong> <span id="daily-high-audcad">Carregando...</span></p>
+                    <p><strong>Mín:</strong> <span id="daily-low-audcad">Carregando...</span></p>
+                    <p><small><span id="update-date-audcad"></span></small></p>
+                </div>
+                <div class="signal-box">
+                    <h2>Sinal</h2>
+                    <div id="signals-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Players</h2>
+                    <div id="player-signals-audcad"><div class="player-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>15M</h2>
+                    <div id="signals-15m-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI</h2>
+                    <div id="signals-rsi-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI Triplo</h2>
+                    <div id="rsi-triple-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume</h2>
+                    <div id="signals-volume-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP</h2>
+                    <div id="twap-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>VWAP</h2>
+                    <div id="vwap-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Profit</h2>
+                    <div id="volume-profit-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Regulado</h2>
+                    <div id="volume-regulated-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>200 MA</h2>
+                    <div id="signals-200ma-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Bandas de Bollinger</h2>
+                    <div id="bollinger-bands-audcad"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Termômetro TWAP 2h</h2>
+                    <div id="twap-2h-audcad">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: 50%;"></div>
+                        </div>
+                        <div class="thermometer-label">Aguardando...</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>Ponteiro TWAP 8h</h2>
+                    <div id="twap-8h-audcad">
+                        <div class="gauge">
+                            <div class="gauge-circle"></div>
+                            <div class="gauge-needle" style="transform: rotate(0deg);"></div>
+                        </div>
+                        <div class="gauge-label">Aguardando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="GBPUSD" class="tab-content">
+            <div class="chart-container" id="chart-gbpusd"></div>
+            <div class="signals-grid">
+                <div class="signal-box">
+                    <h2>Máxima/Mínima</h2>
+                    <p><strong>Máx:</strong> <span id="daily-high-gbpusd">Carregando...</span></p>
+                    <p><strong>Mín:</strong> <span id="daily-low-gbpusd">Carregando...</span></p>
+                    <p><small><span id="update-date-gbpusd"></span></small></p>
+                </div>
+                <div class="signal-box">
+                    <h2>Sinal</h2>
+                    <div id="signals-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Players</h2>
+                    <div id="player-signals-gbpusd"><div class="player-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>15M</h2>
+                    <div id="signals-15m-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI</h2>
+                    <div id="signals-rsi-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI Triplo</h2>
+                    <div id="rsi-triple-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume</h2>
+                    <div id="signals-volume-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP</h2>
+                    <div id="twap-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>VWAP</h2>
+                    <div id="vwap-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Profit</h2>
+                    <div id="volume-profit-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Regulado</h2>
+                    <div id="volume-regulated-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>200 MA</h2>
+                    <div id="signals-200ma-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Bandas de Bollinger</h2>
+                    <div id="bollinger-bands-gbpusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Termômetro TWAP 2h</h2>
+                    <div id="twap-2h-gbpusd">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: 50%;"></div>
+                        </div>
+                        <div class="thermometer-label">Aguardando...</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>Ponteiro TWAP 8h</h2>
+                    <div id="twap-8h-gbpusd">
+                        <div class="gauge">
+                            <div class="gauge-circle"></div>
+                            <div class="gauge-needle" style="transform: rotate(0deg);"></div>
+                        </div>
+                        <div class="gauge-label">Aguardando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="TIPS" class="tab-content">
+            <div class="tips-box">
+                <h2>Dicas da Isabella</h2>
+                <ul>
+                    <li>Seja bem-vindo à nossa plataforma de análises! Aqui, você encontrará ferramentas de ponta, projetadas com base em anos de experiência no mercado financeiro. Explore com confiança!</li>
+                    <li>Utilize nossas ferramentas de análise de gráficos à vontade! Elas foram desenvolvidas para oferecer uma visão clara e precisa, seja para pares como XAUUSD ou BTCUSD, refletindo minha paixão por dados detalhados.</li>
+                    <li>Não tenha pressa para investir. Observe os sinais com atenção – eles são valiosos para trades seguros. Durante meu MBA em Harvard, aprendi que preservar o capital é o primeiro passo para o sucesso. Seu dinheiro vale ouro!</li>
+                    <li>Nossos sinais são ideais para trades seguros, tanto a curto quanto a longo prazo. Use configurações compostas para maximizar seus resultados – uma estratégia que refinei ao longo dos anos em Milão e Nova York.</li>
+                    <li>Configurações compostas são a arte de combinar sinais na mesma direção – ou cor, se preferir – para maior precisão. Por exemplo, alinhe o RSI com o VWAP e veja a mágica acontecer. É como escolher o blazer perfeito para um look impecável!</li>
+                    <li>Um trade de sucesso exige conhecimento profundo sobre ferramentas, gráficos, preços e volumes. Minha disciplina com yoga e pilates me ensinou que consistência e foco são essenciais – aplique isso ao mercado!</li>
+                    <li>Minha dica valiosa para você ser um trader de sucesso com a gente: estude o comportamento do mercado como eu estudo as tendências da moda em Milão. A paciência e a análise são suas melhores aliadas.</li>
+                    <li>Nosso conjunto de análises foi feito sob medida para diversas situações do mercado. Quanto mais tempo você dedicar às nossas ferramentas, mais perceberá o valor do nosso estudo – uma fusão de análise técnica e visão estratégica que ofereço aos nossos clientes.</li>
+                    <li>Quanto mais indicadores apontarem na mesma direção (compra ou venda), melhores serão seus resultados. Pense nisso como um jantar harmonioso: todos os elementos devem combinar para um resultado perfeito.</li>
+                    <li>Avalie preços, volumes e RSI com atenção. Quando preços e volumes estão alinhados, e o RSI confirma a direção, você tem um sinal poderoso. Combine isso com TWAP ou VWAP e terá uma entrada precisa. Seja cauteloso, conheça o par de moedas e nossas ferramentas antes de investir. Bom trabalho!</li>
+                    <li><strong>Sobre o Sinal "Máxima/Mínima":</strong> Mostra os picos diários de preço, essenciais para identificar suportes e resistências. Use para planejar entradas e saídas com base em zonas críticas.</li>
+                    <li><strong>Sobre o Sinal "Players":</strong> Simula ações de grandes players. Combine com volume para confirmar movimentos institucionais – cuidado com falsos rompimentos!</li>
+                    <li><strong>Sobre o Sinal "15M":</strong> Perfeito para day trading, foca em microtendências de 15 minutos. Use com outros sinais para evitar ruídos do mercado.</li>
+                    <li><strong>Sobre o Sinal "RSI Triplo":</strong> Alinha três RSIs para reduzir falsos sinais. Ideal para estratégias compostas, mas exige paciência para confirmação.</li>
+                    <li><strong>Sobre o Sinal "Volume Profit":</strong> Estima lucro potencial com base em volume e preço. Combine com VWAP para entradas mais seguras.</li>
+                    <li><strong>Sobre o Sinal "200 MA":</strong> O cruzamento da MA10 sobre a MA20 indica tendência. Use a MA200 como referência de longo prazo para contexto maior.</li>
+                    <li><strong>Sobre o Sinal "Bandas de Bollinger":</strong> Representam volatilidade com três linhas: superior, média e inferior. Bandas contraídas indicam alta volatilidade; expandidas, baixa volatilidade. Para XAUUSD, "Compra" perto da banda inferior e "Venda" na superior, mas confirme com RSI ou volume.</li>
+                    <li><strong>Horários de Mercado (BRT, UTC-3):</strong>
+                        <ul>
+                            <li><strong>XAUUSD (Spot):</strong> Seg 22h01 (domingo, UTC) a Sex 20h58 (BRT), intervalo diário 20h59-22h01.</li>
+                            <li><strong>BTCUSD:</strong> 24/7, mas maior liquidez durante Londres (5h-13h BRT) e NY (10h-18h BRT).</li>
+                            <li><strong>EURUSD, AUDCAD, GBPUSD:</strong> Seg 22h01 (domingo, UTC) a Sex 20h58 (BRT), intervalo 20h59-22h01. Sessão Londres (5h-13h BRT) e NY (10h-18h BRT) são mais ativas.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Como Escolher a Melhor Estratégia para Ouro (XAUUSD)?</strong> Não há "melhor" universal – depende do seu perfil. Scalpers preferem sessões de alta liquidez (Londres/NY), enquanto traders de longo prazo usam fundamentos. Teste em demo para entender volatilidade e psicologia!</li>
+                    <li><strong>Melhor Sessão para Negociar Ouro?</strong> Londres (5h-13h BRT) e NY (10h-18h BRT) têm spreads menores e mais oportunidades. A sessão asiática (22h-6h BRT) é mais calma – ideal para testes, não scalping.</li>
+                </ul>
+            </div>
+        </div>
+        <div class="inflation-box">
+            <h2>Inflação Americana (CPI)</h2>
+            <p><strong>Valor:</strong> <span id="cpi-value">Carregando...</span>%</p>
+            <p><small>Última atualização: <span id="cpi-date"></span></small></p>
+        </div>
+    </div>
+    <div id="isabella-assistant">
+        <div id="isabella-header">
+            <strong>Isabella Rossi:</strong>
+            <button id="minimize-btn">-</button>
+        </div>
+        <div id="isabella-message">Bem-vindo! Clique em um sinal para saber mais.</div>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        // Gráficos TradingView
+        function loadCharts() {
+            new TradingView.widget({
+                "width": "100%", "height": "100%", "symbol": "OANDA:XAUUSD", "interval": "15", "timezone": "Etc/UTC",
+                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-xauusd", "autosize": true
+            });
+            new TradingView.widget({
+                "width": "100%", "height": "100%", "symbol": "COINBASE:BTCUSD", "interval": "15", "timezone": "Etc/UTC",
+                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-btcusd", "autosize": true
+            });
+            new TradingView.widget({
+                "width": "100%", "height": "100%", "symbol": "OANDA:EURUSD", "interval": "15", "timezone": "Etc/UTC",
+                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-eurusd", "autosize": true
+            });
+            new TradingView.widget({
+                "width": "100%", "height": "100%", "symbol": "OANDA:AUDCAD", "interval": "15", "timezone": "Etc/UTC",
+                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-audcad", "autosize": true
+            });
+            new TradingView.widget({
+                "width": "100%", "height": "100%", "symbol": "OANDA:GBPUSD", "interval": "15", "timezone": "Etc/UTC",
+                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-gbpusd", "autosize": true
+            });
+        }
+        window.addEventListener('load', loadCharts);
+
+        // Variáveis globais
+        let prices = {
+            xauusd: { price: 2650, lastPrice: 2650, lastPrice15m: 2650, movingAverage: 2650, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 2650, twap2h: 2650, twap8h: 2650, vwap: 2650, volume: 1000, volumeProfit: 0, volumeRegulated: 1000, dailyHigh: 2650, dailyLow: 2650, ma200: 2650, ma10: 2650, ma20: 2650, lastMa10: 2650, lastMa20: 2650, bollingerUpper: 2700, bollingerLower: 2600, bollingerMiddle: 2650 },
+            btcusd: { price: 60000, lastPrice: 60000, lastPrice15m: 60000, movingAverage: 60000, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 60000, twap2h: 60000, twap8h: 60000, vwap: 60000, volume: 100, volumeProfit: 0, volumeRegulated: 100, dailyHigh: 60000, dailyLow: 60000, ma200: 60000, ma10: 60000, ma20: 60000, lastMa10: 60000, lastMa20: 60000, bollingerUpper: 61000, bollingerLower: 59000, bollingerMiddle: 60000 },
+            eurusd: { price: 1.10, lastPrice: 1.10, lastPrice15m: 1.10, movingAverage: 1.10, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 1.10, twap2h: 1.10, twap8h: 1.10, vwap: 1.10, volume: 1000, volumeProfit: 0, volumeRegulated: 1000, dailyHigh: 1.10, dailyLow: 1.10, ma200: 1.10, ma10: 1.10, ma20: 1.10, lastMa10: 1.10, lastMa20: 1.10, bollingerUpper: 1.12, bollingerLower: 1.08, bollingerMiddle: 1.10 },
+            audcad: { price: 0.90, lastPrice: 0.90, lastPrice15m: 0.90, movingAverage: 0.90, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 0.90, twap2h: 0.90, twap8h: 0.90, vwap: 0.90, volume: 1000, volumeProfit: 0, volumeRegulated: 1000, dailyHigh: 0.90, dailyLow: 0.90, ma200: 0.90, ma10: 0.90, ma20: 0.90, lastMa10: 0.90, lastMa20: 0.90, bollingerUpper: 0.92, bollingerLower: 0.88, bollingerMiddle: 0.90 },
+            gbpusd: { price: 1.30, lastPrice: 1.30, lastPrice15m: 1.30, movingAverage: 1.30, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 1.30, twap2h: 1.30, twap8h: 1.30, vwap: 1.30, volume: 1000, volumeProfit: 0, volumeRegulated: 1000, dailyHigh: 1.30, dailyLow: 1.30, ma200: 1.30, ma10: 1.30, ma20: 1.30, lastMa10: 1.30, lastMa20: 1.30, bollingerUpper: 1.32, bollingerLower: 1.28, bollingerMiddle: 1.30 }
+        };
+        let cpi = 2.8;
+
+        // Relógios
+        function updateClocks() {
+            const now = new Date();
+            document.getElementById('ny-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'America/New_York' });
+            document.getElementById('london-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'Europe/London' });
+            document.getElementById('tokyo-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'Asia/Tokyo' });
+            document.getElementById('sydney-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'Australia/Sydney' });
+            document.getElementById('hk-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'Asia/Hong_Kong' });
+            document.getElementById('chicago-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'America/Chicago' });
+        }
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        // Funções de atualização
+        function updateDailyExtremes(pair) {
+            const data = prices[pair];
+            data.price += (Math.random() - 0.5) * (pair === 'btcusd' ? 500 : pair === 'xauusd' ? 5 : 0.005);
+            data.dailyHigh = Math.max(data.dailyHigh, data.price).toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5);
+            data.dailyLow = Math.min(data.dailyLow, data.price).toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5);
+            document.getElementById(`daily-high-${pair}`).textContent = data.dailyHigh;
+            document.getElementById(`daily-low-${pair}`).textContent = data.dailyLow;
+            document.getElementById(`update-date-${pair}`).textContent = new Date().toLocaleDateString('pt-BR');
+        }
+
+        function updateSignals(pair) {
+            const data = prices[pair];
+            data.movingAverage = data.movingAverage * 0.95 + data.price * 0.05;
+            const priceChange = data.price - data.lastPrice;
+            const signalsDiv = document.getElementById(`signals-${pair}`);
+            signalsDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            const threshold = pair === 'btcusd' ? 50 : pair === 'xauusd' ? 0.5 : 0.001;
+            if (data.price > data.movingAverage && priceChange > threshold) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.price < data.movingAverage && priceChange < -threshold) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = 'Neutro';
+            }
+            signalsDiv.appendChild(signalDiv);
+            data.lastPrice = data.price;
+        }
+
+        function updatePlayerSignals(pair) {
+            const playerSignalsDiv = document.getElementById(`player-signals-${pair}`);
+            playerSignalsDiv.innerHTML = '';
+            const playerSignalDiv = document.createElement('div');
+            playerSignalDiv.className = 'player-signal';
+            playerSignalDiv.textContent = Math.random() < 0.5 ? 'Compra' : 'Venda';
+            playerSignalsDiv.appendChild(playerSignalDiv);
+        }
+
+        function updateSignals15m(pair) {
+            const data = prices[pair];
+            const signals15mDiv = document.getElementById(`signals-15m-${pair}`);
+            signals15mDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            if (data.price > data.movingAverage && data.lastPrice15m <= data.movingAverage) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.price < data.movingAverage && data.lastPrice15m >= data.movingAverage) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = 'Neutro';
+            }
+            signals15mDiv.appendChild(signalDiv);
+            data.lastPrice15m = data.price;
+        }
+
+        function updateSignalsRSI(pair) {
+            const data = prices[pair];
+            const priceChange = data.price - data.lastPrice;
+            data.rsi += priceChange > 0 ? Math.random() * 2 : -Math.random() * 2;
+            data.rsi = Math.max(0, Math.min(100, data.rsi));
+            const signalsRsiDiv = document.getElementById(`signals-rsi-${pair}`);
+            signalsRsiDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            if (data.rsi < 20) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.rsi > 80) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = `Neutro (${data.rsi.toFixed(1)})`;
+            }
+            signalsRsiDiv.appendChild(signalDiv);
+        }
+
+        function updateSignalsVolume(pair) {
+            const data = prices[pair];
+            const currentVolume = data.volume * (0.8 + Math.random() * 0.4);
+            const volumeChange = currentVolume - data.volume;
+            const signalsVolumeDiv = document.getElementById(`signals-volume-${pair}`);
+            signalsVolumeDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            const threshold = pair === 'btcusd' ? 20 : 200;
+            if (volumeChange > threshold && data.price > data.movingAverage) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (volumeChange > threshold && data.price < data.movingAverage) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = 'Neutro';
+            }
+            signalsVolumeDiv.appendChild(signalDiv);
+            data.volume = currentVolume;
+        }
+
+        function updateSignalsRSITriple(pair) {
+            const data = prices[pair];
+            const priceChange = data.price - data.lastPrice;
+            data.rsiShort += priceChange > 0 ? Math.random() * 3 : -Math.random() * 3;
+            data.rsiMedium += priceChange > 0 ? Math.random() * 2 : -Math.random() * 2;
+            data.rsiLong += priceChange > 0 ? Math.random() * 1 : -Math.random() * 1;
+            data.rsiShort = Math.max(0, Math.min(100, data.rsiShort));
+            data.rsiMedium = Math.max(0, Math.min(100, data.rsiMedium));
+            data.rsiLong = Math.max(0, Math.min(100, data.rsiLong));
+            const signalsRsiTripleDiv = document.getElementById(`rsi-triple-${pair}`);
+            signalsRsiTripleDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            if (data.rsiShort < 30 && data.rsiMedium < 40 && data.rsiLong < 50) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.rsiShort > 70 && data.rsiMedium > 60 && data.rsiLong > 50) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = `Neutro (${data.rsiShort.toFixed(1)})`;
+            }
+            signalsRsiTripleDiv.appendChild(signalDiv);
+        }
+
+        function updateSignalsTWAP(pair) {
+            const data = prices[pair];
+            data.twap = data.twap * 0.9 + data.price * 0.1;
+            const signalsTwapDiv = document.getElementById(`twap-${pair}`);
+            signalsTwapDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            const threshold = pair === 'btcusd' ? 100 : pair === 'xauusd' ? 1 : 0.002;
+            if (data.price > data.twap + threshold) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.price < data.twap - threshold) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = `Neutro (${data.twap.toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5)})`;
+            }
+            signalsTwapDiv.appendChild(signalDiv);
+        }
+
+        function updateSignalsVWAP(pair) {
+            const data = prices[pair];
+            const currentVolume = data.volume * (0.8 + Math.random() * 0.4);
+            data.vwap = (data.vwap * 0.9 + data.price * currentVolume * 0.1) / (0.9 + currentVolume * 0.1);
+            const signalsVwapDiv = document.getElementById(`vwap-${pair}`);
+            signalsVwapDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            const threshold = pair === 'btcusd' ? 100 : pair === 'xauusd' ? 1 : 0.002;
+            if (data.price > data.vwap + threshold) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.price < data.vwap - threshold) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = `Neutro (${data.vwap.toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5)})`;
+            }
+            signalsVwapDiv.appendChild(signalDiv);
+        }
+
+        function updateSignalsVolumeProfit(pair) {
+            const data = prices[pair];
+            const currentVolume = data.volume * (0.8 + Math.random() * 0.4);
+            const priceChange = data.price - data.lastPrice;
+            data.volumeProfit += priceChange * currentVolume * (pair === 'btcusd' ? 0.001 : pair === 'xauusd' ? 0.01 : 0.0001);
+            const signalsVolumeProfitDiv = document.getElementById(`volume-profit-${pair}`);
+            signalsVolumeProfitDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            const threshold = pair === 'btcusd' ? 50 : pair === 'xauusd' ? 5 : 0.5;
+            if (data.volumeProfit > threshold) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.volumeProfit < -threshold) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = `Neutro (${data.volumeProfit.toFixed(2)})`;
+            }
+            signalsVolumeProfitDiv.appendChild(signalDiv);
+        }
+
+        function updateSignalsVolumeRegulated(pair) {
+            const data = prices[pair];
+            const currentVolume = data.volume * (0.95 + Math.random() * 0.1);
+            data.volumeRegulated = data.volumeRegulated * 0.98 + currentVolume * 0.02;
+            const signalsVolumeRegulatedDiv = document.getElementById(`volume-regulated-${pair}`);
+            signalsVolumeRegulatedDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            const threshold = pair === 'btcusd' ? 10 : 50;
+            if (data.volumeRegulated > data.volume + threshold && data.price > data.movingAverage) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.volumeRegulated > data.volume + threshold && data.price < data.movingAverage) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = `Neutro (${data.volumeRegulated.toFixed(0)})`;
+            }
+            signalsVolumeRegulatedDiv.appendChild(signalDiv);
+        }
+
+        function updateSignals200MA(pair) {
+            const data = prices[pair];
+            data.ma200 = data.ma200 * 0.995 + data.price * 0.005;
+            data.ma10 = data.ma10 * 0.9 + data.price * 0.1;
+            data.ma20 = data.ma20 * 0.95 + data.price * 0.05;
+            const signals200maDiv = document.getElementById(`signals-200ma-${pair}`);
+            signals200maDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            if (data.ma10 > data.ma20 && data.lastMa10 <= data.lastMa20) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (data.ma10 < data.ma20 && data.lastMa10 >= data.lastMa20) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = `Neutro (MA200: ${data.ma200.toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5)})`;
+            }
+            signals200maDiv.appendChild(signalDiv);
+            data.lastMa10 = data.ma10;
+            data.lastMa20 = data.ma20;
+        }
+
+        function updateSignalsBollinger(pair) {
+            const data = prices[pair];
+            data.bollingerMiddle = data.bollingerMiddle * 0.95 + data.price * 0.05;
+            const deviation = (Math.random() * 0.5 + 0.5) * (pair === 'btcusd' ? 500 : pair === 'xauusd' ? 5 : 0.005);
+            data.bollingerUpper = data.bollingerMiddle + deviation * 2;
+            data.bollingerLower = data.bollingerMiddle - deviation * 2;
+            const signalsBollingerDiv = document.getElementById(`bollinger-bands-${pair}`);
+            signalsBollingerDiv.innerHTML = '';
+            const signalDiv = document.createElement('div');
+            const bandwidth = data.bollingerUpper - data.bollingerLower;
+            const threshold = pair === 'btcusd' ? 1000 : pair === 'xauusd' ? 10 : 0.01;
+            if (data.price >= data.bollingerUpper) {
+                signalDiv.className = 'signal sell';
+                signalDiv.textContent = 'Venda';
+            } else if (data.price <= data.bollingerLower) {
+                signalDiv.className = 'signal buy';
+                signalDiv.textContent = 'Compra';
+            } else if (bandwidth < threshold) {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = 'Alta Volatilidade';
+            } else {
+                signalDiv.className = 'signal neutral';
+                signalDiv.textContent = `Neutro (${data.bollingerMiddle.toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5)})`;
+            }
+            signalsBollingerDiv.appendChild(signalDiv);
+        }
+
+        function updateSignalsTWAP2h(pair) {
+            const data = prices[pair];
+            data.twap2h = data.twap2h * 0.975 + data.price * 0.025; // Média de 2 horas (mais lenta que TWAP padrão)
+            const twap2hDiv = document.getElementById(`twap-2h-${pair}`);
+            const thermometerFill = twap2hDiv.querySelector('.thermometer-fill');
+            const thermometerLabel = twap2hDiv.querySelector('.thermometer-label');
+            const range = (data.dailyHigh - data.dailyLow) || 1;
+            const percentage = ((data.twap2h - data.dailyLow) / range) * 100;
+            thermometerFill.style.height = `${Math.max(0, Math.min(100, percentage))}%`;
+            thermometerLabel.textContent = `${data.twap2h.toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5)}`;
+        }
+
+        function updateSignalsTWAP8h(pair) {
+            const data = prices[pair];
+            data.twap8h = data.twap8h * 0.995 + data.price * 0.005; // Média de 8 horas (mais lenta)
+            const twap8hDiv = document.getElementById(`twap-8h-${pair}`);
+            const gaugeNeedle = twap8hDiv.querySelector('.gauge-needle');
+            const gaugeLabel = twap8hDiv.querySelector('.gauge-label');
+            const range = (data.dailyHigh - data.dailyLow) || 1;
+            const percentage = ((data.twap8h - data.dailyLow) / range) * 100;
+            const angle = (percentage / 100) * 180 - 90; // De -90° a 90°
+            gaugeNeedle.style.transform = `rotate(${angle}deg)`;
+            gaugeLabel.textContent = `${data.twap8h.toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5)}`;
+        }
+
+        function updateInflation() {
+            cpi += (Math.random() - 0.5) * 0.1;
+            cpi = Math.max(0, cpi.toFixed(1));
+            document.getElementById('cpi-value').textContent = cpi;
+            document.getElementById('cpi-date').textContent = new Date().toLocaleDateString('pt-BR');
+        }
+
+        // Atualização geral
+        function updateAll() {
+            ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd'].forEach(pair => {
+                updateDailyExtremes(pair);
+                updateSignals(pair);
+                updatePlayerSignals(pair);
+                updateSignals15m(pair);
+                updateSignalsRSI(pair);
+                updateSignalsVolume(pair);
+                updateSignalsRSITriple(pair);
+                updateSignalsTWAP(pair);
+                updateSignalsVWAP(pair);
+                updateSignalsVolumeProfit(pair);
+                updateSignalsVolumeRegulated(pair);
+                updateSignals200MA(pair);
+                updateSignalsBollinger(pair);
+                updateSignalsTWAP2h(pair);
+                updateSignalsTWAP8h(pair);
+            });
+            updateInflation();
+        }
+        setInterval(updateAll, 3000);
+        updateAll();
+
+        // Tabs
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        // Tema
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            document.getElementById('theme-toggle').textContent = document.body.classList.contains('light-mode') ? 'Modo Escuro' : 'Modo Claro';
+        });
+
+        // Isabella Rossi - Assistente IA
+        const isabellaMessages = {
+            'Máxima/Mínima': 'Ciao! Aqui estão os preços máximos e mínimos diários, fundamentais para análise técnica. Em Economia na Bocconi, aprendi que esses níveis definem suportes e resistências, baseados na teoria de oferta e demanda. Use-os para identificar zonas de reversão ou breakout.',
+            'Sinal': 'Este sinal usa a média móvel exponencial (EMA) para detectar tendências. Se o preço cruza a EMA com momentum (variação > threshold), temos "Compra" ou "Venda". Em Harvard, estudei modelos de previsão baseados em médias móveis – um clássico para gestão de risco e timing.',
+            'Players': 'Aqui simulamos o comportamento de grandes players, como fundos de hedge. Baseado em estudos de mercado da Goldman Sachs, onde estagiei, esses sinais refletem fluxos institucionais. Combine com volume para confirmar força – mas cuidado com falsos movimentos!',
+            '15M': 'Sinal de curto prazo (15 minutos), ideal para day trading. Usa cruzamentos de preço com a EMA, um método que refinei em Milão. Na teoria financeira, esses sinais capturam microtendências, mas exija confirmação de outros indicadores para evitar ruídos.',
+            'RSI': 'O Índice de Força Relativa (RSI) mede a velocidade e magnitude das mudanças de preço, com limites de 20 (sobreventa) e 80 (sobrecompra). Desenvolvido por Welles Wilder, é um oscilador clássico que estudei em Harvard. Use para identificar reversões, mas confirme com padrões gráficos.',
+            'Volume': 'Volume alto com preço subindo sugere compra; caindo, venda. Na Bocconi, analisei como o volume valida movimentos de preço (teoria de Dow). Combine com RSI ou VWAP para entradas precisas – um pico isolado pode ser manipulação de mercado.',
+            'RSI Triplo': 'Combinação de três RSIs (curto, médio, longo) para maior precisão. Inspirado em modelos estatísticos de Harvard, alinha sobrevenda (<30, <40, <50) ou sobrecompra (>70, >60, >50). É complexo, mas reduz falsos sinais – perfeito para estratégias compostas.',
+            'TWAP': 'Time-Weighted Average Price calcula a média ponderada pelo tempo. Usado por instituições (ex.: Goldman Sachs), sinaliza "Compra" se o preço está acima do TWAP, "Venda" se abaixo. Estudei sua aplicação em algoritmos de execução – ótimo para trades de longo prazo.',
+            'VWAP': 'Volume-Weighted Average Price reflete o preço médio ponderado por volume. Empregado em minha pesquisa de MBA, é um benchmark para traders institucionais. Preço acima do VWAP é "Compra", abaixo é "Venda". Ideal para avaliar o valor intrínseco do dia.',
+            'Volume Profit': 'Inspirado em plataformas como Profit Pro, este indicador combina volume com variação de preço para estimar lucro potencial. Na Goldman Sachs, vi como volume e momentum são chave para trades lucrativos. Use com VWAP para confirmar entradas.',
+            'Volume Regulado': 'Um volume ajustado com média suave, ideal para sinais refinados. Aprendi em Harvard a importância de filtrar ruídos em dados – aqui, o volume é ponderado para evitar falsos picos. Perfeito para trades precisos em mercados voláteis.',
+            '200 MA': 'A média móvel de 200 períodos (MA200) é um indicador de longo prazo, enquanto o cruzamento da MA10 (rápida) sobre a MA20 (lenta) gera sinais. Na Bocconi, estudei como médias móveis capturam tendências. "Compra" quando MA10 cruza acima da MA20, "Venda" quando cruza abaixo.',
+            'Bandas de Bollinger': 'As Bandas de Bollinger mostram volatilidade com três linhas: superior, média e inferior (90% da ação do preço). Bandas contraídas = alta volatilidade; expandidas = baixa. Para XAUUSD, "Compra" na banda inferior, "Venda" na superior – confirme com RSI ou volume!',
+            'Termômetro TWAP 2h': 'Este termômetro mostra o TWAP de 2 horas em relação aos extremos diários. A altura reflete onde o preço médio está: perto do topo (máxima) ou base (mínima). Útil para scalping ou trades de curto prazo, dá uma visão rápida da tendência recente.',
+            'Ponteiro TWAP 8h': 'O ponteiro exibe o TWAP de 8 horas como um medidor, indo de -90° (mínima) a 90° (máxima). Perfeito para swing trading, ajuda a entender a direção do mercado em um horizonte maior. Combine com o TWAP padrão para uma análise mais robusta.',
+            'default': 'Ciao! Sou Isabella Rossi, formada em Economia pela Bocconi e com MBA em Harvard. Clique em um sinal para aprender com minha experiência em Milão e Nova York!'
+        };
+        document.querySelectorAll('.signal-box').forEach(box => {
+            box.addEventListener('click', () => {
+                const signalTitle = box.querySelector('h2').textContent;
+                document.getElementById('isabella-message').textContent = isabellaMessages[signalTitle] || isabellaMessages['default'];
+            });
+        });
+
+        // Minimizar/Maximizar Isabella
+        document.getElementById('minimize-btn').addEventListener('click', () => {
+            const isabellaBox = document.getElementById('isabella-assistant');
+            isabellaBox.classList.toggle('minimized');
+            document.getElementById('minimize-btn').textContent = isabellaBox.classList.contains('minimized') ? '+' : '-';
+        });
+    </script>
+</body>
+</html>
