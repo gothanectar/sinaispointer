@@ -47,6 +47,80 @@
             border-radius: 8px;
             margin-bottom: 10px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        /* Menu minimizável para mobile */
+        .clocks.minimized {
+            padding: 5px 10px;
+            gap: 5px;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .clocks.minimized .clock {
+            font-size: 0.8em;
+            margin: 2px 0;
+        }
+        
+        .clocks-toggle {
+            display: none;
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-bottom: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        .clocks-toggle:hover {
+            background: #0056b3;
+        }
+        
+        /* Responsive para mobile */
+        @media (max-width: 768px) {
+            .clocks {
+                position: relative;
+                max-width: 100%;
+            }
+            
+            .clocks-toggle {
+                display: block;
+            }
+            
+            .clocks.minimized {
+                max-height: 40px;
+                overflow: hidden;
+            }
+            
+            .clocks:not(.minimized) {
+                max-height: 200px;
+                overflow-y: auto;
+            }
+            
+            .clock {
+                font-size: 0.8em;
+                margin: 2px 0;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .clocks {
+                gap: 5px;
+                padding: 5px;
+            }
+            
+            .clocks.minimized {
+                max-height: 30px;
+            }
+            
+            .clock {
+                font-size: 0.7em;
+            }
         }
         .light-mode .clocks {
             background-color: #fff;
@@ -569,13 +643,16 @@
         <div class="header">
             <h1>TradePulse Enhanced</h1>
         </div>
-        <div class="clocks">
-            <div class="clock"><strong>NY:</strong> <span id="ny-time"></span></div>
-            <div class="clock"><strong>Londres:</strong> <span id="london-time"></span></div>
-            <div class="clock"><strong>Tóquio:</strong> <span id="tokyo-time"></span></div>
-            <div class="clock"><strong>Sydney:</strong> <span id="sydney-time"></span></div>
-            <div class="clock"><strong>HK:</strong> <span id="hk-time"></span></div>
-            <div class="clock"><strong>Chicago:</strong> <span id="chicago-time"></span></div>
+        <div class="clocks-container">
+            <button class="clocks-toggle" onclick="toggleClocks()">🕐 Relógios</button>
+            <div class="clocks" id="clocks">
+                <div class="clock"><strong>NY:</strong> <span id="ny-time"></span></div>
+                <div class="clock"><strong>Londres:</strong> <span id="london-time"></span></div>
+                <div class="clock"><strong>Tóquio:</strong> <span id="tokyo-time"></span></div>
+                <div class="clock"><strong>Sydney:</strong> <span id="sydney-time"></span></div>
+                <div class="clock"><strong>HK:</strong> <span id="hk-time"></span></div>
+                <div class="clock"><strong>Chicago:</strong> <span id="chicago-time"></span></div>
+            </div>
         </div>
         <div class="tabs">
             <button class="tab-btn active" data-tab="XAUUSD">XAUUSD</button>
@@ -1474,6 +1551,52 @@
                 });
             }, 2000);
         }
+        
+        // Sistema de Toggle para Relógios (Mobile)
+        function toggleClocks() {
+            const clocks = document.getElementById('clocks');
+            const toggle = document.querySelector('.clocks-toggle');
+            
+            if (clocks.classList.contains('minimized')) {
+                clocks.classList.remove('minimized');
+                toggle.innerHTML = '🕐 Relógios';
+                toggle.style.background = '#007bff';
+            } else {
+                clocks.classList.add('minimized');
+                toggle.innerHTML = '🕐 Expandir';
+                toggle.style.background = '#28a745';
+            }
+        }
+        
+        // Auto-minimizar em mobile
+        function autoMinimizeClocks() {
+            const clocks = document.getElementById('clocks');
+            const toggle = document.querySelector('.clocks-toggle');
+            
+            if (window.innerWidth <= 768) {
+                // Minimizar automaticamente em mobile
+                if (!clocks.classList.contains('minimized')) {
+                    clocks.classList.add('minimized');
+                    toggle.innerHTML = '🕐 Expandir';
+                    toggle.style.background = '#28a745';
+                }
+            } else {
+                // Expandir em desktop
+                clocks.classList.remove('minimized');
+                toggle.innerHTML = '🕐 Relógios';
+                toggle.style.background = '#007bff';
+            }
+        }
+        
+        // Verificar tamanho da tela ao carregar e redimensionar
+        document.addEventListener('DOMContentLoaded', function() {
+            autoMinimizeClocks();
+            
+            // Adicionar listener para redimensionamento
+            window.addEventListener('resize', function() {
+                autoMinimizeClocks();
+            });
+        });
         
         // Sistema de Notícias - Horário Brasília
         function loadBrazilNews() {
