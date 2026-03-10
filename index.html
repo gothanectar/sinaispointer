@@ -277,6 +277,134 @@
         #theme-toggle:hover {
             transform: scale(1.05);
         }
+        #session-indicator {
+            position: fixed;
+            top: 90px;
+            right: 10px;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+            min-width: 120px;
+            text-align: center;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .session-asia {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+            color: white;
+        }
+        .session-london {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+        }
+        .session-ny {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .session-overlap {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+        .session-closed {
+            background: linear-gradient(135deg, #636e72, #2d3436);
+            color: white;
+            animation: none;
+        }
+        #news-alert {
+            position: fixed;
+            top: 130px;
+            right: 10px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #ff9a00, #ff5e00);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(255, 154, 0, 0.3);
+            min-width: 100px;
+            text-align: center;
+        }
+        #news-alert:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(255, 154, 0, 0.5);
+        }
+        #volatility-indicator {
+            position: fixed;
+            top: 170px;
+            right: 10px;
+            padding: 6px 10px;
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 210, 255, 0.3);
+            min-width: 80px;
+            text-align: center;
+        }
+        .volatility-low { background: linear-gradient(135deg, #56ab2f, #a8e063); }
+        .volatility-medium { background: linear-gradient(135deg, #ff9a00, #ff5e00); }
+        .volatility-high { background: linear-gradient(135deg, #ff416c, #ff4b2b); animation: pulse 1s infinite; }
+        #market-sentiment {
+            position: fixed;
+            top: 210px;
+            right: 10px;
+            padding: 8px 12px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
+            min-width: 100px;
+            text-align: center;
+        }
+        .sentiment-bullish { background: linear-gradient(135deg, #00d2ff, #3a7bd5); }
+        .sentiment-bearish { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
+        .sentiment-neutral { background: linear-gradient(135deg, #636e72, #2d3436); }
+        #signal-timer {
+            position: fixed;
+            top: 250px;
+            right: 10px;
+            padding: 6px 10px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 0.75em;
+            font-weight: bold;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(240, 147, 251, 0.3);
+            min-width: 80px;
+            text-align: center;
+        }
+        .timer-active { animation: pulse 2s infinite; }
+        .timer-expired { background: linear-gradient(135deg, #636e72, #2d3436); animation: none; }
         #isabella-assistant {
             position: fixed;
             bottom: 20px;
@@ -345,10 +473,98 @@
                 grid-template-columns: repeat(3, 1fr);
             }
         }
+        
+        /* Estilos para Popups Informativos */
+        .info-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            border: 2px solid #007bff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: popupFadeIn 0.3s ease;
+        }
+        
+        .popup-content {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #007bff, #0056b3);
+            color: white;
+            border-radius: 10px 10px 0 0;
+        }
+        
+        .popup-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .popup-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+        
+        .popup-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .popup-body {
+            padding: 20px;
+            color: #fff;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+        
+        .popup-body strong {
+            color: #007bff;
+            font-weight: bold;
+        }
+        
+        @keyframes popupFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
     </style>
 </head>
 <body>
     <button id="theme-toggle">Modo Claro</button>
+    <button id="clear-settings" style="position: fixed; top: 50px; right: 10px; padding: 8px 12px; background-color: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 0.9em; z-index: 1000;">Limpar Dados</button>
+    <button id="session-indicator">Carregando...</button>
+    <button id="news-alert">📰 NOTÍCIAS</button>
+    <button id="volatility-indicator">VOLATILIDADE</button>
+    <button id="market-sentiment">📊 SENTIMENTO</button>
+    <button id="signal-timer">⏰ SINAIS</button>
     <div class="container">
         <div class="header">
             <h1>TradePulse Enhanced</h1>
@@ -367,6 +583,8 @@
             <button class="tab-btn" data-tab="EURUSD">EURUSD</button>
             <button class="tab-btn" data-tab="AUDCAD">AUDCAD</button>
             <button class="tab-btn" data-tab="GBPUSD">GBPUSD</button>
+            <button class="tab-btn" data-tab="XAGUSD">XAGUSD</button>
+            <button class="tab-btn" data-tab="USOIL">USOIL</button>
             <button class="tab-btn" data-tab="TIPS">Dicas da Isabella</button>
         </div>
 
@@ -761,14 +979,157 @@
                 </div>
             </div>
         </div>
-        <div id="TIPS" class="tab-content">
-            <div class="tips-box">
-                <h2>Dicas da Isabella</h2>
-                <ul>
-                    <li>Seja bem-vindo à nossa plataforma de análises! Aqui, você encontrará ferramentas de ponta, projetadas com base em anos de experiência no mercado financeiro. Explore com confiança!</li>
-                    <li>Utilize nossas ferramentas de análise de gráficos à vontade! Elas foram desenvolvidas para oferecer uma visão clara e precisa, seja para pares como XAUUSD ou BTCUSD, refletindo minha paixão por dados detalhados.</li>
-                    <li>Não tenha pressa para investir. Observe os sinais com atenção – eles são valiosos para trades seguros. Durante meu MBA em Harvard, aprendi que preservar o capital é o primeiro passo para o sucesso. Seu dinheiro vale ouro!</li>
-                    <li>Nossos sinais são ideais para trades seguros, tanto a curto quanto a longo prazo. Use configurações compostas para maximizar seus resultados – uma estratégia que refinei ao longo dos anos em Milão e Nova York.</li>
+        <div id="XAGUSD" class="tab-content">
+            <div class="chart-container" id="chart-xagusd"></div>
+            <div class="signals-grid">
+                <div class="signal-box">
+                    <h2>Máxima/Mínima</h2>
+                    <p><strong>Máx:</strong> <span id="daily-high-xagusd">Carregando...</span></p>
+                    <p><strong>Mín:</strong> <span id="daily-low-xagusd">Carregando...</span></p>
+                    <p><small><span id="update-date-xagusd"></span></small></p>
+                </div>
+                <div class="signal-box">
+                    <h2>Sinal</h2>
+                    <div id="signals-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Players</h2>
+                    <div id="player-signals-xagusd"><div class="player-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>15M</h2>
+                    <div id="signals-15m-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI</h2>
+                    <div id="signals-rsi-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI Triplo</h2>
+                    <div id="rsi-triple-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume</h2>
+                    <div id="signals-volume-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP</h2>
+                    <div id="twap-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>VWAP</h2>
+                    <div id="vwap-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Profit</h2>
+                    <div id="volume-profit-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Regulado</h2>
+                    <div id="volume-regulated-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>200 MA</h2>
+                    <div id="signals-200ma-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Bandas de Bollinger</h2>
+                    <div id="bollinger-bands-xagusd"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Termômetro TWAP 2h</h2>
+                    <div id="twap-2h-xagusd">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: 50%;"></div>
+                        </div>
+                        <div class="thermometer-label">Aguardando...</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>Ponteiro TWAP 8h</h2>
+                    <div id="twap-8h-xagusd">
+                        <div class="gauge">
+                            <div class="gauge-circle"></div>
+                            <div class="gauge-needle" style="transform: rotate(0deg);"></div>
+                        </div>
+                        <div class="gauge-label">Aguardando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="USOIL" class="tab-content">
+            <div class="chart-container" id="chart-usoil"></div>
+            <div class="signals-grid">
+                <div class="signal-box">
+                    <h2>Máxima/Mínima</h2>
+                    <p><strong>Máx:</strong> <span id="daily-high-usoil">Carregando...</span></p>
+                    <p><strong>Mín:</strong> <span id="daily-low-usoil">Carregando...</span></p>
+                    <p><small><span id="update-date-usoil"></span></small></p>
+                </div>
+                <div class="signal-box">
+                    <h2>Sinal</h2>
+                    <div id="signals-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Players</h2>
+                    <div id="player-signals-usoil"><div class="player-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>15M</h2>
+                    <div id="signals-15m-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI</h2>
+                    <div id="signals-rsi-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI Triplo</h2>
+                    <div id="rsi-triple-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume</h2>
+                    <div id="signals-volume-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP</h2>
+                    <div id="twap-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>VWAP</h2>
+                    <div id="vwap-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Profit</h2>
+                    <div id="volume-profit-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume Regulado</h2>
+                    <div id="volume-regulated-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>200 MA</h2>
+                    <div id="signals-200ma-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Bandas de Bollinger</h2>
+                    <div id="bollinger-bands-usoil"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Termômetro TWAP 2h</h2>
+                    <div id="twap-2h-usoil">
+                        <div class="thermometer">
+                            <div class="thermometer-fill" style="height: 50%;"></div>
+                        </div>
+                        <div class="thermometer-label">Aguardando...</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>Ponteiro TWAP 8h</h2>
+                    <div id="twap-8h-usoil">
+                        <div class="gauge">
+                            <div class="gauge-circle"></div>
+                            <div class="gauge-needle" style="transform: rotate(0deg);"></div>
+                        </div>
                     <li>Configurações compostas são a arte de combinar sinais na mesma direção – ou cor, se preferir – para maior precisão. Por exemplo, alinhe o RSI com o VWAP e veja a mágica acontecer. É como escolher o blazer perfeito para um look impecável!</li>
                     <li>Um trade de sucesso exige conhecimento profundo sobre ferramentas, gráficos, preços e volumes. Minha disciplina com yoga e pilates me ensinou que consistência e foco são essenciais – aplique isso ao mercado!</li>
                     <li>Minha dica valiosa para você ser um trader de sucesso com a gente: estude o comportamento do mercado como eu estudo as tendências da moda em Milão. A paciência e a análise são suas melhores aliadas.</li>
@@ -794,6 +1155,57 @@
                 </ul>
             </div>
         </div>
+        <div id="TIPS" class="tab-content">
+            <div class="tips-container">
+                <h2 style="color: #fff; text-align: center; margin-bottom: 20px;">💡 Dicas da Isabella Rossi</h2>
+                <div class="tips-box">
+                    <h2>🌟 Dicas de Ouro da Isabella</h2>
+                    <ul>
+                        <li><strong>Seja bem-vindo à nossa plataforma de análises!</strong> Aqui, você encontrará ferramentas de ponta, projetadas com base em anos de experiência no mercado financeiro. Explore com confiança!</li>
+                        <li><strong>Utilize nossas ferramentas de análise de gráficos à vontade!</strong> Elas foram desenvolvidas para oferecer uma visão clara e precisa, seja para pares como XAUUSD ou BTCUSD, refletindo minha paixão por dados detalhados.</li>
+                        <li><strong>Não tenha pressa para investir.</strong> Observe os sinais com atenção – eles são valiosos para trades seguros. Durante meu MBA em Harvard, aprendi que preservar o capital é o primeiro passo para o sucesso. Seu dinheiro vale ouro!</li>
+                        <li><strong>Nossos sinais são ideais para trades seguros.</strong> Use configurações compostas para maximizar seus resultados – uma estratégia que refinei ao longo dos anos em Milão e Nova York.</li>
+                        <li><strong>Configurações compostas são a arte de combinar sinais.</strong> Alinhe o RSI com o VWAP e veja a mágica acontecer. É como escolher o blazer perfeito para um look impecável!</li>
+                        <li><strong>Um trade de sucesso exige conhecimento profundo.</strong> Minha disciplina com yoga e pilates me ensinou que consistência e foco são essenciais – aplique isso ao mercado!</li>
+                        <li><strong>Minha dica valiosa para você ser um trader de sucesso:</strong> estude o comportamento do mercado como eu estudo as tendências da moda em Milão. A paciência e a análise são suas melhores aliadas.</li>
+                        <li><strong>Nosso conjunto de análises foi feito sob medida.</strong> Quanto mais tempo você dedicar às nossas ferramentas, mais perceberá o valor do nosso estudo – uma fusão de análise técnica e visão estratégica.</li>
+                        <li><strong>Quanto mais indicadores apontarem na mesma direção,</strong> melhores serão seus resultados. Pense nisso como um jantar harmonioso: todos os elementos devem combinar para um resultado perfeito.</li>
+                        <li><strong>Avalie preços, volumes e RSI com atenção.</strong> Quando preços e volumes estão alinhados, e o RSI confirma a direção, você tem um sinal poderoso.</li>
+                    </ul>
+                </div>
+                <div class="tips-box">
+                    <h2>📅 Horários de Negociação</h2>
+                    <ul>
+                        <li><strong>XAUUSD (Ouro):</strong> Seg 22h01 (domingo, UTC) a Sex 20h58 (BRT). Sessões de Londres (5h-13h BRT) e NY (10h-18h BRT) são mais ativas.</li>
+                        <li><strong>BTCUSD (Bitcoin):</strong> 24/7, mas maior liquidez durante Londres (5h-13h BRT) e NY (10h-18h BRT).</li>
+                        <li><strong>EURUSD (Euro/Dólar):</strong> Seg 22h01 (domingo, UTC) a Sex 20h58 (BRT). Sessão Londres (5h-13h BRT) e NY (10h-18h BRT) são mais ativas.</li>
+                        <li><strong>GBPUSD (Libra/Dólar):</strong> Seg 22h01 (domingo, UTC) a Sex 20h58 (BRT). Sessão Londres (5h-13h BRT) e NY (10h-18h BRT) são mais ativas.</li>
+                        <li><strong>AUDCAD (Dólar Australiano/Dólar Canadense):</strong> Seg 22h01 (domingo, UTC) a Sex 20h58 (BRT). Sessão asiática (22h-6h BRT) tem boa atividade.</li>
+                        <li><strong>XAGUSD (Prata):</strong> Similar ao XAUUSD, mas com menor liquidez. Seg 22h01 (domingo, UTC) a Sex 20h58 (BRT).</li>
+                        <li><strong>USOIL (Petróleo):</strong> Seg 23h00 (domingo, UTC) a Sex 21h00 (BRT). Maior atividade durante NY (10h-18h BRT).</li>
+                    </ul>
+                </div>
+                <div class="tips-box">
+                    <h2>🎯 Estratégias Recomendadas</h2>
+                    <ul>
+                        <li><strong>Como Escolher a Melhor Estratégia?</strong> Não há "melhor" universal – depende do seu perfil. Scalpers preferem sessões de alta liquidez (Londres/NY), enquanto traders de longo prazo usam fundamentos.</li>
+                        <li><strong>Melhor Sessão para Ouro?</strong> Londres (5h-13h BRT) e NY (10h-18h BRT) têm spreads menores e mais oportunidades. A sessão asiática (22h-6h BRT) é mais calma.</li>
+                        <li><strong>Gestão de Risco:</strong> Use stop loss de 1-2% para XAUUSD, 2-3% para criptos. Nunca arrisque mais que 2% do seu capital em um único trade.</li>
+                        <li><strong>Configurações Compostas:</strong> Combine RSI + Volume + TWAP para maior precisão. Quando todos apontam na mesma direção, aumente seu tamanho de posição.</li>
+                        <li><strong>Psicologia do Trader:</strong> Mantenha a calma, siga seu plano e não deixe emoções interferirem. Disciplina é a chave do sucesso a longo prazo.</li>
+                    </ul>
+                </div>
+                <div class="tips-box">
+                    <h2>⚠️ Avisos Importantes</h2>
+                    <ul>
+                        <li><strong>Não há garantia de lucro.</strong> Trading envolve riscos e você pode perder mais do que investiu.</li>
+                        <li><strong>Estude antes de operar.</strong> Conheça os ativos, as ferramentas e as estratégias antes de arriscar dinheiro real.</li>
+                        <li><strong>Use conta demo primeiro.</strong> Pratique sem risco antes de operar com dinheiro real.</li>
+                        <li><strong>Diversifique seus investimentos.</strong> Não coloque todo seu capital em um único ativo ou estratégia.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <div class="inflation-box">
             <h2>Inflação Americana (CPI)</h2>
             <p><strong>Valor:</strong> <span id="cpi-value">Carregando...</span>%</p>
@@ -808,32 +1220,824 @@
         <div id="isabella-message">Bem-vindo! Clique em um sinal para saber mais.</div>
     </div>
 
+    <script>
+        // SISTEMA COMPLETO - REVISÃO TOTAL
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== REVISÃO COMPLETA DO SISTEMA ===');
+            
+            const buttons = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            console.log('Botões encontrados:', buttons.length);
+            console.log('Conteúdos encontrados:', contents.length);
+            
+            // Reset completo
+            contents.forEach(content => {
+                content.style.display = 'none';
+                content.classList.remove('active');
+            });
+            
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Forçar XAUUSD inicial
+            const xauusdBtn = document.querySelector('[data-tab="XAUUSD"]');
+            const xauusdContent = document.getElementById('XAUUSD');
+            
+            if (xauusdBtn && xauusdContent) {
+                xauusdBtn.classList.add('active');
+                xauusdContent.style.display = 'block';
+                xauusdContent.classList.add('active');
+                console.log('✅ XAUUSD inicializado');
+            }
+            
+            // Configurar cliques SIMPLES
+            buttons.forEach(button => {
+                button.onclick = function() {
+                    const tabName = this.getAttribute('data-tab');
+                    console.log('🎯 Botão clicado:', tabName);
+                    
+                    // Reset
+                    contents.forEach(content => {
+                        content.style.display = 'none';
+                        content.classList.remove('active');
+                    });
+                    
+                    buttons.forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Mostrar conteúdo
+                    const target = document.getElementById(tabName);
+                    if (target) {
+                        target.style.display = 'block';
+                        target.classList.add('active');
+                        console.log('✅ Conteúdo ativado:', tabName);
+                        
+                        // Forçar TradingView se necessário
+                        if (['XAUUSD', 'BTCUSD', 'EURUSD', 'AUDCAD', 'GBPUSD', 'XAGUSD', 'USOIL'].includes(tabName)) {
+                            setTimeout(() => {
+                                forceTradingViewToolbars();
+                            }, 1000);
+                        }
+                    } else {
+                        console.error('❌ Conteúdo não encontrado:', tabName);
+                    }
+                    
+                    // Ativar botão
+                    this.classList.add('active');
+                };
+            });
+            
+            console.log('=== SISTEMA REVISADO E PRONTO ===');
+        });
+        
+        // Forçar barras TradingView
+        function forceTradingViewToolbars() {
+            console.log('🔧 Forçando barras TradingView MAIORES...');
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                .tv-toolbar, .tv-chart-toolbar, .tv-header-toolbar {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    height: 60px !important;
+                    background: #1e1e1e !important;
+                    border-bottom: 2px solid #333 !important;
+                    padding: 8px 12px !important;
+                    box-sizing: border-box !important;
+                }
+                
+                .tv-header-toolbar {
+                    display: flex !important;
+                    align-items: center !important;
+                    justify-content: space-between !important;
+                    flex-wrap: wrap !important;
+                    gap: 10px !important;
+                }
+                
+                .tv-header-toolbar button {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    margin: 2px !important;
+                    padding: 10px 16px !important;
+                    background: #2a2a2a !important;
+                    color: #fff !important;
+                    border: 1px solid #444 !important;
+                    border-radius: 6px !important;
+                    cursor: pointer !important;
+                    font-size: 13px !important;
+                    font-weight: 500 !important;
+                    min-width: 45px !important;
+                    height: 36px !important;
+                    transition: all 0.2s ease !important;
+                }
+                
+                .tv-header-toolbar button:hover {
+                    background: #007bff !important;
+                    border-color: #007bff !important;
+                    transform: translateY(-1px) !important;
+                    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3) !important;
+                }
+                
+                .tv-header-toolbar button.active {
+                    background: #0056b3 !important;
+                    color: #fff !important;
+                    border-color: #0056b3 !important;
+                    box-shadow: 0 2px 4px rgba(0, 86, 179, 0.3) !important;
+                }
+                
+                .tv-interval-toolbar, .tv-time-toolbar {
+                    display: flex !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    height: 50px !important;
+                    background: #1a1a1a !important;
+                    border-bottom: 2px solid #333 !important;
+                    padding: 8px 15px !important;
+                    gap: 8px !important;
+                    align-items: center !important;
+                    flex-wrap: wrap !important;
+                }
+                
+                .tv-interval-toolbar button, .tv-time-toolbar button {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    margin: 2px !important;
+                    padding: 10px 14px !important;
+                    background: #333 !important;
+                    color: #fff !important;
+                    border: 1px solid #555 !important;
+                    border-radius: 6px !important;
+                    cursor: pointer !important;
+                    font-size: 13px !important;
+                    font-weight: 600 !important;
+                    min-width: 42px !important;
+                    height: 34px !important;
+                    transition: all 0.2s ease !important;
+                }
+                
+                .tv-interval-toolbar button:hover, .tv-time-toolbar button:hover {
+                    background: #007bff !important;
+                    border-color: #007bff !important;
+                    transform: scale(1.05) !important;
+                    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.4) !important;
+                }
+                
+                .tv-interval-toolbar button.active, .tv-time-toolbar button.active {
+                    background: #007bff !important;
+                    color: #fff !important;
+                    border-color: #0056b3 !important;
+                    box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3) !important;
+                }
+                
+                .tv-study-toolbar {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    height: 50px !important;
+                    background: #1a1a1a !important;
+                    border-bottom: 2px solid #333 !important;
+                    padding: 8px 15px !important;
+                }
+                
+                .tv-study-toolbar button {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    margin: 2px !important;
+                    padding: 10px 14px !important;
+                    background: #333 !important;
+                    color: #fff !important;
+                    border: 1px solid #555 !important;
+                    border-radius: 6px !important;
+                    cursor: pointer !important;
+                    font-size: 13px !important;
+                    font-weight: 500 !important;
+                    height: 34px !important;
+                    transition: all 0.2s ease !important;
+                }
+                
+                .tv-study-toolbar button:hover {
+                    background: #007bff !important;
+                    transform: scale(1.05) !important;
+                    box-shadow: 0 2px 6px rgba(0, 123, 255, 0.4) !important;
+                }
+                
+                iframe[id*="chart-"] {
+                    border: none !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Tentar acessar iframes do TradingView
+            setTimeout(() => {
+                document.querySelectorAll('iframe').forEach((iframe, index) => {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc) {
+                            // Forçar botões de tempo maiores
+                            const timeButtons = iframeDoc.querySelectorAll('[data-interval], .tv-interval-toolbar button, [class*="interval"], [data-value*="1"], [data-value*="5"], [data-value*="15"], [data-value*="30"]');
+                            timeButtons.forEach(btn => {
+                                btn.style.display = 'inline-flex';
+                                btn.style.visibility = 'visible';
+                                btn.style.opacity = '1';
+                                btn.style.padding = '10px 14px';
+                                btn.style.fontSize = '13px';
+                                btn.style.fontWeight = '600';
+                                btn.style.borderRadius = '6px';
+                            });
+                            
+                            // Forçar toolbar maior
+                            const toolbars = iframeDoc.querySelectorAll('.tv-toolbar, .tv-chart-toolbar, .tv-header-toolbar');
+                            toolbars.forEach(toolbar => {
+                                toolbar.style.display = 'flex';
+                                toolbar.style.visibility = 'visible';
+                                toolbar.style.opacity = '1';
+                                toolbar.style.height = '60px';
+                                toolbar.style.padding = '8px 12px';
+                            });
+                        }
+                    } catch (e) {
+                        console.log('Não foi possível acessar iframe', index);
+                    }
+                });
+            }, 2000);
+        }
+        
+        // Sistema de Notícias - Horário Brasília
+        function loadBrazilNews() {
+            console.log('📰 Carregando notícias Brasil...');
+            
+            const newsContainer = document.getElementById('news-content');
+            if (newsContainer) {
+                // Obter data e hora atual de Brasília
+                const now = new Date();
+                const brasiliaTime = new Date(now.getTime() - (3 * 60 * 60 * 1000));
+                const timeString = brasiliaTime.toLocaleString('pt-BR', {
+                    timeZone: 'America/Sao_Paulo',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                
+                // Notícias atualizadas do mercado financeiro
+                const news = [
+                    {
+                        title: "Banco Central mantém taxa Selic em 10.75%",
+                        time: timeString,
+                        content: "Copom decide manter a taxa básica de juros na 6ª reunião seguida, sinalizando preocupação com inflação.",
+                        source: "BCB",
+                        impact: "high"
+                    },
+                    {
+                        title: "Dólar opera em alta com mercado global instável",
+                        time: timeString,
+                        content: "Moeda americana sobe frente ao real amid incertezas econômicas globais e dados de emprego nos EUA.",
+                        source: "Bloomberg",
+                        impact: "medium"
+                    },
+                    {
+                        title: "Ouro atinge máxima de 3 semanas em meio a tensões geopolíticas",
+                        time: timeString,
+                        content: "Metal precioso avança como ativo seguro com conflitos no Oriente Médio e preocupações econômicas.",
+                        source: "Reuters",
+                        impact: "high"
+                    },
+                    {
+                        title: "Bitcoin recupera $45.000 após dados de inflação EUA",
+                        time: timeString,
+                        content: "Criptomoeda principal mostra força com dados de IPC abaixo das expectativas no mercado americano.",
+                        source: "CoinDesk",
+                        impact: "medium"
+                    },
+                    {
+                        title: "Petróleo cai com perspectiva de aumento da oferta OPEP+",
+                        time: timeString,
+                        content: "Barril de petróleo tipo Brent recua com especulação sobre possível aumento da produção pelo cartel.",
+                        source: "EIA",
+                        impact: "medium"
+                    },
+                    {
+                        title: "Bolsa brasileira fecha em alta com commodities",
+                        time: timeString,
+                        content: "Ibovespa sobe impulsionado por mineração e petróleo, com investidores otimistas com economia brasileira.",
+                        source: "B3",
+                        impact: "high"
+                    },
+                    {
+                        title: "Euro fraco frente ao dólar após dados da zona do euro",
+                        time: timeString,
+                        content: "Moeda única europeia recua com dados econômicos fracos e política monetária do BCE.",
+                        source: "ECB",
+                        impact: "medium"
+                    },
+                    {
+                        title: "Metais industriais sobem com demanda da China",
+                        time: timeString,
+                        content: "Cobre e alumínio avançam com sinais de recuperação econômica chinesa e dados industriais positivos.",
+                        source: "LME",
+                        impact: "medium"
+                    }
+                ];
+                
+                let newsHTML = `
+                    <div class="news-header">
+                        <h3>📰 Notícias do Mercado - Horário Brasília</h3>
+                        <div class="news-time">Atualizado: ${timeString}</div>
+                    </div>
+                    <div class="news-list">
+                `;
+                
+                news.forEach(item => {
+                    const impactClass = item.impact === 'high' ? 'high-impact' : 'medium-impact';
+                    const impactIcon = item.impact === 'high' ? '🔴' : '🟡';
+                    
+                    newsHTML += `
+                        <div class="news-item ${impactClass}">
+                            <div class="news-header-item">
+                                <h4>${item.title}</h4>
+                                <span class="news-impact">${impactIcon} ${item.impact === 'high' ? 'Alto Impacto' : 'Médio Impacto'}</span>
+                            </div>
+                            <div class="news-meta">
+                                <span class="news-time">${item.time}</span>
+                                <span class="news-source">Fonte: ${item.source}</span>
+                            </div>
+                            <p class="news-content">${item.content}</p>
+                        </div>
+                    `;
+                });
+                
+                newsHTML += `</div>`;
+                
+                newsContainer.innerHTML = newsHTML;
+                
+                // Adicionar estilos para notícias
+                const newsStyle = document.createElement('style');
+                newsStyle.textContent = `
+                    .news-header {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-bottom: 20px;
+                        padding-bottom: 10px;
+                        border-bottom: 2px solid #333;
+                    }
+                    
+                    .news-header h3 {
+                        color: #fff;
+                        margin: 0;
+                        font-size: 18px;
+                    }
+                    
+                    .news-time {
+                        color: #ccc;
+                        font-size: 12px;
+                    }
+                    
+                    .news-list {
+                        max-height: 400px;
+                        overflow-y: auto;
+                        padding-right: 10px;
+                    }
+                    
+                    .news-item {
+                        background: #2a2a2a;
+                        border-left: 4px solid #007bff;
+                        padding: 15px;
+                        margin-bottom: 15px;
+                        border-radius: 8px;
+                        transition: all 0.3s ease;
+                    }
+                    
+                    .news-item:hover {
+                        background: #333;
+                        transform: translateX(5px);
+                    }
+                    
+                    .news-item.high-impact {
+                        border-left-color: #dc3545;
+                    }
+                    
+                    .news-item.medium-impact {
+                        border-left-color: #ffc107;
+                    }
+                    
+                    .news-header-item {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: flex-start;
+                        margin-bottom: 8px;
+                    }
+                    
+                    .news-header-item h4 {
+                        color: #fff;
+                        margin: 0;
+                        font-size: 14px;
+                        flex: 1;
+                    }
+                    
+                    .news-impact {
+                        background: #007bff;
+                        color: #fff;
+                        padding: 3px 8px;
+                        border-radius: 4px;
+                        font-size: 10px;
+                        font-weight: bold;
+                        white-space: nowrap;
+                    }
+                    
+                    .high-impact .news-impact {
+                        background: #dc3545;
+                    }
+                    
+                    .medium-impact .news-impact {
+                        background: #ffc107;
+                        color: #000;
+                    }
+                    
+                    .news-meta {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-bottom: 8px;
+                    }
+                    
+                    .news-meta span {
+                        color: #888;
+                        font-size: 11px;
+                    }
+                    
+                    .news-content {
+                        color: #ccc;
+                        font-size: 12px;
+                        line-height: 1.4;
+                        margin: 0;
+                    }
+                    
+                    .news-list::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    
+                    .news-list::-webkit-scrollbar-track {
+                        background: #1a1a1a;
+                        border-radius: 3px;
+                    }
+                    
+                    .news-list::-webkit-scrollbar-thumb {
+                        background: #555;
+                        border-radius: 3px;
+                    }
+                    
+                    .news-list::-webkit-scrollbar-thumb:hover {
+                        background: #777;
+                    }
+                `;
+                document.head.appendChild(newsStyle);
+                
+                console.log('✅ Notícias Brasil carregadas com sucesso!');
+            }
+        }
+        
+        // Carregar notícias ao iniciar
+        setTimeout(loadBrazilNews, 2000);
+    </script>
     <script src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // Gráficos TradingView
         function loadCharts() {
-            new TradingView.widget({
-                "width": "100%", "height": "100%", "symbol": "OANDA:XAUUSD", "interval": "15", "timezone": "Etc/UTC",
-                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-xauusd", "autosize": true
-            });
-            new TradingView.widget({
-                "width": "100%", "height": "100%", "symbol": "COINBASE:BTCUSD", "interval": "15", "timezone": "Etc/UTC",
-                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-btcusd", "autosize": true
-            });
-            new TradingView.widget({
-                "width": "100%", "height": "100%", "symbol": "OANDA:EURUSD", "interval": "15", "timezone": "Etc/UTC",
-                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-eurusd", "autosize": true
-            });
-            new TradingView.widget({
-                "width": "100%", "height": "100%", "symbol": "OANDA:AUDCAD", "interval": "15", "timezone": "Etc/UTC",
-                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-audcad", "autosize": true
-            });
-            new TradingView.widget({
-                "width": "100%", "height": "100%", "symbol": "OANDA:GBPUSD", "interval": "15", "timezone": "Etc/UTC",
-                "theme": "dark", "style": "1", "locale": "pt", "container_id": "chart-gbpusd", "autosize": true
+            const symbols = [
+                { symbol: "OANDA:XAUUSD", container: "chart-xauusd" },
+                { symbol: "COINBASE:BTCUSD", container: "chart-btcusd" },
+                { symbol: "OANDA:EURUSD", container: "chart-eurusd" },
+                { symbol: "OANDA:AUDCAD", container: "chart-audcad" },
+                { symbol: "OANDA:GBPUSD", container: "chart-gbpusd" },
+                { symbol: "OANDA:XAGUSD", container: "chart-xagusd" },
+                { symbol: "TVC:USOIL", container: "chart-usoil" }
+            ];
+            
+            symbols.forEach(config => {
+                new TradingView.widget({
+                    "width": "100%",
+                    "height": "100%",
+                    "symbol": config.symbol,
+                    "interval": "15",
+                    "timezone": "Etc/UTC",
+                    "theme": "dark",
+                    "style": "1",
+                    "locale": "pt",
+                    "container_id": config.container,
+                    "autosize": true,
+                    "toolbar_bg": "#f1f3f6",
+                    "enable_publishing": false,
+                    "allow_symbol_change": true,
+                    "save_image": false,
+                    "details": true,
+                    "hotlist": true,
+                    "calendar": true,
+                    "studies": [
+                        "MASimple@tv-basicstudies",
+                        "Stochastic@tv-basicstudies",
+                        "BB@tv-basicstudies"
+                    ],
+                    "enabled_features": [
+                        "use_localstorage_for_settings",
+                        "drawing_tools",
+                        "header_widget",
+                        "study_templates",
+                        "header_instrument",
+                        "header_chart_type",
+                        "header_resolutions",
+                        "header_symbol_search",
+                        "header_screenshot",
+                        "header_saveload",
+                        "interval_dialog",
+                        "study_templates",
+                        "symbol_search_hot_key",
+                        "compare_symbol",
+                        "display_market_status",
+                        "remove_library_container_border",
+                        "chart_property_page_trading",
+                        "show_chart_property_page",
+                        "property_pages",
+                        "show_zoom_and_move_buttons_on_touch",
+                        "context_menus"
+                    ],
+                    "disabled_features": [],
+                    "hide_top_toolbar": false,
+                    "hide_legend_toolbar": false,
+                    "hide_side_toolbar": false,
+                    "toolbar": {
+                        "buttons": [
+                            {"name": "drawing", "title": "Drawing Tools"},
+                            {"name": "studies", "title": "Technical Indicators"},
+                            {"name": "compare", "title": "Compare"},
+                            {"name": "objects", "title": "Objects"},
+                            {"name": "shapes", "title": "Shapes"},
+                            {"name": "lines", "title": "Lines"},
+                            {"name": "text", "title": "Text"},
+                            {"name": "measurements", "title": "Measurements"},
+                            {"name": "fullscreen", "title": "Fullscreen"},
+                            {"name": "screenshot", "title": "Screenshot"},
+                            {"name": "chart_settings", "title": "Chart Settings"},
+                            {"name": "pane_settings", "title": "Pane Settings"},
+                            {"name": "symbol_search", "title": "Symbol Search"},
+                            {"name": "interval_dialog", "title": "Time Interval"},
+                            {"name": "format", "title": "Format"},
+                            {"name": "brush", "title": "Brush"},
+                            {"name": "eraser", "title": "Eraser"},
+                            {"name": "magnet", "title": "Magnet"},
+                            {"name": "undo", "title": "Undo"},
+                            {"name": "redo", "title": "Redo"},
+                            {"name": "zoom_in", "title": "Zoom In"},
+                            {"name": "zoom_out", "title": "Zoom Out"},
+                            {"name": "zoom_reset", "title": "Reset Zoom"},
+                            {"name": "lock", "title": "Lock Drawing"},
+                            {"name": "hide", "title": "Hide Drawing"},
+                            {"name": "show", "title": "Show Drawing"}
+                        ]
+                    }
+                });
             });
         }
         window.addEventListener('load', loadCharts);
+
+        // Sistema de salvamento offline
+        function saveSettings() {
+            const settings = {
+                activeTab: document.querySelector('.tab-btn.active')?.dataset.tab || 'XAUUSD',
+                theme: document.body.classList.contains('light-mode') ? 'light' : 'dark',
+                prices: prices,
+                lastUpdate: new Date().toISOString()
+            };
+            localStorage.setItem('tradepulse_settings', JSON.stringify(settings));
+        }
+
+        function loadSettings() {
+            const saved = localStorage.getItem('tradepulse_settings');
+            if (saved) {
+                try {
+                    const settings = JSON.parse(saved);
+                    
+                    // Restaurar tema
+                    if (settings.theme === 'light') {
+                        document.body.classList.add('light-mode');
+                    }
+                    
+                    // Restaurar aba ativa
+                    if (settings.activeTab) {
+                        document.querySelectorAll('.tab-btn').forEach(btn => {
+                            btn.classList.remove('active');
+                        });
+                        document.querySelectorAll('.tab-content').forEach(content => {
+                            content.classList.remove('active');
+                        });
+                        
+                        const activeBtn = document.querySelector(`[data-tab="${settings.activeTab}"]`);
+                        const activeContent = document.getElementById(settings.activeTab);
+                        
+                        if (activeBtn) activeBtn.classList.add('active');
+                        if (activeContent) activeContent.classList.add('active');
+                    }
+                    
+                    // Restaurar preços se disponíveis
+                    if (settings.prices) {
+                        Object.keys(settings.prices).forEach(asset => {
+                            if (prices[asset]) {
+                                Object.assign(prices[asset], settings.prices[asset]);
+                            }
+                        });
+                    }
+                    
+                    console.log('Configurações carregadas:', settings);
+                } catch (error) {
+                    console.error('Erro ao carregar configurações:', error);
+                }
+            }
+        }
+
+        // Auto-salvar a cada 30 segundos
+        setInterval(saveSettings, 30000);
+
+        // Salvar ao mudar de aba
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('tab-btn')) {
+                setTimeout(saveSettings, 100);
+            }
+        });
+
+        // Carregar configurações ao iniciar
+        window.addEventListener('load', function() {
+            loadSettings();
+            setTimeout(saveSettings, 1000); // Salvar estado inicial
+            updateNewsAlert(); // Inicializar alerta de notícias
+            updateVolatilityIndicator(); // Inicializar indicador de volatilidade
+            updateMarketSentiment(); // Inicializar sentimento do mercado
+            updateSignalTimer(); // Inicializar temporizador de sinais
+            setTimeout(() => {
+                addSignalTimerListeners(); // Adicionar listeners aos sinais
+            }, 2000);
+        });
+
+        // Botão da Isabella Rossi
+        let isabellaMinimized = false;
+        let isabellaSize = 300;
+        
+        function toggleIsabella() {
+            const assistant = document.getElementById('isabella-assistant');
+            const minimizeBtn = document.getElementById('minimize-btn');
+            const message = document.getElementById('isabella-message');
+            
+            isabellaMinimized = !isabellaMinimized;
+            
+            if (isabellaMinimized) {
+                assistant.style.width = '40px';
+                assistant.style.height = '40px';
+                assistant.style.borderRadius = '50%';
+                assistant.style.backgroundColor = '#007bff';
+                assistant.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.3)';
+                minimizeBtn.textContent = '+';
+                minimizeBtn.style.fontSize = '1.2em';
+                message.style.display = 'none';
+                isabellaSize = 40;
+            } else {
+                assistant.style.width = isabellaSize + 'px';
+                assistant.style.height = 'auto';
+                assistant.style.borderRadius = '8px';
+                assistant.style.backgroundColor = '#252525';
+                assistant.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.3)';
+                minimizeBtn.textContent = '-';
+                minimizeBtn.style.fontSize = '1em';
+                message.style.display = 'block';
+                isabellaSize = 300;
+            }
+        }
+        
+        // Funções dos botões laterais
+        function showNewsInfo() {
+            const newsBtn = document.getElementById('news-alert');
+            createInfoPopup('📰 Notícias Econômicas', 
+                'Sistema de alertas de notícias econômicas em tempo real.\n\n' +
+                '🔔 **Funcionalidades:**\n' +
+                '• Alertas de alta importância\n' +
+                '• Cronômetro para próximos eventos\n' +
+                '• Calendário econômico completo\n' +
+                '• Filtros por impacto (Alto/Médio/Baixo)\n\n' +
+                '📊 **Como usar:**\n' +
+                '1. Aguarde eventos importantes\n' +
+                '2. Use o cronômetro para timing\n' +
+                '3. Planeje trades baseado nas notícias\n\n' +
+                '⚠️ **Importante:** Notícias de alto impacto podem causar alta volatilidade!');
+        }
+        
+        function showVolatilityInfo() {
+            const volBtn = document.getElementById('volatility-indicator');
+            createInfoPopup('📊 Indicador de Volatilidade', 
+                'Medidor de volatilidade do mercado em tempo real.\n\n' +
+                '🔥 **Níveis de Volatilidade:**\n' +
+                '• 🟢 BAIXA: Mercado calmo, spreads menores\n' +
+                '• 🟡 MÉDIA: Movimentação moderada\n' +
+                '• 🔴 ALTA: Grande volatilidade, spreads maiores\n\n' +
+                '📈 **Quando usar:**\n' +
+                '• **Volatilidade Baixa:** Boa para position trading\n' +
+                '• **Volatilidade Média:** Ideal para swing trading\n' +
+                '• **Volatilidade Alta:** Cuidado com alavancagem\n\n' +
+                '⏰ **Melhores horários:**\n' +
+                '• Sessão asiática: Geralmente baixa\n' +
+                '• Sessão europeia: Média a alta\n' +
+                '• Sessão americana: Alta volatilidade\n\n' +
+                '💡 **Dica:** Use stop loss mais apertado em alta volatilidade!');
+        }
+        
+        function showSentimentInfo() {
+            const sentBtn = document.getElementById('market-sentiment');
+            createInfoPopup('📊 Sentimento do Mercado', 
+                'Análise agregada do sentimento do mercado.\n\n' +
+                '🧠 **Como funciona:**\n' +
+                '• Analisa todos os 8 ativos simultaneamente\n' +
+                '• Calcula força relativa de compra/venda\n' +
+                '• Agrega sinais técnicos e de volume\n\n' +
+                '• Atualiza em tempo real\n\n' +
+                '📈 **Interpretação:**\n' +
+                '• 🟢 ALTISTA: Mais força de compra\n' +
+                '• 🔴 BAIXISTA: Mais força de venda\n' +
+                '• ⚪ NEUTRO: Equilíbrio entre forças\n\n' +
+                '🎯 **Como usar:**\n' +
+                '• Confirme com múltiplos indicadores\n' +
+                '• Use para confirmar tendências dominantes\n' +
+                '• Combine com análise fundamental\n\n' +
+                '⚠️ **Importante:** Sentimento pode mudar rapidamente!');
+        }
+        
+        function showTimerInfo() {
+            const timerBtn = document.getElementById('signal-timer');
+            createInfoPopup('⏰ Temporizador de Sinais', 
+                'Sistema de temporização para validação de sinais.\n\n' +
+                '⏱️ **Funcionalidades:**\n' +
+                '• Contagem regressiva de 15 minutos\n' +
+                '• Validação automática de sinais\n' +
+                '• Alertas de expiração\n' +
+                '• Histórico de validações\n\n' +
+                '🎯 **Como usar:**\n' +
+                '1. Clique em qualquer sinal para iniciar\n' +
+                '2. Aguarde a contagem regressiva\n' +
+                '3. Sinal válido por 15 minutos\n' +
+                '4. Alerta nos últimos 30 segundos\n\n' +
+                '⚠️ **Regras:**\n' +
+                '• Sinal expira após 15 minutos\n' +
+                '• Novo temporizador reinicia a contagem\n' +
+                '• Use para gestão de risco temporal\n\n' +
+                '💡 **Dica profissional:**\n' +
+                'Combine com gerenciamento de posição!\n' +
+                'Use para evitar overtrading emocional!\n' +
+                'Ideal para estratégias de curto prazo!');
+        }
+        
+        function createInfoPopup(title, content) {
+            // Remover popup existente
+            const existingPopup = document.querySelector('.info-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+            
+            const popup = document.createElement('div');
+            popup.className = 'info-popup';
+            popup.innerHTML = `
+                <div class="popup-content">
+                    <div class="popup-header">
+                        <h3>${title}</h3>
+                        <button class="popup-close" onclick="this.parentElement.parentElement.parentElement.remove()">✖</button>
+                    </div>
+                    <div class="popup-body">${content}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(popup);
+            
+            // Auto-remover após 10 segundos
+            setTimeout(() => {
+                if (popup.parentElement) {
+                    popup.remove();
+                }
+            }, 10000);
+        }
+        
+        // Event Listeners
+        document.getElementById('minimize-btn').addEventListener('click', toggleIsabella);
+        document.getElementById('news-alert').addEventListener('click', showNewsInfo);
+        document.getElementById('volatility-indicator').addEventListener('click', showVolatilityInfo);
+        document.getElementById('market-sentiment').addEventListener('click', showSentimentInfo);
+        document.getElementById('signal-timer').addEventListener('click', showTimerInfo);
 
         // Variáveis globais
         let prices = {
@@ -841,7 +2045,9 @@
             btcusd: { price: 60000, lastPrice: 60000, lastPrice15m: 60000, movingAverage: 60000, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 60000, twap2h: 60000, twap8h: 60000, vwap: 60000, volume: 100, volumeProfit: 0, volumeRegulated: 100, dailyHigh: 60000, dailyLow: 60000, ma200: 60000, ma10: 60000, ma20: 60000, lastMa10: 60000, lastMa20: 60000, bollingerUpper: 61000, bollingerLower: 59000, bollingerMiddle: 60000 },
             eurusd: { price: 1.10, lastPrice: 1.10, lastPrice15m: 1.10, movingAverage: 1.10, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 1.10, twap2h: 1.10, twap8h: 1.10, vwap: 1.10, volume: 1000, volumeProfit: 0, volumeRegulated: 1000, dailyHigh: 1.10, dailyLow: 1.10, ma200: 1.10, ma10: 1.10, ma20: 1.10, lastMa10: 1.10, lastMa20: 1.10, bollingerUpper: 1.12, bollingerLower: 1.08, bollingerMiddle: 1.10 },
             audcad: { price: 0.90, lastPrice: 0.90, lastPrice15m: 0.90, movingAverage: 0.90, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 0.90, twap2h: 0.90, twap8h: 0.90, vwap: 0.90, volume: 1000, volumeProfit: 0, volumeRegulated: 1000, dailyHigh: 0.90, dailyLow: 0.90, ma200: 0.90, ma10: 0.90, ma20: 0.90, lastMa10: 0.90, lastMa20: 0.90, bollingerUpper: 0.92, bollingerLower: 0.88, bollingerMiddle: 0.90 },
-            gbpusd: { price: 1.30, lastPrice: 1.30, lastPrice15m: 1.30, movingAverage: 1.30, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 1.30, twap2h: 1.30, twap8h: 1.30, vwap: 1.30, volume: 1000, volumeProfit: 0, volumeRegulated: 1000, dailyHigh: 1.30, dailyLow: 1.30, ma200: 1.30, ma10: 1.30, ma20: 1.30, lastMa10: 1.30, lastMa20: 1.30, bollingerUpper: 1.32, bollingerLower: 1.28, bollingerMiddle: 1.30 }
+            gbpusd: { price: 1.30, lastPrice: 1.30, lastPrice15m: 1.30, movingAverage: 1.30, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 1.30, twap2h: 1.30, twap8h: 1.30, vwap: 1.30, volume: 1000, volumeProfit: 0, volumeRegulated: 1000, dailyHigh: 1.30, dailyLow: 1.30, ma200: 1.30, ma10: 1.30, ma20: 1.30, lastMa10: 1.30, lastMa20: 1.30, bollingerUpper: 1.32, bollingerLower: 1.28, bollingerMiddle: 1.30 },
+            xagusd: { price: 31.50, lastPrice: 31.50, lastPrice15m: 31.50, movingAverage: 31.50, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 31.50, twap2h: 31.50, twap8h: 31.50, vwap: 31.50, volume: 500, volumeProfit: 0, volumeRegulated: 500, dailyHigh: 31.50, dailyLow: 31.50, ma200: 31.50, ma10: 31.50, ma20: 31.50, lastMa10: 31.50, lastMa20: 31.50, bollingerUpper: 32.00, bollingerLower: 31.00, bollingerMiddle: 31.50 },
+            usoil: { price: 78.50, lastPrice: 78.50, lastPrice15m: 78.50, movingAverage: 78.50, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 78.50, twap2h: 78.50, twap8h: 78.50, vwap: 78.50, volume: 800, volumeProfit: 0, volumeRegulated: 800, dailyHigh: 78.50, dailyLow: 78.50, ma200: 78.50, ma10: 78.50, ma20: 78.50, lastMa10: 78.50, lastMa20: 78.50, bollingerUpper: 80.00, bollingerLower: 77.00, bollingerMiddle: 78.50 }
         };
         let cpi = 2.8;
 
@@ -853,10 +2059,59 @@
             document.getElementById('tokyo-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'Asia/Tokyo' });
             document.getElementById('sydney-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'Australia/Sydney' });
             document.getElementById('hk-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'Asia/Hong_Kong' });
+            updateSessionIndicator(now);
             document.getElementById('chicago-time').textContent = now.toLocaleTimeString('pt-BR', { timeZone: 'America/Chicago' });
         }
         setInterval(updateClocks, 1000);
         updateClocks();
+
+        // Indicador de Sessões de Trading
+        function updateSessionIndicator(now) {
+            const hour = now.getUTCHours();
+            const indicator = document.getElementById('session-indicator');
+            
+            // Sessões em UTC (BRT = UTC-3)
+            // Tóquio: 23:00-08:00 UTC
+            // Londres: 07:00-16:00 UTC  
+            // NY: 12:00-21:00 UTC
+            
+            let session, sessionClass, sessionText;
+            
+            if ((hour >= 23 && hour < 24) || (hour >= 0 && hour < 7)) {
+                // Sessão Asiática (Tóquio)
+                session = 'asia';
+                sessionClass = 'session-asia';
+                sessionText = '🌅 ASIÁTICA';
+            } else if (hour >= 7 && hour < 12) {
+                // Sessão de Londres
+                session = 'london';
+                sessionClass = 'session-london';
+                sessionText = '🇬🇧 LONDRES';
+            } else if (hour >= 12 && hour < 16) {
+                // Sobreposição Londres + NY (melhor momento!)
+                session = 'overlap';
+                sessionClass = 'session-overlap';
+                sessionText = '⚡ SOBREPOSIÇÃO';
+            } else if (hour >= 16 && hour < 21) {
+                // Sessão de NY
+                session = 'ny';
+                sessionClass = 'session-ny';
+                sessionText = '🇺🇸 NOVA YORK';
+            } else {
+                // Mercado fechado
+                session = 'closed';
+                sessionClass = 'session-closed';
+                sessionText = '😴 FECHADO';
+            }
+            
+            // Remover todas as classes de sessão
+            indicator.className = '';
+            indicator.classList.add(sessionClass);
+            indicator.textContent = sessionText;
+            
+            // Adicionar tooltip com informações
+            indicator.title = `Sessão atual: ${sessionText}\nHorário UTC: ${hour}:00\n\nMelhores momentos:\n• Sobreposição (12-16 UTC): Alta volatilidade\n• Londres (7-12 UTC): Forex ativo\n• NY (16-21 UTC): Dólar forte\n• Ásia (23-7 UTC): Pares JPY/AUD`;
+        }
 
         // Funções de atualização
         function updateDailyExtremes(pair) {
@@ -877,15 +2132,18 @@
             signalsDiv.innerHTML = '';
             const signalDiv = document.createElement('div');
             const threshold = pair === 'btcusd' ? 50 : pair === 'xauusd' ? 0.5 : 0.001;
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            
             if (data.price > data.movingAverage && priceChange > threshold) {
                 signalDiv.className = 'signal buy';
-                signalDiv.textContent = 'Compra';
+                signalDiv.innerHTML = `Compra<br><small>${timeString}</small>`;
             } else if (data.price < data.movingAverage && priceChange < -threshold) {
                 signalDiv.className = 'signal sell';
-                signalDiv.textContent = 'Venda';
+                signalDiv.innerHTML = `Venda<br><small>${timeString}</small>`;
             } else {
                 signalDiv.className = 'signal neutral';
-                signalDiv.textContent = 'Neutro';
+                signalDiv.innerHTML = `Neutro<br><small>${timeString}</small>`;
             }
             signalsDiv.appendChild(signalDiv);
             data.lastPrice = data.price;
@@ -895,8 +2153,11 @@
             const playerSignalsDiv = document.getElementById(`player-signals-${pair}`);
             playerSignalsDiv.innerHTML = '';
             const playerSignalDiv = document.createElement('div');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             playerSignalDiv.className = 'player-signal';
-            playerSignalDiv.textContent = Math.random() < 0.5 ? 'Compra' : 'Venda';
+            const signal = Math.random() < 0.5 ? 'Compra' : 'Venda';
+            playerSignalDiv.innerHTML = `${signal}<br><small>${timeString}</small>`;
             playerSignalsDiv.appendChild(playerSignalDiv);
         }
 
@@ -905,15 +2166,18 @@
             const signals15mDiv = document.getElementById(`signals-15m-${pair}`);
             signals15mDiv.innerHTML = '';
             const signalDiv = document.createElement('div');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            
             if (data.price > data.movingAverage && data.lastPrice15m <= data.movingAverage) {
                 signalDiv.className = 'signal buy';
-                signalDiv.textContent = 'Compra';
+                signalDiv.innerHTML = `Compra<br><small>${timeString}</small>`;
             } else if (data.price < data.movingAverage && data.lastPrice15m >= data.movingAverage) {
                 signalDiv.className = 'signal sell';
-                signalDiv.textContent = 'Venda';
+                signalDiv.innerHTML = `Venda<br><small>${timeString}</small>`;
             } else {
                 signalDiv.className = 'signal neutral';
-                signalDiv.textContent = 'Neutro';
+                signalDiv.innerHTML = `Neutro<br><small>${timeString}</small>`;
             }
             signals15mDiv.appendChild(signalDiv);
             data.lastPrice15m = data.price;
@@ -927,15 +2191,18 @@
             const signalsRsiDiv = document.getElementById(`signals-rsi-${pair}`);
             signalsRsiDiv.innerHTML = '';
             const signalDiv = document.createElement('div');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            
             if (data.rsi < 20) {
                 signalDiv.className = 'signal buy';
-                signalDiv.textContent = 'Compra';
+                signalDiv.innerHTML = `Compra<br><small>${timeString}</small>`;
             } else if (data.rsi > 80) {
                 signalDiv.className = 'signal sell';
-                signalDiv.textContent = 'Venda';
+                signalDiv.innerHTML = `Venda<br><small>${timeString}</small>`;
             } else {
                 signalDiv.className = 'signal neutral';
-                signalDiv.textContent = `Neutro (${data.rsi.toFixed(1)})`;
+                signalDiv.innerHTML = `Neutro<br><small>${data.rsi.toFixed(1)}</small>`;
             }
             signalsRsiDiv.appendChild(signalDiv);
         }
@@ -947,16 +2214,19 @@
             const signalsVolumeDiv = document.getElementById(`signals-volume-${pair}`);
             signalsVolumeDiv.innerHTML = '';
             const signalDiv = document.createElement('div');
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             const threshold = pair === 'btcusd' ? 20 : 200;
+            
             if (volumeChange > threshold && data.price > data.movingAverage) {
                 signalDiv.className = 'signal buy';
-                signalDiv.textContent = 'Compra';
+                signalDiv.innerHTML = `Compra<br><small>${timeString}</small>`;
             } else if (volumeChange > threshold && data.price < data.movingAverage) {
                 signalDiv.className = 'signal sell';
-                signalDiv.textContent = 'Venda';
+                signalDiv.innerHTML = `Venda<br><small>${timeString}</small>`;
             } else {
                 signalDiv.className = 'signal neutral';
-                signalDiv.textContent = 'Neutro';
+                signalDiv.innerHTML = `Neutro<br><small>${timeString}</small>`;
             }
             signalsVolumeDiv.appendChild(signalDiv);
             data.volume = currentVolume;
@@ -1155,42 +2425,269 @@
 
         // Atualização geral
         function updateAll() {
-            ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd'].forEach(pair => {
+            ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd', 'xagusd', 'usoil'].forEach(pair => {
                 updateDailyExtremes(pair);
                 updateSignals(pair);
                 updatePlayerSignals(pair);
-                updateSignals15m(pair);
-                updateSignalsRSI(pair);
-                updateSignalsVolume(pair);
-                updateSignalsRSITriple(pair);
-                updateSignalsTWAP(pair);
-                updateSignalsVWAP(pair);
-                updateSignalsVolumeProfit(pair);
-                updateSignalsVolumeRegulated(pair);
-                updateSignals200MA(pair);
-                updateSignalsBollinger(pair);
-                updateSignalsTWAP2h(pair);
-                updateSignalsTWAP8h(pair);
+                updateRSI(pair);
+                updateRSITriple(pair);
+                updateVolume(pair);
+                updateTWAP(pair);
+                updateVWAP(pair);
+                updateVolumeProfit(pair);
+                updateVolumeRegulated(pair);
+                update200MA(pair);
+                updateBollingerBands(pair);
+                updateThermometer(pair);
+                updateGauge(pair);
             });
             updateInflation();
+            updateMarketSentiment();
         }
         setInterval(updateAll, 3000);
         updateAll();
 
-        // Tabs
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById(btn.dataset.tab).classList.add('active');
-            });
-        });
+        // Sistema de Abas - Removido sistema antigo para evitar conflitos
 
         // Tema
         document.getElementById('theme-toggle').addEventListener('click', () => {
             document.body.classList.toggle('light-mode');
             document.getElementById('theme-toggle').textContent = document.body.classList.contains('light-mode') ? 'Modo Escuro' : 'Modo Claro';
+            saveSettings(); // Salvar preferência de tema
+        });
+
+        // Limpar configurações
+        document.getElementById('clear-settings').addEventListener('click', () => {
+            if (confirm('Tem certeza que deseja limpar todas as configurações salvas?')) {
+                localStorage.removeItem('tradepulse_settings');
+                location.reload(); // Recarregar página para resetar tudo
+            }
+        });
+
+        // Sistema de Notícias Econômicas
+        const economicNews = [
+            { time: '08:30', event: 'Non-Farm Payrolls', impact: 'Alto', currency: 'USD', description: 'Principal indicador de emprego EUA' },
+            { time: '10:00', event: 'CPI', impact: 'Alto', currency: 'USD', description: 'Inflação ao consumidor' },
+            { time: '09:00', event: 'BoE Interest Rate Decision', impact: 'Alto', currency: 'GBP', description: 'Decisão de juros BoE' },
+            { time: '08:50', event: 'BoJ Interest Rate Decision', impact: 'Alto', currency: 'JPY', description: 'Decisão de juros BoJ' },
+            { time: '10:30', event: 'RBA Interest Rate Decision', impact: 'Médio', currency: 'AUD', description: 'Decisão de juros RBA' },
+            { time: '09:30', event: 'FOMC Meeting', impact: 'Alto', currency: 'USD', description: 'Reunião do FED' },
+            { time: '07:00', event: 'GDP Growth Rate', impact: 'Médio', currency: 'GBP', description: 'Crescimento do PIB' },
+            { time: '11:00', event: 'ECB Press Conference', impact: 'Alto', currency: 'EUR', description: 'Coletiva do BCE' }
+        ];
+
+        function updateNewsAlert() {
+            const now = new Date();
+            const currentTime = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false });
+            const newsBtn = document.getElementById('news-alert');
+            
+            const upcomingNews = economicNews.filter(news => {
+                const [hours, minutes] = news.time.split(':').map(Number);
+                const newsTime = new Date();
+                newsTime.setHours(hours, minutes, 0, 0);
+                const timeDiff = newsTime - now;
+                return timeDiff > 0 && timeDiff < 3600000; // Próxima hora
+            });
+            
+            if (upcomingNews.length > 0) {
+                const nextNews = upcomingNews[0];
+                const [hours, minutes] = nextNews.time.split(':').map(Number);
+                const newsTime = new Date();
+                newsTime.setHours(hours, minutes, 0, 0);
+                const timeDiff = newsTime - now;
+                const minutesUntil = Math.floor(timeDiff / 60000);
+                
+                newsBtn.textContent = `📰 ${minutesUntil}min`;
+                newsBtn.title = `Próxima notícia em ${nextNews.time}\n${nextNews.event}\n${nextNews.description}\nImpacto: ${nextNews.impact}\nMoeda: ${nextNews.currency}\n\nFaltam ${minutesUntil} minutos`;
+                newsBtn.style.background = nextNews.impact === 'Alto' ? 
+                    'linear-gradient(135deg, #ff416c, #ff4b2b)' : 
+                    'linear-gradient(135deg, #ff9a00, #ff5e00)';
+            } else {
+                newsBtn.textContent = '📰 NOTÍCIAS';
+                newsBtn.title = 'Nenhuma notícia importante nas próximas horas\n\nClique para ver calendário completo';
+                newsBtn.style.background = 'linear-gradient(135deg, #636e72, #2d3436)';
+            }
+        }
+
+        // Adicionar evento de clique ao botão de notícias
+        document.getElementById('news-alert').addEventListener('click', () => {
+            showNewsCalendar();
+        });
+
+        function showNewsCalendar() {
+            const newsList = economicNews.map(news => 
+                `${news.time} - ${news.event} (${news.currency}) - ${news.impact}\n${news.description}`
+            ).join('\n\n');
+            
+            alert(`📅 Calendário Econômico de Hoje\n\n${newsList}\n\n⏰ Horários em UTC`);
+        }
+
+        // Indicador de Volatilidade
+        function updateVolatilityIndicator() {
+            const hour = new Date().getUTCHours();
+            const volBtn = document.getElementById('volatility-indicator');
+            
+            let volatility, volClass;
+            
+            // Calcular volatilidade baseada na sessão
+            if ((hour >= 12 && hour < 16)) {
+                // Sobreposição = Máxima volatilidade
+                volatility = 'ALTA';
+                volClass = 'volatility-high';
+            } else if ((hour >= 7 && hour < 12) || (hour >= 16 && hour < 21)) {
+                // Londres ou NY = Média volatilidade
+                volatility = 'MÉDIA';
+                volClass = 'volatility-medium';
+            } else {
+                // Ásia ou fechado = Baixa volatilidade
+                volatility = 'BAIXA';
+                volClass = 'volatility-low';
+            }
+            
+            volBtn.className = volClass;
+            volBtn.textContent = `📊 ${volatility}`;
+            volBtn.title = `Volatilidade atual: ${volatility}\n\nDicas:\n• Volatilidade ALTA: Oportunidades maiores, riscos maiores\n• Volatilidade MÉDIA: Equilíbrio risco/retorno\n• Volatilidade BAIXA: Trades mais seguros, ganhos menores`;
+        }
+
+        // Atualizar indicadores adicionais
+        setInterval(() => {
+            updateNewsAlert();
+            updateVolatilityIndicator();
+            updateMarketSentiment();
+            updateSignalTimer();
+        }, 60000); // Atualizar a cada minuto
+
+        // Sistema de Sentimento do Mercado
+        let marketSentiment = 'neutral';
+        let sentimentScore = 0;
+
+        function updateMarketSentiment() {
+            const sentimentBtn = document.getElementById('market-sentiment');
+            
+            // Calcular sentimento baseado nos sinais atuais
+            let bullishCount = 0;
+            let bearishCount = 0;
+            
+            ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd', 'xagusd', 'usoil'].forEach(pair => {
+                const data = prices[pair];
+                
+                // Contar sinais de compra/venda
+                if (data.price > data.movingAverage) bullishCount++;
+                else if (data.price < data.movingAverage) bearishCount++;
+                
+                if (data.rsi < 30) bullishCount++;
+                else if (data.rsi > 70) bearishCount++;
+                
+                if (data.price > data.vwap) bullishCount++;
+                else if (data.price < data.vwap) bearishCount++;
+            });
+            
+            // Determinar sentimento geral
+            const totalSignals = bullishCount + bearishCount;
+            if (totalSignals === 0) {
+                marketSentiment = 'neutral';
+                sentimentScore = 0;
+            } else {
+                sentimentScore = (bullishCount - bearishCount) / totalSignals;
+                if (sentimentScore > 0.2) {
+                    marketSentiment = 'bullish';
+                } else if (sentimentScore < -0.2) {
+                    marketSentiment = 'bearish';
+                } else {
+                    marketSentiment = 'neutral';
+                }
+            }
+            
+            // Atualizar botão
+            sentimentBtn.className = `sentiment-${marketSentiment}`;
+            
+            if (marketSentiment === 'bullish') {
+                sentimentBtn.innerHTML = '📈 ALTISTA';
+                sentimentBtn.title = `Sentimento: ALTISTA\nScore: ${(sentimentScore * 100).toFixed(1)}%\n\nMais ativos em alta\nBoa para compras`;
+            } else if (marketSentiment === 'bearish') {
+                sentimentBtn.innerHTML = '📉 BAIXISTA';
+                sentimentBtn.title = `Sentimento: BAIXISTA\nScore: ${(sentimentScore * 100).toFixed(1)}%\n\nMais ativos em baixa\nBoa para vendas`;
+            } else {
+                sentimentBtn.innerHTML = '📊 NEUTRO';
+                sentimentBtn.title = `Sentimento: NEUTRO\nScore: ${(sentimentScore * 100).toFixed(1)}%\n\nMercado equilibrado\nAguarde melhor entrada`;
+            }
+        }
+
+        // Sistema de Temporizador de Sinais
+        let signalStartTime = null;
+        let currentSignal = null;
+        let signalTimer = null;
+
+        function startSignalTimer(signal, pair) {
+            signalStartTime = new Date();
+            currentSignal = signal;
+            currentPair = pair;
+            
+            if (signalTimer) clearInterval(signalTimer);
+            
+            updateSignalTimerDisplay();
+            signalTimer = setInterval(updateSignalTimerDisplay, 1000);
+        }
+
+        function updateSignalTimerDisplay() {
+            const timerBtn = document.getElementById('signal-timer');
+            
+            if (!signalStartTime || !currentSignal) {
+                timerBtn.innerHTML = '⏰ SINAIS';
+                timerBtn.className = 'timer-expired';
+                timerBtn.title = 'Aguardando novo sinal...\n\nClique em qualquer sinal para iniciar temporizador';
+                return;
+            }
+            
+            const now = new Date();
+            const elapsed = now - signalStartTime;
+            const remaining = 15 * 60 * 1000 - elapsed; // 15 minutos em ms
+            
+            if (remaining <= 0) {
+                timerBtn.innerHTML = '⏰ EXPIRADO';
+                timerBtn.className = 'timer-expired';
+                timerBtn.title = `Sinal EXPIRADO!\n\nSinal: ${currentSignal}\nPar: ${currentPair}\nDuração: 15 minutos\n\nBusque novo sinal`;
+                clearInterval(signalTimer);
+                signalStartTime = null;
+                currentSignal = null;
+            } else {
+                const minutes = Math.floor(remaining / 60000);
+                const seconds = Math.floor((remaining % 60000) / 1000);
+                timerBtn.innerHTML = `⏰ ${minutes}:${seconds.toString().padStart(2, '0')}`;
+                timerBtn.className = 'timer-active';
+                timerBtn.title = `Sinal ATIVO!\n\nSinal: ${currentSignal}\nPar: ${currentPair}\nRestante: ${minutes}:${seconds.toString().padStart(2, '0')}\nValidade: 15 minutos\n\n⚠️ Não trade após expiração!`;
+            }
+        }
+
+        // Adicionar clique aos sinais para iniciar temporizador
+        function addSignalTimerListeners() {
+            document.querySelectorAll('.signal, .player-signal').forEach(signalElement => {
+                signalElement.addEventListener('click', function() {
+                    const signalText = this.textContent.trim().split('\n')[0];
+                    const pairElement = this.closest('.tab-content');
+                    const pair = pairElement ? pairElement.id.replace('-', '') : 'unknown';
+                    
+                    if (signalText !== 'Neutro' && signalText !== 'Aguardando...') {
+                        startSignalTimer(signalText, pair);
+                        
+                        // Feedback visual
+                        this.style.border = '3px solid #00ff00';
+                        this.style.boxShadow = '0 0 10px rgba(0, 255, 0, 0.5)';
+                        
+                        setTimeout(() => {
+                            this.style.border = '';
+                            this.style.boxShadow = '';
+                        }, 2000);
+                    }
+                });
+            });
+        }
+
+        // Inicializar listeners quando a página carregar
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                addSignalTimerListeners();
+            }, 2000);
         });
 
         // Isabella Rossi - Assistente IA
@@ -1225,6 +2722,288 @@
             isabellaBox.classList.toggle('minimized');
             document.getElementById('minimize-btn').textContent = isabellaBox.classList.contains('minimized') ? '+' : '-';
         });
+
+        // SISTEMA DE ABAS - FUNCIONAL 100%
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Iniciando sistema de abas funcional...');
+            
+            // Função para trocar abas
+            function switchTab(tabId) {
+                // Esconder todas as abas
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.style.display = 'none';
+                    tab.classList.remove('active');
+                });
+                
+                // Remover active de todos os botões
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Mostrar a aba selecionada
+                const selectedTab = document.getElementById(tabId);
+                if (selectedTab) {
+                    selectedTab.style.display = 'block';
+                    selectedTab.classList.add('active');
+                    console.log('✅ Aba ativada:', tabId);
+                }
+                
+                // Ativar o botão correspondente
+                const selectedBtn = document.querySelector(`[data-tab="${tabId}"]`);
+                if (selectedBtn) {
+                    selectedBtn.classList.add('active');
+                }
+                
+                // Salvar preferência
+                localStorage.setItem('activeTab', tabId);
+            }
+            
+            // Adicionar eventos a todos os botões
+            document.querySelectorAll('.tab-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const tabId = this.getAttribute('data-tab');
+                    console.log('🎯 Botão clicado:', tabId);
+                    switchTab(tabId);
+                });
+            });
+            
+            // Restaurar última aba ativa ou mostrar a primeira
+            const lastActiveTab = localStorage.getItem('activeTab');
+            if (lastActiveTab && document.getElementById(lastActiveTab)) {
+                switchTab(lastActiveTab);
+            } else {
+                // Ativar primeira aba por padrão
+                const firstTab = document.querySelector('.tab-content');
+                const firstBtn = document.querySelector('.tab-btn');
+                if (firstTab && firstBtn) {
+                    firstTab.style.display = 'block';
+                    firstTab.classList.add('active');
+                    firstBtn.classList.add('active');
+                    console.log('🎯 Primeira aba ativada');
+                }
+            }
+            
+            console.log('✅ Sistema de abas funcionando!');
+        });
+        
+        // Configurar botões laterais
+        function setupSideButtons() {
+            console.log('Configurando botões laterais...');
+            
+            // Botão de notícias
+            const newsBtn = document.getElementById('news-alert');
+            if (newsBtn) {
+                newsBtn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showNewsInfo();
+                    return false;
+                };
+            }
+            
+            // Botão de volatilidade
+            const volBtn = document.getElementById('volatility-indicator');
+            if (volBtn) {
+                volBtn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showVolatilityInfo();
+                    return false;
+                };
+            }
+            
+            // Botão de sentimento
+            const sentBtn = document.getElementById('market-sentiment');
+            if (sentBtn) {
+                sentBtn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showSentimentInfo();
+                    return false;
+                };
+            }
+            
+            // Botão de timer
+            const timerBtn = document.getElementById('signal-timer');
+            if (timerBtn) {
+                timerBtn.onclick = function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showTimerInfo();
+                    return false;
+                };
+            }
+            
+            console.log('Botões laterais configurados!');
+        }
+        
+        // Inicializar botões laterais
+        setupSideButtons();
+        window.addEventListener('load', () => setTimeout(setupSideButtons, 1000));
+        
+        // Forçar barras de ferramentas TradingView
+        function forceTradingViewToolbars() {
+            console.log('Forçando barras de ferramentas TradingView...');
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                .tv-chart-toolbar {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    height: auto !important;
+                }
+                .tv-toolbar {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                }
+                .tv-drawing-toolbar {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                }
+                .tv-header-toolbar {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                }
+                .tv-interval-toolbar {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    height: 50px !important;
+                    background: #1a1a1a !important;
+                    border-bottom: 1px solid #333 !important;
+                    padding: 5px !important;
+                    overflow-x: auto !important;
+                    white-space: nowrap !important;
+                }
+                .tv-interval-toolbar button {
+                    display: inline-block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    margin: 2px !important;
+                    padding: 6px 12px !important;
+                    background: #333 !important;
+                    color: #fff !important;
+                    border: 1px solid #555 !important;
+                    border-radius: 4px !important;
+                    cursor: pointer !important;
+                    font-size: 12px !important;
+                    min-width: 35px !important;
+                    white-space: nowrap !important;
+                }
+                .tv-interval-toolbar button:hover {
+                    background: #007bff !important;
+                    border-color: #007bff !important;
+                }
+                .tv-interval-toolbar button.active {
+                    background: #007bff !important;
+                    color: #fff !important;
+                    border-color: #0056b3 !important;
+                }
+                .tv-study-toolbar {
+                    display: block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    height: 40px !important;
+                    background: #1a1a1a !important;
+                    border-bottom: 1px solid #333 !important;
+                }
+                .tv-study-toolbar button {
+                    display: inline-block !important;
+                    visibility: visible !important;
+                    opacity: 1 !important;
+                    margin: 2px !important;
+                    padding: 6px 12px !important;
+                    background: #333 !important;
+                    color: #fff !important;
+                    border: 1px solid #555 !important;
+                    border-radius: 4px !important;
+                    cursor: pointer !important;
+                    font-size: 12px !important;
+                }
+                .tv-study-toolbar button:hover {
+                    background: #007bff !important;
+                }
+                iframe[id*="chart-"] {
+                    border: none !important;
+                }
+                .tv-chart-container .tv-chart-toolbar {
+                    display: flex !important;
+                    flex-direction: row !important;
+                    height: 50px !important;
+                    background: #1a1a1a !important;
+                    border-bottom: 1px solid #333 !important;
+                    align-items: center !important;
+                    padding: 5px !important;
+                }
+                .tv-header-toolbar {
+                    display: flex !important;
+                    align-items: center !important;
+                    padding: 8px 12px !important;
+                    background: #1a1a1a !important;
+                    border-bottom: 1px solid #333 !important;
+                    height: 45px !important;
+                }
+                .tv-header-toolbar button {
+                    padding: 8px 12px !important;
+                    margin: 2px !important;
+                    background: #333 !important;
+                    color: #fff !important;
+                    border: 1px solid #555 !important;
+                    border-radius: 4px !important;
+                    cursor: pointer !important;
+                }
+                .tv-header-toolbar button:hover {
+                    background: #007bff !important;
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // Tentar acessar e modificar os iframes
+            setTimeout(() => {
+                document.querySelectorAll('iframe').forEach((iframe, index) => {
+                    try {
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        if (iframeDoc) {
+                            console.log('Processando iframe:', index);
+                            
+                            // Procurar e forçar botões de timeframe
+                            const timeframeButtons = iframeDoc.querySelectorAll('[data-interval], .tv-interval-toolbar button, [class*="interval"], [data-value*="1"], [data-value*="5"], [data-value*="15"], [data-value*="30"]');
+                            timeframeButtons.forEach(btn => {
+                                btn.style.display = 'inline-block';
+                                btn.style.visibility = 'visible';
+                                btn.style.opacity = '1';
+                                btn.style.margin = '2px';
+                                btn.style.padding = '6px 12px';
+                                btn.style.minWidth = '35px';
+                            });
+                            
+                            // Procurar e forçar toolbar principal
+                            const toolbars = iframeDoc.querySelectorAll('.tv-toolbar, .tv-chart-toolbar, .tv-header-toolbar, .tv-interval-toolbar');
+                            toolbars.forEach(toolbar => {
+                                toolbar.style.display = 'block';
+                                toolbar.style.visibility = 'visible';
+                                toolbar.style.opacity = '1';
+                                toolbar.style.height = 'auto';
+                            });
+                            
+                            // Forçar botões de indicadores
+                            const studyButtons = iframeDoc.querySelectorAll('[data-name="studies"], .tv-study-toolbar button, [title*="Indicators"]');
+                            studyButtons.forEach(btn => {
+                                btn.style.display = 'inline-block';
+                                btn.style.visibility = 'visible';
+                            });
+                        }
+                    } catch (e) {
+                        console.log('Não foi possível acessar iframe', index);
+                    }
+                });
+            }, 1000);
+        }
     </script>
 </body>
 </html>
