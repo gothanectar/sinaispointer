@@ -575,12 +575,16 @@
             .menu-buttons {
                 gap: 5px;
                 padding: 8px;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                justify-content: flex-start;
             }
             
             .menu-buttons button {
                 font-size: 0.7em !important;
                 padding: 6px 8px !important;
                 min-width: 70px !important;
+                flex-shrink: 0;
             }
         }
         
@@ -588,12 +592,35 @@
             .menu-buttons {
                 gap: 3px;
                 padding: 5px;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                justify-content: flex-start;
             }
             
             .menu-buttons button {
                 font-size: 0.65em !important;
                 padding: 4px 6px !important;
                 min-width: 60px !important;
+                flex-shrink: 0;
+            }
+            
+            /* Scrollbar customizada para menu horizontal */
+            .menu-buttons::-webkit-scrollbar {
+                height: 4px;
+            }
+            
+            .menu-buttons::-webkit-scrollbar-track {
+                background: #1a1a1a;
+                border-radius: 2px;
+            }
+            
+            .menu-buttons::-webkit-scrollbar-thumb {
+                background: #555;
+                border-radius: 2px;
+            }
+            
+            .menu-buttons::-webkit-scrollbar-thumb:hover {
+                background: #777;
             }
         }
         
@@ -2290,12 +2317,16 @@
         // Funções de atualização
         function updateDailyExtremes(pair) {
             const data = prices[pair];
-            data.price += (Math.random() - 0.5) * (pair === 'btcusd' ? 500 : pair === 'xauusd' ? 5 : 0.005);
+            // Aumentar variação de preços para gerar mais sinais
+            const variation = (Math.random() - 0.5) * (pair === 'btcusd' ? 1000 : pair === 'xauusd' ? 10 : 0.01);
+            data.price += variation;
             data.dailyHigh = Math.max(data.dailyHigh, data.price).toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5);
             data.dailyLow = Math.min(data.dailyLow, data.price).toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5);
             document.getElementById(`daily-high-${pair}`).textContent = data.dailyHigh;
             document.getElementById(`daily-low-${pair}`).textContent = data.dailyLow;
             document.getElementById(`update-date-${pair}`).textContent = new Date().toLocaleDateString('pt-BR');
+            
+            console.log(`💰 ${pair}: price=${data.price.toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5)}, variation=${variation.toFixed(pair === 'btcusd' || pair === 'xauusd' ? 2 : 5)}`);
         }
 
         function updateSignals(pair) {
@@ -2303,21 +2334,33 @@
             data.movingAverage = data.movingAverage * 0.95 + data.price * 0.05;
             const priceChange = data.price - data.lastPrice;
             const signalsDiv = document.getElementById(`signals-${pair}`);
+            
+            if (!signalsDiv) {
+                console.error(`❌ Elemento signals-${pair} não encontrado!`);
+                return;
+            }
+            
             signalsDiv.innerHTML = '';
             const signalDiv = document.createElement('div');
-            const threshold = pair === 'btcusd' ? 50 : pair === 'xauusd' ? 0.5 : 0.001;
+            // Diminuir thresholds para gerar mais sinais
+            const threshold = pair === 'btcusd' ? 20 : pair === 'xauusd' ? 2 : 0.002;
             const now = new Date();
             const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            
+            console.log(`🔄 Atualizando sinal ${pair}: price=${data.price}, movingAverage=${data.movingAverage}, change=${priceChange}, threshold=${threshold}`);
             
             if (data.price > data.movingAverage && priceChange > threshold) {
                 signalDiv.className = 'signal buy';
                 signalDiv.innerHTML = `Compra<br><small>${timeString}</small>`;
+                console.log(`✅ Sinal COMPRA para ${pair}`);
             } else if (data.price < data.movingAverage && priceChange < -threshold) {
                 signalDiv.className = 'signal sell';
                 signalDiv.innerHTML = `Venda<br><small>${timeString}</small>`;
+                console.log(`✅ Sinal VENDA para ${pair}`);
             } else {
                 signalDiv.className = 'signal neutral';
                 signalDiv.innerHTML = `Neutro<br><small>${timeString}</small>`;
+                console.log(`⚪ Sinal NEUTRO para ${pair}`);
             }
             signalsDiv.appendChild(signalDiv);
             data.lastPrice = data.price;
@@ -2363,20 +2406,31 @@
             data.rsi += priceChange > 0 ? Math.random() * 2 : -Math.random() * 2;
             data.rsi = Math.max(0, Math.min(100, data.rsi));
             const signalsRsiDiv = document.getElementById(`signals-rsi-${pair}`);
+            
+            if (!signalsRsiDiv) {
+                console.error(`❌ Elemento signals-rsi-${pair} não encontrado!`);
+                return;
+            }
+            
             signalsRsiDiv.innerHTML = '';
             const signalDiv = document.createElement('div');
             const now = new Date();
             const timeString = now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
             
-            if (data.rsi < 20) {
+            console.log(`📈 RSI ${pair}: rsi=${data.rsi.toFixed(1)}`);
+            
+            if (data.rsi < 30) {
                 signalDiv.className = 'signal buy';
-                signalDiv.innerHTML = `Compra<br><small>${timeString}</small>`;
-            } else if (data.rsi > 80) {
+                signalDiv.textContent = 'Compra';
+                console.log(`✅ RSI COMPRA para ${pair}`);
+            } else if (data.rsi > 70) {
                 signalDiv.className = 'signal sell';
-                signalDiv.innerHTML = `Venda<br><small>${timeString}</small>`;
+                signalDiv.textContent = 'Venda';
+                console.log(`✅ RSI VENDA para ${pair}`);
             } else {
                 signalDiv.className = 'signal neutral';
-                signalDiv.innerHTML = `Neutro<br><small>${data.rsi.toFixed(1)}</small>`;
+                signalDiv.textContent = `Neutro (${data.rsi.toFixed(1)})`;
+                console.log(`⚪ RSI NEUTRO para ${pair}`);
             }
             signalsRsiDiv.appendChild(signalDiv);
         }
@@ -2599,24 +2653,27 @@
 
         // Atualização geral
         function updateAll() {
+            console.log('🔄 Iniciando atualização geral de sinais...');
             ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd', 'xagusd', 'usoil'].forEach(pair => {
+                console.log(`📊 Processando par: ${pair}`);
                 updateDailyExtremes(pair);
                 updateSignals(pair);
                 updatePlayerSignals(pair);
-                updateRSI(pair);
-                updateRSITriple(pair);
-                updateVolume(pair);
-                updateTWAP(pair);
-                updateVWAP(pair);
-                updateVolumeProfit(pair);
-                updateVolumeRegulated(pair);
-                update200MA(pair);
-                updateBollingerBands(pair);
-                updateThermometer(pair);
-                updateGauge(pair);
+                updateSignalsRSI(pair);
+                updateSignalsRSITriple(pair);
+                updateSignalsVolume(pair);
+                updateSignalsTWAP(pair);
+                updateSignalsVWAP(pair);
+                updateSignalsVolumeProfit(pair);
+                updateSignalsVolumeRegulated(pair);
+                updateSignals200MA(pair);
+                updateSignalsBollinger(pair);
+                updateSignalsTWAP2h(pair);
+                updateSignalsTWAP8h(pair);
             });
             updateInflation();
             updateMarketSentiment();
+            console.log('✅ Atualização geral concluída!');
         }
         setInterval(updateAll, 3000);
         updateAll();
