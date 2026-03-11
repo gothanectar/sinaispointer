@@ -2126,19 +2126,135 @@
         
         // Funções dos botões laterais
         function showNewsInfo() {
-            const newsBtn = document.getElementById('news-alert');
-            createInfoPopup('📰 Notícias Econômicas', 
-                'Sistema de alertas de notícias econômicas em tempo real.\n\n' +
-                '🔔 **Funcionalidades:**\n' +
-                '• Alertas de alta importância\n' +
-                '• Cronômetro para próximos eventos\n' +
-                '• Calendário econômico completo\n' +
-                '• Filtros por impacto (Alto/Médio/Baixo)\n\n' +
-                '📊 **Como usar:**\n' +
-                '1. Aguarde eventos importantes\n' +
-                '2. Use o cronômetro para timing\n' +
-                '3. Planeje trades baseado nas notícias\n\n' +
-                '⚠️ **Importante:** Notícias de alto impacto podem causar alta volatilidade!');
+            const now = new Date();
+            const brasiliaTime = new Date(now.getTime() - (3 * 60 * 60 * 1000));
+            
+            // Principais notícias do dia
+            const mainNews = [
+                {
+                    time: "08:30",
+                    title: "Non-Farm Payrolls (NFP)",
+                    impact: "🔴 ALTO",
+                    currency: "USD",
+                    description: "Principal indicador de emprego dos EUA",
+                    forecast: "+180K",
+                    previous: "+199K"
+                },
+                {
+                    time: "09:30",
+                    title: "CPI - Inflação ao Consumidor",
+                    impact: "🔴 ALTO",
+                    currency: "USD",
+                    description: "Índice de Preços ao Consumidor",
+                    forecast: "3.2%",
+                    previous: "3.4%"
+                },
+                {
+                    time: "10:00",
+                    title: "Decisão de Juros - FED",
+                    impact: "🔴 ALTO",
+                    currency: "USD",
+                    description: "Reunião do Comitê de Política Monetária",
+                    forecast: "5.25%",
+                    previous: "5.25%"
+                },
+                {
+                    time: "11:00",
+                    title: "Vendas no Varejo",
+                    impact: "🟡 MÉDIO",
+                    currency: "USD",
+                    description: "Gastos dos consumidores",
+                    forecast: "+0.5%",
+                    previous: "+0.7%"
+                },
+                {
+                    time: "07:00",
+                    title: "Decisão de Juros - BoE",
+                    impact: "🔴 ALTO",
+                    currency: "GBP",
+                    description: "Banco da Inglaterra",
+                    forecast: "5.25%",
+                    previous: "5.25%"
+                },
+                {
+                    time: "08:50",
+                    title: "Decisão de Juros - BoJ",
+                    impact: "🔴 ALTO",
+                    currency: "JPY",
+                    description: "Banco do Japão",
+                    forecast: "-0.10%",
+                    previous: "-0.10%"
+                },
+                {
+                    time: "12:30",
+                    title: "PIB - Canadá",
+                    impact: "🟡 MÉDIO",
+                    currency: "CAD",
+                    description: "Produto Interno Bruto",
+                    forecast: "2.1%",
+                    previous: "2.0%"
+                },
+                {
+                    time: "14:00",
+                    title: "Inflação - Zona Euro",
+                    impact: "🟡 MÉDIO",
+                    currency: "EUR",
+                    description: "CPI da Zona Euro",
+                    forecast: "2.8%",
+                    previous: "2.9%"
+                }
+            ];
+            
+            let newsHTML = `
+                <div style="max-height: 70vh; overflow-y: auto; padding-right: 10px;">
+                    <div style="text-align: center; margin-bottom: 20px; color: #007bff;">
+                        <h3>📅 Principais Notícias do Dia</h3>
+                        <p style="font-size: 0.9em; opacity: 0.8;">Horário Brasília: ${brasiliaTime.toLocaleString('pt-BR')}</p>
+                    </div>
+            `;
+            
+            mainNews.forEach((news, index) => {
+                const impactColor = news.impact.includes("ALTO") ? "#dc3545" : "#ffc107";
+                newsHTML += `
+                    <div style="background: ${index % 2 === 0 ? '#2a2a2a' : '#333'}; border-left: 4px solid ${impactColor}; padding: 15px; margin-bottom: 12px; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                            <div style="flex: 1;">
+                                <div style="font-size: 0.8em; color: #ffc107; font-weight: bold; margin-bottom: 5px;">${news.time} BRT</div>
+                                <h4 style="color: #fff; margin: 0 0 5px 0; font-size: 1em;">${news.title}</h4>
+                                <div style="font-size: 0.7em; color: #888; margin-bottom: 5px;">${news.description}</div>
+                            </div>
+                            <div style="text-align: right; margin-left: 15px;">
+                                <div style="font-size: 0.7em; color: #ccc; margin-bottom: 3px;">${news.currency}</div>
+                                <div style="font-size: 0.6em; font-weight: bold; color: ${impactColor};">${news.impact}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.7em;">
+                            <div>
+                                <span style="color: #888;">Previsão: </span>
+                                <span style="color: #007bff; font-weight: bold;">${news.forecast}</span>
+                            </div>
+                            <div>
+                                <span style="color: #888;">Anterior: </span>
+                                <span style="color: #28a745; font-weight: bold;">${news.previous}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            newsHTML += `
+                </div>
+                <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #444;">
+                    <div style="font-size: 0.8em; color: #888; margin-bottom: 10px;">
+                        ⚠️ <strong>Atenção:</strong> Notícias de alto impacto podem causar alta volatilidade
+                    </div>
+                    <div style="font-size: 0.7em; color: #666;">
+                        Use gestão de risco rigorosa durante eventos econômicos importantes
+                    </div>
+                </div>
+            `;
+            
+            createInfoPopup('📰 Calendário Econômico do Dia', newsHTML);
         }
         
         function showVolatilityInfo() {
@@ -2161,47 +2277,231 @@
         }
         
         function showSentimentInfo() {
-            const sentBtn = document.getElementById('market-sentiment');
-            createInfoPopup('📊 Sentimento do Mercado', 
-                'Análise agregada do sentimento do mercado.\n\n' +
-                '🧠 **Como funciona:**\n' +
-                '• Analisa todos os 8 ativos simultaneamente\n' +
-                '• Calcula força relativa de compra/venda\n' +
-                '• Agrega sinais técnicos e de volume\n\n' +
-                '• Atualiza em tempo real\n\n' +
-                '📈 **Interpretação:**\n' +
-                '• 🟢 ALTISTA: Mais força de compra\n' +
-                '• 🔴 BAIXISTA: Mais força de venda\n' +
-                '• ⚪ NEUTRO: Equilíbrio entre forças\n\n' +
-                '🎯 **Como usar:**\n' +
-                '• Confirme com múltiplos indicadores\n' +
-                '• Use para confirmar tendências dominantes\n' +
-                '• Combine com análise fundamental\n\n' +
-                '⚠️ **Importante:** Sentimento pode mudar rapidamente!');
+            const now = new Date();
+            const brasiliaTime = new Date(now.getTime() - (3 * 60 * 60 * 1000));
+            
+            // Calcular sentimento atual
+            let bullishCount = 0;
+            let bearishCount = 0;
+            let neutralCount = 0;
+            
+            ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd', 'xagusd', 'usoil'].forEach(pair => {
+                const data = prices[pair];
+                if (data.price > data.movingAverage) {
+                    bullishCount++;
+                } else if (data.price < data.movingAverage) {
+                    bearishCount++;
+                } else {
+                    neutralCount++;
+                }
+            });
+            
+            const total = bullishCount + bearishCount + neutralCount;
+            const bullishPercent = ((bullishCount / total) * 100).toFixed(1);
+            const bearishPercent = ((bearishCount / total) * 100).toFixed(1);
+            const neutralPercent = ((neutralCount / total) * 100).toFixed(1);
+            
+            let sentiment, sentimentColor, sentimentIcon, sentimentDesc;
+            
+            if (bullishPercent > 60) {
+                sentiment = "ALTISTA FORTE";
+                sentimentColor = "#28a745";
+                sentimentIcon = "🚀";
+                sentimentDesc = "Mercado com forte tendência de compra";
+            } else if (bearishPercent > 60) {
+                sentiment = "BAIXISTA FORTE";
+                sentimentColor = "#dc3545";
+                sentimentIcon = "📉";
+                sentimentDesc = "Mercado com forte tendência de venda";
+            } else if (bullishPercent > 40) {
+                sentiment = "LEVEMENTE ALTISTA";
+                sentimentColor = "#17a2b8";
+                sentimentIcon = "📈";
+                sentimentDesc = "Leve preferência por compras";
+            } else if (bearishPercent > 40) {
+                sentiment = "LEVEMENTE BAIXISTA";
+                sentimentColor = "#fd7e14";
+                sentimentIcon = "📊";
+                sentimentDesc = "Leve preferência por vendas";
+            } else {
+                sentiment = "NEUTRO";
+                sentimentColor = "#6c757d";
+                sentimentIcon = "⚖️";
+                sentimentDesc = "Mercado em equilíbrio";
+            }
+            
+            let sentimentHTML = `
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">${sentimentIcon}</div>
+                    <h3 style="color: ${sentimentColor}; margin: 0 0 10px 0; font-size: 1.5em; font-weight: bold;">${sentiment}</h3>
+                    <p style="color: #ccc; margin: 0; font-size: 0.9em;">${sentimentDesc}</p>
+                    <p style="color: #888; margin: 5px 0 0 0; font-size: 0.8em;">Atualizado: ${brasiliaTime.toLocaleTimeString('pt-BR')}</p>
+                </div>
+                
+                <div style="display: flex; justify-content: space-around; margin-bottom: 25px; text-align: center;">
+                    <div style="flex: 1;">
+                        <div style="font-size: 1.5em; color: #28a745; font-weight: bold;">${bullishPercent}%</div>
+                        <div style="font-size: 0.8em; color: #ccc;">Altista</div>
+                        <div style="font-size: 0.7em; color: #888;">${bullishCount} ativos</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 1.5em; color: #6c757d; font-weight: bold;">${neutralPercent}%</div>
+                        <div style="font-size: 0.8em; color: #ccc;">Neutro</div>
+                        <div style="font-size: 0.7em; color: #888;">${neutralCount} ativos</div>
+                    </div>
+                    <div style="flex: 1;">
+                        <div style="font-size: 1.5em; color: #dc3545; font-weight: bold;">${bearishPercent}%</div>
+                        <div style="font-size: 0.8em; color: #ccc;">Baixista</div>
+                        <div style="font-size: 0.7em; color: #888;">${bearishCount} ativos</div>
+                    </div>
+                </div>
+                
+                <div style="background: #2a2a2a; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #fff; margin: 0 0 15px 0; font-size: 1em;">📊 Análise por Ativo</h4>
+            `;
+            
+            ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd', 'xagusd', 'usoil'].forEach(pair => {
+                const data = prices[pair];
+                const assetName = pair.toUpperCase();
+                let signal, signalColor;
+                
+                if (data.price > data.movingAverage) {
+                    signal = "🟢 COMPRA";
+                    signalColor = "#28a745";
+                } else if (data.price < data.movingAverage) {
+                    signal = "🔴 VENDA";
+                    signalColor = "#dc3545";
+                } else {
+                    signal = "⚪ NEUTRO";
+                    signalColor = "#6c757d";
+                }
+                
+                sentimentHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #444;">
+                        <span style="color: #ccc; font-size: 0.8em;">${assetName}</span>
+                        <span style="color: ${signalColor}; font-size: 0.7em; font-weight: bold;">${signal}</span>
+                    </div>
+                `;
+            });
+            
+            sentimentHTML += `
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #444;">
+                    <div style="font-size: 0.8em; color: #888; margin-bottom: 10px;">
+                        💡 <strong>Como usar o sentimento:</strong>
+                    </div>
+                    <div style="font-size: 0.7em; color: #666; line-height: 1.4;">
+                        • <strong>Altista forte:</strong> Boa para buscar oportunidades de compra<br>
+                        • <strong>Baixista forte:</strong> Cautela, melhor esperar reversão<br>
+                        • <strong>Neutro:</strong> Aguardar definição clara de tendência<br>
+                        • Combine sempre com outros indicadores técnicos
+                    </div>
+                </div>
+            `;
+            
+            createInfoPopup('📊 Sentimento do Mercado', sentimentHTML);
         }
         
         function showTimerInfo() {
-            const timerBtn = document.getElementById('signal-timer');
-            createInfoPopup('⏰ Temporizador de Sinais', 
-                'Sistema de temporização para validação de sinais.\n\n' +
-                '⏱️ **Funcionalidades:**\n' +
-                '• Contagem regressiva de 15 minutos\n' +
-                '• Validação automática de sinais\n' +
-                '• Alertas de expiração\n' +
-                '• Histórico de validações\n\n' +
-                '🎯 **Como usar:**\n' +
-                '1. Clique em qualquer sinal para iniciar\n' +
-                '2. Aguarde a contagem regressiva\n' +
-                '3. Sinal válido por 15 minutos\n' +
-                '4. Alerta nos últimos 30 segundos\n\n' +
-                '⚠️ **Regras:**\n' +
-                '• Sinal expira após 15 minutos\n' +
-                '• Novo temporizador reinicia a contagem\n' +
-                '• Use para gestão de risco temporal\n\n' +
-                '💡 **Dica profissional:**\n' +
-                'Combine com gerenciamento de posição!\n' +
-                'Use para evitar overtrading emocional!\n' +
-                'Ideal para estratégias de curto prazo!');
+            const now = new Date();
+            const brasiliaTime = new Date(now.getTime() - (3 * 60 * 60 * 1000));
+            
+            // Verificar se há temporizadores ativos
+            const activeTimers = document.querySelectorAll('.signal-timer-active');
+            const timerCount = activeTimers.length;
+            
+            let timerHTML = `
+                <div style="text-align: center; margin-bottom: 25px;">
+                    <div style="font-size: 2em; margin-bottom: 10px;">⏰</div>
+                    <h3 style="color: #007bff; margin: 0 0 10px 0; font-size: 1.5em; font-weight: bold;">Temporizador de Sinais</h3>
+                    <p style="color: #ccc; margin: 0; font-size: 0.9em;">Sistema de validação temporal de sinais</p>
+                    <p style="color: #888; margin: 5px 0 0 0; font-size: 0.8em;">Atualizado: ${brasiliaTime.toLocaleTimeString('pt-BR')}</p>
+                </div>
+                
+                <div style="background: #2a2a2a; padding: 15px; border-radius: 8px; margin-bottom: 20px; text-align: center;">
+                    <div style="font-size: 1.2em; color: #fff; margin-bottom: 10px;">
+                        ${timerCount > 0 ? `⚡ ${timerCount} Sinais Ativos` : '😴 Nenhum Sinal Ativo'}
+                    </div>
+                    <div style="font-size: 0.8em; color: #888;">
+                        ${timerCount > 0 ? 'Temporizadores em andamento' : 'Clique em um sinal para iniciar'}
+                    </div>
+                </div>
+                
+                <div style="background: #333; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #fff; margin: 0 0 15px 0; font-size: 1em;">📋 Como Funciona</h4>
+                    <div style="color: #ccc; font-size: 0.8em; line-height: 1.5;">
+                        <div style="margin-bottom: 10px;">
+                            <strong>1. Ativação:</strong> Clique em qualquer sinal (compra/venda)
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>2. Contagem:</strong> 15 minutos de validade
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>3. Alertas:</strong> Avisos nos últimos 30 segundos
+                        </div>
+                        <div style="margin-bottom: 10px;">
+                            <strong>4. Expiração:</strong> Sinal perde validade após 15min
+                        </div>
+                        <div>
+                            <strong>5. Renovação:</strong> Clique novamente para reiniciar
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #2a2a2a; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #fff; margin: 0 0 15px 0; font-size: 1em;">⚠️ Regras Importantes</h4>
+                    <div style="color: #ccc; font-size: 0.8em; line-height: 1.5;">
+                        <div style="margin-bottom: 8px;">
+                            • <strong>Validade:</strong> 15 minutos corridos
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            • <strong>Expiração:</strong> Automática e irrevogável
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            • <strong>Múltiplos:</strong> Máximo 1 timer por sinal
+                        </div>
+                        <div>
+                            • <strong>Reset:</strong> Novo clique reinicia contagem
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #333; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #fff; margin: 0 0 15px 0; font-size: 1em;">💡 Dicas Profissionais</h4>
+                    <div style="color: #ccc; font-size: 0.8em; line-height: 1.5;">
+                        <div style="margin-bottom: 8px;">
+                            <strong>Gestão de Risco:</strong><br>
+                            • Use stop loss mais apertado nos últimos 5min<br>
+                            • Reduza posição se sinal expirar
+                        </div>
+                        <div style="margin-bottom: 8px;">
+                            <strong>Timing:</strong><br>
+                            • Melhor entrar nos primeiros 10min<br>
+                            • Saia antes da expiração se em lucro
+                        </div>
+                        <div>
+                            <strong>Psicologia:</strong><br>
+                            • Evite FOMO pós-expiração<br>
+                            • Aguarde novo sinal confirmado
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px; padding-top: 15px; border-top: 1px solid #444;">
+                    <div style="font-size: 0.8em; color: #888; margin-bottom: 10px;">
+                        🎯 <strong>Estratégias Recomendadas:</strong>
+                    </div>
+                    <div style="font-size: 0.7em; color: #666; line-height: 1.4;">
+                        • <strong>Scalping:</strong> Use timer completo (15min)<br>
+                        • <strong>Day Trade:</strong> Saia aos 10-12min<br>
+                        • <strong>Swing:</strong> Confirme com outros indicadores<br>
+                        • <strong>Position:</strong> Use como filtro de entrada
+                    </div>
+                </div>
+            `;
+            
+            createInfoPopup('⏰ Temporizador de Sinais', timerHTML);
         }
         
         function createInfoPopup(title, content) {
