@@ -744,6 +744,7 @@
             <button class="tab-btn" data-tab="USDJPY">USD/JPY</button>
             <button class="tab-btn" data-tab="EURCHF">EUR/CHF</button>
             <button class="tab-btn" data-tab="USDARS">USD/ARS</button>
+            <button class="tab-btn" data-tab="PAGX">PAGX</button>
             <button class="tab-btn" data-tab="XAGUSD">XAGUSD</button>
             <button class="tab-btn" data-tab="USOIL">USOIL</button>
             <button class="tab-btn" data-tab="TIPS">Dicas da Isabella</button>
@@ -1565,6 +1566,83 @@
                 </div>
             </div>
         </div>
+        <div id="PAGX" class="tab-content">
+            <div class="chart-container" id="chart-pagx"></div>
+            <div class="signals-grid">
+                <div class="signal-box">
+                    <h2>Máxima/Mínima</h2>
+                    <p><strong>Máx:</strong> <span id="daily-high-pagx">Carregando...</span></p>
+                    <p><strong>Mín:</strong> <span id="daily-low-pagx">Carregando...</span></p>
+                    <p><small><span id="update-date-pagx"></span></small></p>
+                </div>
+                <div class="signal-box">
+                    <h2>Sinal</h2>
+                    <div id="signals-pagx"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Players</h2>
+                    <div id="player-signals-pagx"><div class="player-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>15M</h2>
+                    <div id="signals-15m-pagx"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI</h2>
+                    <div id="signals-rsi-pagx"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>RSI Triplo</h2>
+                    <div id="rsi-triple-pagx"><div class="signal neutral">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Volume</h2>
+                    <div id="volume-signals-pagx"><div class="volume-signal">Aguardando...</div></div>
+                </div>
+                <div class="signal-box">
+                    <h2>Força</h2>
+                    <div class="gauge">
+                        <div class="gauge-circle"></div>
+                        <div class="gauge-value" id="gauge-strength-pagx">0°</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP 1H</h2>
+                    <div class="gauge">
+                        <div class="gauge-circle"></div>
+                        <div class="gauge-value" id="gauge-twap1h-pagx">0°</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP 4H</h2>
+                    <div class="gauge">
+                        <div class="gauge-circle"></div>
+                        <div class="gauge-value" id="gauge-twap4h-pagx">0°</div>
+                    </div>
+                </div>
+                <div class="signal-box">
+                    <h2>TWAP 8H</h2>
+                    <div class="gauge">
+                        <div class="gauge-circle"></div>
+                        <div class="gauge-value" id="gauge-twap8h-pagx">0°</div>
+                    </div>
+                </div>
+            </div>
+            <div class="extremes">
+                <div class="extreme-box">
+                    <h3>Máxima Diária</h3>
+                    <div id="daily-high-pagx">-</div>
+                </div>
+                <div class="extreme-box">
+                    <h3>Mínima Diária</h3>
+                    <div id="daily-low-pagx">-</div>
+                </div>
+                <div class="extreme-box">
+                    <h3>Atualização</h3>
+                    <div id="update-date-pagx">-</div>
+                </div>
+            </div>
+        </div>
         <div id="XAGUSD" class="tab-content">
             <div class="chart-container" id="chart-xagusd"></div>
             <div class="signals-grid">
@@ -2359,6 +2437,7 @@
                 { symbol: "FX_IDC:USDJPY", container: "chart-usdjpy" },
                 { symbol: "FX_IDC:EURCHF", container: "chart-eurchf" },
                 { symbol: "FX_IDC:USDARS", container: "chart-usdars" },
+                { symbol: "PAXGUSD", container: "chart-pagx" },
                 { symbol: "OANDA:XAGUSD", container: "chart-xagusd" },
                 { symbol: "TVC:USOIL", container: "chart-usoil" }
             ];
@@ -2966,7 +3045,8 @@
             eurchf: { price: 0.97, lastPrice: 0.97, lastPrice15m: 0.97, movingAverage: 0.97, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 0.97, twap2h: 0.97, twap8h: 0.97, vwap: 0.97, volume: 1500, volumeProfit: 0, volumeRegulated: 1500, dailyHigh: 0.97, dailyLow: 0.97, ma200: 0.97, ma10: 0.97, ma20: 0.97, lastMa10: 0.97, lastMa20: 0.97, bollingerUpper: 0.99, bollingerLower: 0.95, bollingerMiddle: 0.97 },
             usdars: { price: 890, lastPrice: 890, lastPrice15m: 890, movingAverage: 890, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 890, twap2h: 890, twap8h: 890, vwap: 890, volume: 4000, volumeProfit: 0, volumeRegulated: 4000, dailyHigh: 890, dailyLow: 890, ma200: 890, ma10: 890, ma20: 890, lastMa10: 890, lastMa20: 890, bollingerUpper: 910, bollingerLower: 870, bollingerMiddle: 890 },
             xagusd: { price: 31.50, lastPrice: 31.50, lastPrice15m: 31.50, movingAverage: 31.50, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 31.50, twap2h: 31.50, twap8h: 31.50, vwap: 31.50, volume: 500, volumeProfit: 0, volumeRegulated: 500, dailyHigh: 31.50, dailyLow: 31.50, ma200: 31.50, ma10: 31.50, ma20: 31.50, lastMa10: 31.50, lastMa20: 31.50, bollingerUpper: 32.00, bollingerLower: 31.00, bollingerMiddle: 31.50 },
-            usoil: { price: 78.50, lastPrice: 78.50, lastPrice15m: 78.50, movingAverage: 78.50, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 78.50, twap2h: 78.50, twap8h: 78.50, vwap: 78.50, volume: 800, volumeProfit: 0, volumeRegulated: 800, dailyHigh: 78.50, dailyLow: 78.50, ma200: 78.50, ma10: 78.50, ma20: 78.50, lastMa10: 78.50, lastMa20: 78.50, bollingerUpper: 80.00, bollingerLower: 77.00, bollingerMiddle: 78.50 }
+            usoil: { price: 78.50, lastPrice: 78.50, lastPrice15m: 78.50, movingAverage: 78.50, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 78.50, twap2h: 78.50, twap8h: 78.50, vwap: 78.50, volume: 800, volumeProfit: 0, volumeRegulated: 800, dailyHigh: 78.50, dailyLow: 78.50, ma200: 78.50, ma10: 78.50, ma20: 78.50, lastMa10: 78.50, lastMa20: 78.50, bollingerUpper: 80.00, bollingerLower: 77.00, bollingerMiddle: 78.50 },
+            pagx: { price: 0.50, lastPrice: 0.50, lastPrice15m: 0.50, movingAverage: 0.50, rsi: 50, rsiShort: 50, rsiMedium: 50, rsiLong: 50, twap: 0.50, twap2h: 0.50, twap8h: 0.50, vwap: 0.50, volume: 1000000, volumeProfit: 0, volumeRegulated: 1000000, dailyHigh: 0.50, dailyLow: 0.50, ma200: 0.50, ma10: 0.50, ma20: 0.50, lastMa10: 0.50, lastMa20: 0.50, bollingerUpper: 0.55, bollingerLower: 0.45, bollingerMiddle: 0.50 }
         };
         let cpi = 2.8;
 
@@ -3469,7 +3549,7 @@
         // Atualização geral
         function updateAll() {
             console.log('🔄 Iniciando atualização geral de sinais...');
-            ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd', 'usdbrl', 'usdchf', 'usdjpy', 'eurchf', 'usdars', 'xagusd', 'usoil'].forEach(pair => {
+            ['xauusd', 'btcusd', 'eurusd', 'audcad', 'gbpusd', 'usdbrl', 'usdchf', 'usdjpy', 'eurchf', 'usdars', 'pagx', 'xagusd', 'usoil'].forEach(pair => {
                 console.log(`📊 Processando par: ${pair}`);
                 try {
                     updateDailyExtremes(pair);
