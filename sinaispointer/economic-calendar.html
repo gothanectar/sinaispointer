@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário Econômico - TradePulse</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+            background-color: #252525;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .header h1 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #888;
+            font-size: 0.9em;
+        }
+        .calendar-container {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .tradingview-widget-container {
+            width: 100%;
+        }
+        .info-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #252525;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .info-section h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .info-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        .info-section li {
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+        }
+        .info-section li:last-child {
+            border-bottom: none;
+        }
+        .impact-high {
+            color: #ff4444;
+            font-weight: bold;
+        }
+        .impact-medium {
+            color: #ffaa00;
+            font-weight: bold;
+        }
+        .impact-low {
+            color: #44ff44;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Calendário Econômico</h1>
+            <p>Acompanhe os eventos econômicos que impactam o mercado de Forex e Cripto</p>
+        </div>
+
+        <div class="calendar-container">
+            <div class="tradingview-widget-container" style="width: 100%; height: 1500px;">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
+                {
+                    "colorTheme": "dark",
+                    "isTransparent": false,
+                    "width": "100%",
+                    "height": 1500,
+                    "locale": "br",
+                    "importanceFilter": "-1,0,1",
+                    "countryFilter": "br,us,eu,gb,jp"
+                }
+                </script>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>ℹ️ Legenda de Impacto</h2>
+            <ul>
+                <li><span class="impact-high">🔴 Alto Impacto</span> - Eventos que podem causar movimentos significativos no mercado</li>
+                <li><span class="impact-medium">🟡 Médio Impacto</span> - Eventos com impacto moderado nos preços</li>
+                <li><span class="impact-low">🟢 Baixo Impacto</span> - Eventos com impacto limitado no mercado</li>
+            </ul>
+        </div>
+
+        <div class="info-section">
+            <h2>💡 Dicas de Trading</h2>
+            <ul>
+                <li>Evite entrar em trades durante eventos de alto impacto (NFP, decisões de juros, etc.)</li>
+                <li>Use o calendário para planejar suas estratégias de trading</li>
+                <li>Fique atento aos horários de divulgação dos dados econômicos</li>
+                <li>Considere o impacto das notícias nos pares de moedas que você opera</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Sistema de Avisos de Notícias
+        const newsAlert = document.getElementById('newsAlert');
+        const newsAlertText = document.getElementById('newsAlertText');
+        const newsAlertTimer = document.getElementById('newsAlertTimer');
+        const newsAlertDate = document.getElementById('newsAlertDate');
+        const newsAlertTime = document.getElementById('newsAlertTime');
+        const newsIndicator = document.getElementById('newsIndicator');
+
+        // Variável para o contador regressivo
+        let countdownInterval = null;
+        let currentEventDate = null;
+
+        // Simulação de notícias de alto impacto
+        const newsData = {
+            'USD': {
+                impact: 'high',
+                message: 'Non-Farm Payrolls (NFP) - Impacto Alto no USD',
+                time: '13:30',
+                date: getNextEventDate('13:30')
+            },
+            'XAUUSD': {
+                impact: 'high',
+                message: 'Decisão de Juros do FED - Impacto Alto no Ouro',
+                time: '14:00',
+                date: getNextEventDate('14:00')
+            },
+            'BTC': {
+                impact: 'medium',
+                message: 'Relatório de Inflação EUA - Impacto Médio no BTC',
+                time: '10:00',
+                date: getNextEventDate('10:00')
+            },
+            'OIL': {
+                impact: 'medium',
+                message: 'Relatório de Estoque de Petróleo - Impacto Médio no OIL',
+                time: '11:30',
+                date: getNextEventDate('11:30')
+            },
+            'EURUSD': {
+                impact: 'low',
+                message: 'PMI da Zona do Euro - Impacto Baixo no EURUSD',
+                time: '09:00',
+                date: getNextEventDate('09:00')
+            }
+        };
+
+        // Função para calcular a próxima data do evento
+        function getNextEventDate(timeStr) {
+            const now = new Date();
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            
+            let eventDate = new Date(now);
+            eventDate.setHours(hours, minutes, 0, 0);
+            
+            // Se o horário já passou hoje, agendar para amanhã
+            if (eventDate <= now) {
+                eventDate.setDate(eventDate.getDate() + 1);
+            }
+            
+            return eventDate;
+        }
+
+        // Filtros ativos
+        let activeFilters = ['USD', 'XAUUSD', 'BTC', 'OIL', 'EURUSD'];
+
+        // Função para formatar data e hora
+        function formatDateTime(date) {
+            const options = { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            return date.toLocaleString('pt-BR', options);
+        }
+
+        // Função para formatar hora
+        function formatTime(date) {
+            const options = { 
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            return date.toLocaleTimeString('pt-BR', options);
+        }
+
+        // Função para atualizar contador regressivo
+        function updateCountdown() {
+            if (!currentEventDate) return;
+            
+            const now = new Date();
+            const timeDiff = currentEventDate - now;
+            
+            if (timeDiff <= 0) {
+                clearInterval(countdownInterval);
+                newsAlert.classList.remove('show');
+                return;
+            }
+            
+            const minutes = Math.floor(timeDiff / (1000 * 60));
+            const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+            
+            newsAlertTimer.textContent = `⏱️ ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        // Função para mostrar alerta de notícia
+        function showNewsAlert(currency, message) {
+            const news = newsData[currency];
+            
+            // Atualizar data e hora do evento
+            currentEventDate = news.date;
+            newsAlertDate.textContent = formatDateTime(news.date);
+            newsAlertTime.textContent = news.time;
+            
+            // Atualizar mensagem
+            newsAlertText.textContent = `${currency}: ${message}`;
+            
+            // Reiniciar contador regressivo
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            countdownInterval = setInterval(updateCountdown, 1000);
+            updateCountdown();
+            
+            // Mostrar alerta
+            newsAlert.classList.add('show');
+        }
+
+        // Função para mostrar detalhes da notícia
+        function showNewsDetails(currency) {
+            const news = newsData[currency];
+            if (news) {
+                showNewsAlert(currency, news.message);
+            }
+        }
+
+        // Função para fechar o aviso
+        function closeNewsAlert() {
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+            newsAlert.classList.remove('show');
+        }
+
+        // Função para alternar filtro
+        function toggleFilter(currency) {
+            const btn = document.querySelector(`.filter-btn.${currency.toLowerCase()}`);
+            const indicatorBar = document.querySelector(`.news-indicator-bar[data-currency="${currency}"]`);
+
+            if (activeFilters.includes(currency)) {
+                activeFilters = activeFilters.filter(c => c !== currency);
+                btn.classList.remove('active');
+                indicatorBar.style.display = 'none';
+            } else {
+                activeFilters.push(currency);
+                btn.classList.add('active');
+                indicatorBar.style.display = 'block';
+            }
+        }
+
+        // Simulação de detecção de notícias em tempo real
+        function simulateNewsDetection() {
+            // Encontrar o próximo evento futuro mais próximo
+            function findNextEvent() {
+                const now = new Date();
+                let nextEvent = null;
+                let nextCurrency = null;
+                
+                for (const [currency, news] of Object.entries(newsData)) {
+                    if (activeFilters.includes(currency) && news.impact === 'high') {
+                        if (!nextEvent || news.date < nextEvent) {
+                            nextEvent = news.date;
+                            nextCurrency = currency;
+                        }
+                    }
+                }
+                
+                return { currency: nextCurrency, event: nextEvent ? newsData[nextCurrency] : null };
+            }
+            
+            // Mostrar o próximo evento imediatamente
+            const nextEvent = findNextEvent();
+            if (nextEvent.currency && nextEvent.event) {
+                showNewsAlert(nextEvent.currency, nextEvent.event.message);
+                
+                // Animar a barrinha indicadora
+                const indicatorBar = document.querySelector(`.news-indicator-bar[data-currency="${nextEvent.currency}"]`);
+                indicatorBar.style.animation = 'pulse 1s ease-in-out 3';
+                setTimeout(() => {
+                    indicatorBar.style.animation = '';
+                }, 3000);
+            }
+            
+            // Verificar notícias a cada 30 segundos
+            setInterval(() => {
+                const nextEvent = findNextEvent();
+                if (nextEvent.currency && nextEvent.event) {
+                    showNewsAlert(nextEvent.currency, nextEvent.event.message);
+                    
+                    // Animar a barrinha indicadora
+                    const indicatorBar = document.querySelector(`.news-indicator-bar[data-currency="${nextEvent.currency}"]`);
+                    indicatorBar.style.animation = 'pulse 1s ease-in-out 3';
+                    setTimeout(() => {
+                        indicatorBar.style.animation = '';
+                    }, 3000);
+                }
+            }, 30000);
+        }
+
+        // Iniciar simulação de detecção de notícias
+        simulateNewsDetection();
+
+        // Adicionar animação de pulse
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 1; }
+                50% { transform: scale(1.3); opacity: 0.7; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
