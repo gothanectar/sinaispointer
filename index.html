@@ -1,4 +1,4 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="pt-BR">
 
@@ -34,6 +34,24 @@
 
             transition: background-color 0.3s, color 0.3s;
 
+        }
+
+        /* Otimizações para mobile - reduzir oscilações */
+        @media (max-width: 768px) {
+            * {
+                -webkit-backface-visibility: hidden;
+                backface-visibility: hidden;
+                -webkit-transform: translateZ(0);
+                transform: translateZ(0);
+            }
+            
+            body {
+                transition: none !important;
+            }
+            
+            .header, .container, .regua-tempo-container, .fibonacci-container {
+                transition: none !important;
+            }
         }
 
         body.light-mode {
@@ -11865,11 +11883,29 @@
 
                 const widgets = document.querySelectorAll('iframe[src*="tradingview"]');
 
+                if (!widgets || widgets.length === 0) {
+
+                    return;
+
+                }
+
                 widgets.forEach((widget, index) => {
 
                     try {
 
-                        const containerId = widget.parentElement.id;
+                        if (!widget || !widget.contentWindow) {
+
+                            return;
+
+                        }
+
+                        const containerId = widget.parentElement ? widget.parentElement.id : null;
+
+                        if (!containerId) {
+
+                            return;
+
+                        }
 
                         const pair = containerId.replace('chart-', '');
 
@@ -11951,45 +11987,71 @@
 
                             // Tentar obter dados do gráfico
 
-                            widget.chart().getAllStudies().then(studies => {
+                            try {
 
-                                studies.forEach(study => {
+                                if (typeof widget.chart === 'function') {
 
-                                    if (study.name && study.name.includes('Bollinger')) {
+                                    const chart = widget.chart();
 
-                                        console.log('✅ Estudo Bollinger encontrado:', study);
+                                    if (chart && typeof chart.getAllStudies === 'function') {
 
-                                        
+                                        chart.getAllStudies().then(studies => {
 
-                                        // Obter dados mais recentes
+                                            if (studies && Array.isArray(studies)) {
 
-                                        study.getStudyData().then(data => {
+                                                studies.forEach(study => {
 
-                                            if (data && data.length > 0) {
+                                                    if (study && study.name && study.name.includes('Bollinger')) {
 
-                                                const lastData = data[data.length - 1];
+                                                        console.log('✅ Estudo Bollinger encontrado:', study);
 
-                                                processarDadosBollingerReais({
+                                                        
 
-                                                    close: lastData.close,
+                                                        // Obter dados mais recentes
 
-                                                    upper: lastData.upper,
+                                                        if (typeof study.getStudyData === 'function') {
 
-                                                    lower: lastData.lower,
+                                                            study.getStudyData().then(data => {
 
-                                                    middle: lastData.middle || lastData.sma
+                                                                if (data && data.length > 0) {
+
+                                                                    const lastData = data[data.length - 1];
+
+                                                                    processarDadosBollingerReais({
+
+                                                                        close: lastData.close,
+
+                                                                        upper: lastData.upper,
+
+                                                                        lower: lastData.lower,
+
+                                                                        middle: lastData.middle || lastData.sma
+
+                                                                    });
+
+                                                                }
+
+                                                            }).catch(err => console.log('Erro ao obter dados do estudo:', err));
+
+                                                        }
+
+                                                    }
 
                                                 });
 
                                             }
 
-                                        });
+                                        }).catch(err => console.log('Erro ao obter estudos:', err));
 
                                     }
 
-                                });
+                                }
 
-                            });
+                            } catch (error) {
+
+                                console.log('❌ Erro ao acessar chart do widget:', error);
+
+                            }
 
                         }
 
@@ -12629,7 +12691,8 @@
 
             atualizarReferenciasVisuaisSessoesBRT();
 
-            setInterval(atualizarReferenciasVisuaisSessoesBRT, 1000);
+            const sessoesInterval = isMobile ? 2000 : 1000;
+            setInterval(atualizarReferenciasVisuaisSessoesBRT, sessoesInterval);
 
         })();
 
@@ -12819,7 +12882,7 @@
 
                 const widget = document.querySelector('#chart-xauusd iframe');
 
-                if (!widget) return;
+                if (!widget || !widget.contentWindow) return;
 
                 
 
@@ -15143,9 +15206,9 @@ Esta régua é uma ferramenta de apoio. Sempre confirme os timeframes diretament
 
 
 
-            // Atualizar a cada segundo
-
-            setInterval(atualizarReguaTempo, 1000);
+            // Atualizar a cada segundo (reduzido para mobile)
+            const reguaTempoInterval = isMobile ? 2000 : 1000;
+            setInterval(atualizarReguaTempo, reguaTempoInterval);
 
             
 
@@ -17558,11 +17621,14 @@ Esta régua é uma ferramenta de apoio. Sempre confirme os timeframes diretament
 
         // setInterval(syncTimeWithServer, 300000); // Sincronizar a cada 5 minutos
 
+        // Detectar se é mobile para reduzir frequência de atualizações
+        const isMobile = window.innerWidth <= 768;
+        const clockInterval = isMobile ? 2000 : 1000;
+        const phasesInterval = isMobile ? 10000 : 5000;
 
+        setInterval(updateClocks, clockInterval);
 
-        setInterval(updateClocks, 1000);
-
-        setInterval(updatePhasesBar, 5000); // Atualizar fases a cada 5 segundos
+        setInterval(updatePhasesBar, phasesInterval); // Atualizar fases a cada 5 segundos
 
         updateClocks();
 
