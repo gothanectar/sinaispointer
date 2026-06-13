@@ -4847,6 +4847,70 @@
 
             </div>
 
+            <!-- PAINEL DE DADOS DE SINAIS -->
+            <div id="painel-dados-sinais-xauusd" style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 20px; border-radius: 12px; margin-top: 20px; border: 2px solid #0f3460; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                <h3 style="color: #00d4ff; margin-bottom: 15px; text-align: center; font-size: 1.3em;">
+                    📊 DADOS CONSOLIDADOS DE SINAIS - XAUUSD
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <!-- Pontuação -->
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #00d4ff;">
+                        <div style="color: #00d4ff; font-size: 0.9em; margin-bottom: 5px;">PONTUAÇÃO DE INDICADORES</div>
+                        <div id="dados-pontos-xauusd" style="font-size: 2em; font-weight: bold; color: #fff;">--/6</div>
+                        <div id="dados-detalhes-xauusd" style="font-size: 0.8em; color: #aaa; margin-top: 5px;">Carregando...</div>
+                    </div>
+
+                    <!-- Máximas/Mínimas -->
+                    <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #ffd700;">
+                        <div style="color: #ffd700; font-size: 0.9em; margin-bottom: 5px;">MÁXIMA/MÍNIMA</div>
+                        <div id="dados-maxmin-xauusd" style="font-size: 1.1em; color: #fff;">
+                            <div>Máx: <span style="color: #28a745;">--</span></div>
+                            <div>Mín: <span style="color: #dc3545;">--</span></div>
+                        </div>
+                        <div id="dados-preco-xauusd" style="font-size: 0.8em; color: #aaa; margin-top: 5px;">Preço atual: --</div>
+                    </div>
+
+                    <!-- Força Relativa -->
+                    <div style="background: rgba(40, 167, 69, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #28a745;">
+                        <div style="color: #28a745; font-size: 0.9em; margin-bottom: 5px;">FORÇA RELATIVA</div>
+                        <div id="dados-forca-xauusd" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: #28a745;">Compra: --%</span>
+                            <span style="color: #dc3545;">Venda: --%</span>
+                        </div>
+                        <div style="background: #333; height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div id="dados-barra-xauusd" style="background: linear-gradient(90deg, #28a745 50%, #dc3545 50%); height: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Tendência -->
+                    <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #ffd700;">
+                        <div style="color: #ffd700; font-size: 0.9em; margin-bottom: 5px;">TENDÊNCIA</div>
+                        <div id="dados-tendencia-xauusd" style="font-size: 1.5em; font-weight: bold; color: #ffd700;">--</div>
+                    </div>
+                </div>
+
+                <!-- Dados adicionais -->
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                    <div style="text-align: center;">
+                        <div style="color: #aaa; font-size: 0.8em;">RSI</div>
+                        <div id="dados-rsi-xauusd" style="color: #fff; font-size: 1.1em; font-weight: bold;">--</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: #aaa; font-size: 0.8em;">Volume Profit</div>
+                        <div id="dados-volume-xauusd" style="color: #fff; font-size: 1.1em; font-weight: bold;">--</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: #aaa; font-size: 0.8em;">Força Compra</div>
+                        <div id="dados-forca-compra-xauusd" style="color: #28a745; font-size: 1.1em; font-weight: bold;">--</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: #aaa; font-size: 0.8em;">Força Venda</div>
+                        <div id="dados-forca-venda-xauusd" style="color: #dc3545; font-size: 1.1em; font-weight: bold;">--</div>
+                    </div>
+                </div>
+            </div>
+
             
 
             <!-- CAJADO DE TENDÊNCIA -->
@@ -5883,6 +5947,65 @@
 
                 </div>
 
+            </div>
+
+            <!-- PAINEL DE DADOS DE SINAIS -->
+            <div id="painel-dados-sinais-btcusd" style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 20px; border-radius: 12px; margin-top: 20px; border: 2px solid #0f3460; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);">
+                <h3 style="color: #00d4ff; margin-bottom: 15px; text-align: center; font-size: 1.3em;">
+                    📊 DADOS CONSOLIDADOS DE SINAIS - BTCUSD
+                </h3>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #00d4ff;">
+                        <div style="color: #00d4ff; font-size: 0.9em; margin-bottom: 5px;">PONTUAÇÃO DE INDICADORES</div>
+                        <div id="dados-pontos-btcusd" style="font-size: 2em; font-weight: bold; color: #fff;">--/6</div>
+                        <div id="dados-detalhes-btcusd" style="font-size: 0.8em; color: #aaa; margin-top: 5px;">Carregando...</div>
+                    </div>
+
+                    <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #ffd700;">
+                        <div style="color: #ffd700; font-size: 0.9em; margin-bottom: 5px;">MÁXIMA/MÍNIMA</div>
+                        <div id="dados-maxmin-btcusd" style="font-size: 1.1em; color: #fff;">
+                            <div>Máx: <span style="color: #28a745;">--</span></div>
+                            <div>Mín: <span style="color: #dc3545;">--</span></div>
+                        </div>
+                        <div id="dados-preco-btcusd" style="font-size: 0.8em; color: #aaa; margin-top: 5px;">Preço atual: --</div>
+                    </div>
+
+                    <div style="background: rgba(40, 167, 69, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #28a745;">
+                        <div style="color: #28a745; font-size: 0.9em; margin-bottom: 5px;">FORÇA RELATIVA</div>
+                        <div id="dados-forca-btcusd" style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="color: #28a745;">Compra: --%</span>
+                            <span style="color: #dc3545;">Venda: --%</span>
+                        </div>
+                        <div style="background: #333; height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div id="dados-barra-btcusd" style="background: linear-gradient(90deg, #28a745 50%, #dc3545 50%); height: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <div style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 8px; border: 1px solid #ffd700;">
+                        <div style="color: #ffd700; font-size: 0.9em; margin-bottom: 5px;">TENDÊNCIA</div>
+                        <div id="dados-tendencia-btcusd" style="font-size: 1.5em; font-weight: bold; color: #ffd700;">--</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #333; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                    <div style="text-align: center;">
+                        <div style="color: #aaa; font-size: 0.8em;">RSI</div>
+                        <div id="dados-rsi-btcusd" style="color: #fff; font-size: 1.1em; font-weight: bold;">--</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: #aaa; font-size: 0.8em;">Volume Profit</div>
+                        <div id="dados-volume-btcusd" style="color: #fff; font-size: 1.1em; font-weight: bold;">--</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: #aaa; font-size: 0.8em;">Força Compra</div>
+                        <div id="dados-forca-compra-btcusd" style="color: #28a745; font-size: 1.1em; font-weight: bold;">--</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="color: #aaa; font-size: 0.8em;">Força Venda</div>
+                        <div id="dados-forca-venda-btcusd" style="color: #dc3545; font-size: 1.1em; font-weight: bold;">--</div>
+                    </div>
+                </div>
             </div>
 
             
@@ -21237,6 +21360,171 @@ Esta régua é uma ferramenta de apoio. Sempre confirme os timeframes diretament
 
 
 
+        // ==================== EXTRAÇÃO DE DADOS DE SINAIS DE TRADER ====================
+
+        function extrairDadosSinaisTrader(pair) {
+            const data = prices[pair];
+            if (!data) {
+                return null;
+            }
+
+            // Calcular pontos de indicadores (sistema martelo)
+            let pontos = 0;
+            let detalhesPontos = [];
+
+            if (data.price > data.movingAverage) {
+                pontos++;
+                detalhesPontos.push('Preço > MA');
+            }
+            if (data.rsi < 40) {
+                pontos++;
+                detalhesPontos.push('RSI < 40');
+            }
+            if (data.price > data.twap) {
+                pontos++;
+                detalhesPontos.push('Preço > TWAP');
+            }
+            if (data.price > data.vwap) {
+                pontos++;
+                detalhesPontos.push('Preço > VWAP');
+            }
+            if (data.volumeProfit > 0) {
+                pontos++;
+                detalhesPontos.push('Volume Profit > 0');
+            }
+            if (data.price > data.bollingerMiddle) {
+                pontos++;
+                detalhesPontos.push('Preço > Bollinger Middle');
+            }
+
+            // Calcular força relativa de compra/venda
+            let forcaCompra = 0;
+            let forcaVenda = 0;
+
+            if (data.price > data.movingAverage) forcaCompra += 1;
+            else forcaVenda += 1;
+
+            if (data.rsi < 30) forcaCompra += 2;
+            else if (data.rsi > 70) forcaVenda += 2;
+            else if (data.rsi < 40) forcaCompra += 1;
+            else if (data.rsi > 60) forcaVenda += 1;
+
+            if (data.price > data.twap) forcaCompra += 1;
+            else forcaVenda += 1;
+
+            if (data.price > data.vwap) forcaCompra += 1;
+            else forcaVenda += 1;
+
+            if (data.volumeProfit > 0) forcaCompra += 1;
+            else forcaVenda += 1;
+
+            // Calcular força relativa percentual
+            const totalForca = forcaCompra + forcaVenda;
+            const forcaRelativaCompra = totalForca > 0 ? (forcaCompra / totalForca) * 100 : 50;
+            const forcaRelativaVenda = totalForca > 0 ? (forcaVenda / totalForca) * 100 : 50;
+
+            // Determinar tendência baseada na força
+            let tendencia = 'NEUTRO';
+            if (forcaRelativaCompra > 60) tendencia = 'COMPRA FORTE';
+            else if (forcaRelativaCompra > 55) tendencia = 'COMPRA MODERADA';
+            else if (forcaRelativaVenda > 60) tendencia = 'VENDA FORTE';
+            else if (forcaRelativaVenda > 55) tendencia = 'VENDA MODERADA';
+
+            // Retornar dados consolidados
+            const price = parseFloat(data.price) || 0;
+            const dailyHigh = parseFloat(data.dailyHigh) || price * 1.01;
+            const dailyLow = parseFloat(data.dailyLow) || price * 0.99;
+            
+            return {
+                par: pair.toUpperCase(),
+                pontos: pontos,
+                pontosTotal: 6,
+                detalhesPontos: detalhesPontos,
+                maxima: dailyHigh,
+                minima: dailyLow,
+                forcaCompra: forcaCompra,
+                forcaVenda: forcaVenda,
+                forcaRelativaCompra: forcaRelativaCompra.toFixed(1),
+                forcaRelativaVenda: forcaRelativaVenda.toFixed(1),
+                tendencia: tendencia,
+                precoAtual: price,
+                rsi: parseFloat(data.rsi) || 50,
+                volumeProfit: parseFloat(data.volumeProfit) || 0
+            };
+        }
+
+        function atualizarPainelDadosSinais() {
+            // Apenas processar XAUUSD e BTCUSD
+            const paresPermitidos = ['xauusd', 'btcusd'];
+            
+            paresPermitidos.forEach(pair => {
+                try {
+                    const dados = extrairDadosSinaisTrader(pair);
+                    if (!dados) {
+                        return;
+                    }
+
+                    // Atualizar elementos HTML existentes
+                    const pontosEl = document.getElementById(`dados-pontos-${pair}`);
+                    const detalhesEl = document.getElementById(`dados-detalhes-${pair}`);
+                    const maxminEl = document.getElementById(`dados-maxmin-${pair}`);
+                    const precoEl = document.getElementById(`dados-preco-${pair}`);
+                    const forcaEl = document.getElementById(`dados-forca-${pair}`);
+                    const barraEl = document.getElementById(`dados-barra-${pair}`);
+                    const tendenciaEl = document.getElementById(`dados-tendencia-${pair}`);
+                    const rsiEl = document.getElementById(`dados-rsi-${pair}`);
+                    const volumeEl = document.getElementById(`dados-volume-${pair}`);
+                    const forcaCompraEl = document.getElementById(`dados-forca-compra-${pair}`);
+                    const forcaVendaEl = document.getElementById(`dados-forca-venda-${pair}`);
+
+                    if (pontosEl) pontosEl.textContent = `${dados.pontos}/${dados.pontosTotal}`;
+                    if (detalhesEl) detalhesEl.textContent = dados.detalhesPontos.join(', ') || 'Nenhum indicador alinhado';
+                    if (maxminEl) {
+                        const maxVal = typeof dados.maxima === 'number' ? dados.maxima.toFixed(2) : '--';
+                        const minVal = typeof dados.minima === 'number' ? dados.minima.toFixed(2) : '--';
+                        maxminEl.innerHTML = `
+                            <div>Máx: <span style="color: #28a745;">${maxVal}</span></div>
+                            <div>Mín: <span style="color: #dc3545;">${minVal}</span></div>
+                        `;
+                    }
+                    if (precoEl) {
+                        const precoVal = typeof dados.precoAtual === 'number' ? dados.precoAtual.toFixed(2) : '--';
+                        precoEl.textContent = `Preço atual: ${precoVal}`;
+                    }
+                    if (forcaEl) {
+                        forcaEl.innerHTML = `
+                            <span style="color: #28a745;">Compra: ${dados.forcaRelativaCompra}%</span>
+                            <span style="color: #dc3545;">Venda: ${dados.forcaRelativaVenda}%</span>
+                        `;
+                    }
+                    if (barraEl) {
+                        barraEl.style.background = `linear-gradient(90deg, #28a745 ${dados.forcaRelativaCompra}%, #dc3545 ${dados.forcaRelativaCompra}%)`;
+                    }
+                    if (tendenciaEl) {
+                        const corTendencia = dados.tendencia.includes('COMPRA') ? '#28a745' : 
+                                             dados.tendencia.includes('VENDA') ? '#dc3545' : '#ffd700';
+                        tendenciaEl.textContent = dados.tendencia;
+                        tendenciaEl.style.color = corTendencia;
+                        if (tendenciaEl.parentElement) {
+                            tendenciaEl.parentElement.style.borderColor = corTendencia;
+                        }
+                    }
+                    if (rsiEl) {
+                        const rsiVal = typeof dados.rsi === 'number' ? dados.rsi.toFixed(1) : '--';
+                        rsiEl.textContent = rsiVal;
+                    }
+                    if (volumeEl) {
+                        const volumeVal = typeof dados.volumeProfit === 'number' ? dados.volumeProfit.toFixed(2) : '--';
+                        volumeEl.textContent = volumeVal;
+                    }
+                    if (forcaCompraEl) forcaCompraEl.textContent = dados.forcaCompra;
+                    if (forcaVendaEl) forcaVendaEl.textContent = dados.forcaVenda;
+                } catch (error) {
+                    console.error('Erro ao atualizar painel para', pair, error);
+                }
+            });
+        }
+
         // ==================== INTEGRAÇÃO NO UPDATEALL ====================
 
         const originalUpdateAll = window.updateAll;
@@ -21261,9 +21549,58 @@ Esta régua é uma ferramenta de apoio. Sempre confirme os timeframes diretament
 
                 updateCajadoTendencia();
 
+                // Atualizar Painel de Dados de Sinais
+                atualizarPainelDadosSinais();
+
             };
 
         }
+
+        // Função para simular atualização de preços
+        function simulatePriceUpdates() {
+            ['xauusd', 'btcusd'].forEach(pair => {
+                if (prices[pair]) {
+                    const data = prices[pair];
+                    // Simular pequenas variações de preço
+                    const priceChange = (Math.random() - 0.5) * (data.price * 0.002);
+                    data.price = data.price + priceChange;
+                    data.lastPrice = data.price;
+                    
+                    // Atualizar RSI aleatoriamente
+                    data.rsi = Math.max(10, Math.min(90, data.rsi + (Math.random() - 0.5) * 5));
+                    
+                    // Atualizar volume profit
+                    data.volumeProfit = (Math.random() - 0.5) * 100;
+                    
+                    // Atualizar máximas e mínimas diárias
+                    if (data.price > data.dailyHigh) data.dailyHigh = data.price;
+                    if (data.price < data.dailyLow) data.dailyLow = data.price;
+                    
+                    // Atualizar médias móveis
+                    data.movingAverage = data.movingAverage * 0.99 + data.price * 0.01;
+                    data.twap = data.twap * 0.99 + data.price * 0.01;
+                    data.vwap = data.vwap * 0.99 + data.price * 0.01;
+                    data.ma10 = data.ma10 * 0.99 + data.price * 0.01;
+                    data.ma20 = data.ma20 * 0.99 + data.price * 0.01;
+                    data.bollingerMiddle = data.bollingerMiddle * 0.99 + data.price * 0.01;
+                }
+            });
+        }
+
+        // Chamar a função após 3 segundos para garantir que o DOM esteja pronto
+        setTimeout(() => {
+            simulatePriceUpdates();
+            atualizarPainelDadosSinais();
+        }, 3000);
+
+        // Atualizar preços e painel a cada 5 segundos
+        setInterval(() => {
+            simulatePriceUpdates();
+            atualizarPainelDadosSinais();
+        }, 5000);
+
+        // Log inicial para verificar se o script está sendo executado
+        console.log('🎯 [DEBUG] Script de painel de dados carregado com sucesso!');
 
     </script>
 

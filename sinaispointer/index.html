@@ -17089,60 +17089,43 @@ Esta régua é uma ferramenta de apoio. Sempre confirme os timeframes diretament
 
             if (currentHour >= 19 && currentHour < 24) {
 
-                // Acumulação: 19h-01h
-
+                // Acumulação: 19h-24h (parte 1)
                 currentPhase = t.accumulation;
-
                 currentPhaseElement = activeTab.querySelector('#phase-accumulation');
-
-                progressPercent = ((currentHour - 19 + 1) / 6) * 100;
+                progressPercent = ((currentHour - 19) / 6) * 100;
 
             } else if (currentHour >= 0 && currentHour < 1) {
 
-                // Continuação Acumulação: 00h-01h
-
+                // Acumulação: 00h-01h (parte 2)
                 currentPhase = t.accumulation;
-
                 currentPhaseElement = activeTab.querySelector('#phase-accumulation');
-
-                progressPercent = ((currentHour + 1) / 6) * 100;
+                progressPercent = 100;
 
             } else if (currentHour >= 1 && currentHour < 7) {
 
                 // Manipulação: 01h-07h
-
                 currentPhase = t.manipulation;
-
                 currentPhaseElement = activeTab.querySelector('#phase-manipulation');
-
-                progressPercent = ((currentHour - 1 + 1) / 6) * 100;
+                progressPercent = ((currentHour - 1) / 6) * 100;
 
             } else if (currentHour >= 7 && currentHour < 13) {
 
                 // Distribuição: 07h-13h
-
                 currentPhase = t.distribution;
-
                 currentPhaseElement = activeTab.querySelector('#phase-distribution');
-
-                progressPercent = ((currentHour - 7 + 1) / 6) * 100;
+                progressPercent = ((currentHour - 7) / 6) * 100;
 
             } else if (currentHour >= 13 && currentHour < 18) {
 
                 // Preparação: 13h-18h
-
                 currentPhase = t.preparation;
-
                 currentPhaseElement = activeTab.querySelector('#phase-preparation');
-
-                progressPercent = ((currentHour - 13 + 1) / 5) * 100;
+                progressPercent = ((currentHour - 13) / 5) * 100;
 
             } else {
 
                 // Fechado: 18h-19h
-
                 currentPhase = t.closed;
-
                 progressPercent = 0;
 
             }
