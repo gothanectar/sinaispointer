@@ -509,6 +509,14 @@
             background: linear-gradient(180deg, #4ecdc4, #44a08d);
         }
 
+        .quick-access-btn.scroll-top {
+            background: linear-gradient(180deg, #9b59b6, #8e44ad);
+        }
+
+        .quick-access-btn.scroll-bottom {
+            background: linear-gradient(180deg, #3498db, #2980b9);
+        }
+
         .quick-access-btn::after {
             content: attr(data-label);
             position: absolute;
@@ -4106,6 +4114,8 @@
     <div class="quick-access-bar">
         <div class="quick-access-btn calendar" data-label="📅 Calendário Econômico" onclick="navigateToCalendar()"></div>
         <div class="quick-access-btn grade" data-label="📊 Grade 15m" onclick="navigateToGrade()"></div>
+        <div class="quick-access-btn scroll-top" data-label="⬆️ Ir para o Topo" onclick="scrollToTop()"></div>
+        <div class="quick-access-btn scroll-bottom" data-label="⬇️ Ir para o Final" onclick="scrollToBottom()"></div>
     </div>
 
             <div class="container">
@@ -22953,6 +22963,20 @@ Esta régua é uma ferramenta de apoio. Sempre confirme os timeframes diretament
                 calendarTab.style.display = 'block';
                 calendarTab.classList.add('active');
             }
+        }
+
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function scrollToBottom() {
+            window.scrollTo({
+                top: document.body.scrollHeight,
+                behavior: 'smooth'
+            });
         }
 
     </script>
