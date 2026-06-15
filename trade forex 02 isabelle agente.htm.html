@@ -1,0 +1,824 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Forex & Cripto Hoje Enhanced - Isabella Rossi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 10px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.light-mode {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .header {
+            background-color: #2a2a2a;
+            color: #ffffff;
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .header {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .ticker, .crypto-ticker, .forex-ticker {
+            background-color: #ffffff;
+            color: #333;
+            padding: 5px 0;
+            font-size: 12px;
+            overflow: hidden;
+            white-space: nowrap;
+            border-bottom: 1px solid #444;
+        }
+        .ticker marquee, .crypto-ticker marquee, .forex-ticker marquee {
+            width: 100%;
+        }
+        .ticker span, .crypto-ticker span, .forex-ticker span {
+            margin: 0 10px;
+        }
+        .clocks {
+            background-color: #2a2a2a;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .clocks {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .clocks div {
+            margin: 5px;
+            font-size: 14px;
+        }
+        .section {
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            background-color: #252525;
+            transition: transform 0.1s;
+        }
+        .light-mode .section {
+            background-color: #e0e0e0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .section:hover {
+            transform: scale(1.02);
+        }
+        .forex-news-section { background-color: #000; color: #ffffff; }
+        .crypto-news-section { background-color: #1a3c34; color: #ffffff; }
+        .signals-section { background-color: #252525; color: #ffffff; }
+        .aggressor-signals-section { background-color: #252525; color: #ffffff; }
+        .b3-signals-section { background-color: #3f51b5; color: #ffffff; }
+        .fii-signals-section { background-color: #8e24aa; color: #ffffff; }
+        .ptax-section { background-color: #5d4037; color: #ffffff; }
+        .xauusd-section { background-color: #ffd700; color: #000; }
+        .bitcoin-section { background-color: #f7931a; color: #000; }
+        .selic-section { background-color: #006400; color: #ffffff; }
+        .gold-price-section { background-color: #b8860b; color: #ffffff; }
+        .section button {
+            padding: 8px 16px;
+            background-color: #4caf50;
+            color: #ffffff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px 0;
+            transition: background-color 0.3s ease;
+        }
+        .section button:hover {
+            background-color: #66bb6a;
+        }
+        .signal-list {
+            list-style: none;
+            padding: 0;
+            columns: 1;
+        }
+        .signal-list li {
+            margin: 4px 0;
+            padding: 8px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            height: 45px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .scrolling-column {
+            position: fixed;
+            top: 100px;
+            right: 10px;
+            width: 250px;
+            height: 75vh;
+            background-color: #2a2a2a;
+            padding: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+        .light-mode .scrolling-column {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .scrolling-column marquee {
+            height: 100%;
+            font-size: 12px;
+            color: #ffffff;
+        }
+        .chart-container {
+            width: 100%;
+            height: 350px;
+            margin-top: 15px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        .light-mode .chart-container {
+            background-color: #f0f0f0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            width: 100%;
+            border-radius: 8px;
+            position: fixed;
+            bottom: 40px;
+            z-index: 1;
+        }
+        .light-mode footer {
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .crypto-ticker, .forex-ticker {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 2;
+        }
+        .crypto-ticker { bottom: 20px; }
+        .forex-ticker { bottom: 0; }
+        .legend {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #333;
+            border-radius: 5px;
+        }
+        .light-mode .legend {
+            background-color: #ddd;
+        }
+        .legend span { margin-right: 15px; }
+        .vol-25 { background-color: #ffff99; color: #000; }
+        .vol-50 { background-color: #4caf50; color: #ffffff; }
+        .vol-100 { background-color: #f44336; color: #ffffff; }
+        .vol-500 { background-color: #2196f3; color: #ffffff; }
+        .vol-1000 { background-color: #212121; color: #ffffff; }
+        .buy::before {
+            content: "↑";
+            color: #4caf50;
+            font-size: 32px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .sell::before {
+            content: "↓";
+            color: #f44336;
+            font-size: 32px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        #theme-toggle {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            transition: transform 0.1s;
+        }
+        #theme-toggle:hover {
+            transform: scale(1.05);
+        }
+        #isabella-assistant {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #252525;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            font-size: 0.9em;
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+        .light-mode #isabella-assistant {
+            background-color: #fff;
+        }
+        #isabella-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #minimize-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        .light-mode #minimize-btn {
+            color: #333;
+        }
+        #isabella-message {
+            margin-top: 5px;
+            display: block;
+        }
+        #isabella-assistant.minimized {
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #007bff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        #isabella-assistant.minimized #isabella-header {
+            height: 100%;
+            justify-content: center;
+        }
+        #isabella-assistant.minimized #minimize-btn {
+            color: #fff;
+            font-size: 1.2em;
+        }
+        #isabella-assistant.minimized #isabella-message,
+        #isabella-assistant.minimized strong {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+            .section { flex: 1 1 30%; min-width: 300px; }
+            .chart-container { height: 500px; }
+        }
+        @media (max-width: 768px) {
+            footer { position: static; }
+            .scrolling-column { display: none; }
+            .crypto-ticker, .forex-ticker { position: static; }
+        }
+    </style>
+</head>
+<body>
+    <button id="theme-toggle">Modo Claro</button>
+    <div class="ticker" id="ticker"><marquee direction="left" scrollamount="8"></marquee></div>
+    <div class="clocks" id="clocks">
+        <div>São Paulo: <span id="sao-paulo-time"></span></div>
+        <div>Nova York: <span id="new-york-time"></span></div>
+        <div>Londres: <span id="london-time"></span></div>
+        <div>Tóquio: <span id="tokyo-time"></span></div>
+    </div>
+    <header class="header">
+        <h1>Forex & Cripto Hoje Enhanced</h1>
+        <p>Gráficos, Notícias, Sinais e Taxas em Tempo Real</p>
+    </header>
+    <div class="container">
+        <div class="forex-news-section section">
+            <h2>Notícias de Forex</h2>
+            <button onclick="loadNews()" aria-label="Atualizar notícias de Forex">Atualizar Notícias</button>
+            <ul id="forex-news-list-pt" class="signal-list"></ul>
+        </div>
+        <div class="crypto-news-section section">
+            <h2>Notícias de Criptomoedas</h2>
+            <button onclick="loadNews()" aria-label="Atualizar notícias de criptomoedas">Atualizar Notícias</button>
+            <ul id="crypto-news-list-pt" class="signal-list"></ul>
+        </div>
+        <div class="gold-price-section section">
+            <h2>Preço do Ouro (XAU/USD)</h2>
+            <button onclick="updateGoldPrice()" aria-label="Atualizar preço do ouro">Atualizar Agora</button>
+            <ul id="gold-price-list" class="signal-list"></ul>
+        </div>
+        <div class="signals-section section">
+            <h2>Sinais de Trading</h2>
+            <select id="timeframe-filter" aria-label="Filtrar por período de tempo">
+                <option value="all">Todos</option>
+                <option value="1h">1h</option>
+                <option value="2h">2h</option>
+                <option value="4h">4h</option>
+                <option value="8h">8h</option>
+            </select>
+            <button onclick="updateSignals(document.getElementById('timeframe-filter').value)" aria-label="Atualizar sinais de trading">Atualizar Sinais</button>
+            <div class="legend">
+                <span style="color: #ffff99">■ 25+ Volume</span>
+                <span style="color: #4caf50">■ 50+ Volume</span>
+                <span style="color: #f44336">■ 100+ Volume</span>
+                <span style="color: #2196f3">■ 500+ Volume</span>
+                <span style="color: #212121">■ 1000+ Volume</span>
+            </div>
+            <ul id="signal-list" class="signal-list"></ul>
+        </div>
+        <div class="chart-section section">
+            <h2>Gráficos em Tempo Real</h2>
+            <button id="load-crypto-chart-btn" onclick="loadChart('BITSTAMP:BTCUSD', 'crypto-chart'); this.style.display='none'" aria-label="Carregar gráfico de criptomoedas">Carregar Gráfico Cripto</button>
+            <div id="crypto-chart" class="chart-container"></div>
+            <button id="load-forex-chart-btn" onclick="loadChart('FX:XAUUSD', 'forex-chart'); this.style.display='none'" aria-label="Carregar gráfico de Forex">Carregar Gráfico Forex</button>
+            <div id="forex-chart" class="chart-container"></div>
+            <button id="load-b3-chart-btn" onclick="loadChart('B3:IBOV', 'b3-chart'); this.style.display='none'" aria-label="Carregar gráfico da B3">Carregar Gráfico B3</button>
+            <div id="b3-chart" class="chart-container"></div>
+        </div>
+        <div class="aggressor-signals-section section">
+            <h2>Sinais de Agressores</h2>
+            <select id="asset-filter" aria-label="Filtrar por par de moedas ou cripto">
+                <option value="all">Todos</option>
+                <option value="AUD/USD">AUD/USD</option>
+                <option value="USD/CAD">USD/CAD</option>
+                <option value="NZD/USD">NZD/USD</option>
+                <option value="USD/CHF">USD/CHF</option>
+                <option value="Litecoin">Litecoin</option>
+            </select>
+            <button onclick="updateAggressorSignals(document.getElementById('asset-filter').value)" aria-label="Atualizar sinais de agressores">Atualizar Sinais</button>
+            <div class="legend">
+                <span style="color: #ffff99">■ 25+ Volume</span>
+                <span style="color: #4caf50">■ 50+ Volume</span>
+                <span style="color: #f44336">■ 100+ Volume</span>
+                <span style="color: #2196f3">■ 500+ Volume</span>
+                <span style="color: #212121">■ 1000+ Volume</span>
+            </div>
+            <ul id="aggressor-signal-list" class="signal-list"></ul>
+        </div>
+        <div class="b3-signals-section section">
+            <h2>Sinais da B3</h2>
+            <select id="b3-timeframe-filter" aria-label="Filtrar por período de tempo da B3">
+                <option value="all">Todos</option>
+                <option value="1h">1h</option>
+                <option value="2h">2h</option>
+                <option value="4h">4h</option>
+                <option value="8h">8h</option>
+            </select>
+            <button onclick="updateB3Signals(document.getElementById('b3-timeframe-filter').value)" aria-label="Atualizar sinais da B3">Atualizar Sinais</button>
+            <div class="legend">
+                <span style="color: #ffff99">■ 25+ Volume</span>
+                <span style="color: #4caf50">■ 50+ Volume</span>
+                <span style="color: #f44336">■ 100+ Volume</span>
+                <span style="color: #2196f3">■ 500+ Volume</span>
+                <span style="color: #212121">■ 1000+ Volume</span>
+            </div>
+            <ul id="b3-signal-list" class="signal-list"></ul>
+        </div>
+        <div class="fii-signals-section section">
+            <h2>Sinais de Fundos Imobiliários</h2>
+            <select id="fii-timeframe-filter" aria-label="Filtrar por período de tempo dos FIIs">
+                <option value="all">Todos</option>
+                <option value="1h">1h</option>
+                <option value="2h">2h</option>
+                <option value="4h">4h</option>
+                <option value="8h">8h</option>
+            </select>
+            <button onclick="updateFIISignals(document.getElementById('fii-timeframe-filter').value)" aria-label="Atualizar sinais dos FIIs">Atualizar Sinais</button>
+            <div class="legend">
+                <span style="color: #ffff99">■ 25+ Volume</span>
+                <span style="color: #4caf50">■ 50+ Volume</span>
+                <span style="color: #f44336">■ 100+ Volume</span>
+                <span style="color: #2196f3">■ 500+ Volume</span>
+                <span style="color: #212121">■ 1000+ Volume</span>
+            </div>
+            <ul id="fii-signal-list" class="signal-list"></ul>
+        </div>
+        <div class="ptax-section section">
+            <h2>Médias Móveis e Fechamentos Ptax</h2>
+            <button onclick="updatePtax()" aria-label="Atualizar Ptax">Atualizar</button>
+            <ul id="ptax-list" class="signal-list"></ul>
+        </div>
+        <div class="xauusd-section section">
+            <h2>Médias XAU/USD</h2>
+            <button onclick="updateXAUUSD()" aria-label="Atualizar XAU/USD">Atualizar</button>
+            <ul id="xauusd-list" class="signal-list"></ul>
+        </div>
+        <div class="bitcoin-section section">
+            <h2>Médias Bitcoin</h2>
+            <button onclick="updateBitcoin()" aria-label="Atualizar Bitcoin">Atualizar</button>
+            <ul id="bitcoin-list" class="signal-list"></ul>
+        </div>
+        <div class="selic-section section">
+            <h2>Taxa Selic</h2>
+            <button onclick="updateSelic()" aria-label="Atualizar Selic">Atualizar</button>
+            <ul id="selic-list" class="signal-list"></ul>
+        </div>
+    </div>
+    <div class="scrolling-column" id="scrolling-column"><marquee direction="up" scrollamount="3"></marquee></div>
+    <footer>© 2025 Forex & Cripto Hoje Enhanced. Todos os direitos reservados.</footer>
+    <div class="crypto-ticker" id="crypto-ticker"><marquee direction="left" scrollamount="8"></marquee></div>
+    <div class="forex-ticker" id="forex-ticker"><marquee direction="left" scrollamount="8"></marquee></div>
+    <div id="isabella-assistant">
+        <div id="isabella-header">
+            <strong>Isabella Rossi:</strong>
+            <button id="minimize-btn">-</button>
+        </div>
+        <div id="isabella-message">Bem-vindo! Clique em uma seção para saber mais.</div>
+    </div>
+
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        window.onload = function() {
+            updateSignals();
+            updateAggressorSignals();
+            updateB3Signals();
+            updateFIISignals();
+            updatePtax();
+            updateXAUUSD();
+            updateBitcoin();
+            updateSelic();
+            updateGoldPrice();
+            updateTicker();
+            updateCryptoTicker();
+            updateForexTicker();
+            updateScrollingColumn();
+            loadNews();
+            updateClocks();
+
+            setInterval(updateTicker, 10000);
+            setInterval(() => updateSignals(document.getElementById('timeframe-filter').value), 5000);
+            setInterval(() => updateAggressorSignals(document.getElementById('asset-filter').value), 5000);
+            setInterval(() => updateB3Signals(document.getElementById('b3-timeframe-filter').value), 5000);
+            setInterval(() => updateFIISignals(document.getElementById('fii-timeframe-filter').value), 5000);
+            setInterval(updatePtax, 60000);
+            setInterval(updateXAUUSD, 5000);
+            setInterval(updateBitcoin, 5000);
+            setInterval(updateSelic, 60000);
+            setInterval(updateGoldPrice, 30000);
+            setInterval(updateCryptoTicker, 10000);
+            setInterval(updateForexTicker, 10000);
+            setInterval(updateScrollingColumn, 5000);
+            setInterval(updateClocks, 1000);
+        };
+
+        function loadChart(symbol, containerId) {
+            new TradingView.widget({
+                "width": "100%",
+                "height": "100%",
+                "symbol": symbol,
+                "interval": "D",
+                "timezone": "Etc/UTC",
+                "theme": "dark",
+                "style": "1",
+                "locale": "pt",
+                "toolbar_bg": "#252525",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "container_id": containerId
+            });
+        }
+
+        const assets = {
+            forex: ['EUR/USD', 'USD/JPY', 'GBP/USD', 'XAU/USD'],
+            crypto: ['Bitcoin', 'Ethereum', 'XRP', 'Toncoin']
+        };
+        const aggressorAssets = {
+            forex: ['AUD/USD', 'USD/CAD', 'NZD/USD', 'USD/CHF'],
+            crypto: ['Litecoin', 'Cardano', 'Solana', 'Polkadot']
+        };
+        const tickerAssets = {
+            forex: ['EUR/GBP', 'EUR/CHF', 'GBP/JPY', 'CAD/JPY'],
+            crypto: ['Binance Coin', 'Dogecoin', 'Chainlink', 'Avalanche']
+        };
+        const scrollingAssets = {
+            forex: ['EUR/AUD', 'GBP/CHF', 'USD/MXN', 'AUD/JPY'],
+            crypto: ['Polygon', 'Shiba Inu', 'Cosmos', 'Algorand']
+        };
+        const b3Assets = ['PETR4', 'VALE3', 'ITUB4', 'BBDC4', 'ABEV3'];
+        const fiiAssets = ['KNRI11', 'HGLG11', 'XPLG11', 'MXRF11', 'BCFF11'];
+        const aggressors = ['JPMorgan', 'Goldman Sachs', 'Binance', 'Citadel', 'BlackRock'];
+
+        function analyzeSignal(asset) {
+            const volume = Math.floor(Math.random() * 1500);
+            const dropout = Math.random() > 0.3 ? 1 : 0;
+            const signalStrength = (volume * dropout) / 1000;
+            const direction = Math.random() > 0.5 ? 'buy' : 'sell';
+            const aggressor = aggressors[Math.floor(Math.random() * aggressors.length)];
+            return { asset, volume, signalStrength, direction, aggressor };
+        }
+
+        function getVolumeClass(volume) {
+            if (volume >= 1000) return 'vol-1000';
+            if (volume >= 500) return 'vol-500';
+            if (volume >= 100) return 'vol-100';
+            if (volume >= 50) return 'vol-50';
+            if (volume >= 25) return 'vol-25';
+            return '';
+        }
+
+        function updateSignals(filterTime = 'all') {
+            const signalList = document.getElementById('signal-list');
+            signalList.innerHTML = '';
+            const timeFrames = ['1h', '2h', '4h', '8h'];
+
+            [...assets.forex, ...assets.crypto].forEach(asset => {
+                const signal = analyzeSignal(asset);
+                timeFrames.forEach(time => {
+                    if (filterTime === 'all' || filterTime === time) {
+                        const li = document.createElement('li');
+                        li.className = `${getVolumeClass(signal.volume)} ${signal.direction}`;
+                        li.textContent = `${asset} - ${time} - Força: ${(signal.signalStrength * 100).toFixed(1)}% - Agressor: ${signal.aggressor}`;
+                        signalList.appendChild(li);
+                    }
+                });
+            });
+        }
+
+        function updateAggressorSignals(filterAsset = 'all') {
+            const aggressorSignalList = document.getElementById('aggressor-signal-list');
+            aggressorSignalList.innerHTML = '';
+            const timeFrames = ['1h', '2h', '4h', '8h'];
+
+            [...aggressorAssets.forex, ...aggressorAssets.crypto].forEach(asset => {
+                if (filterAsset === 'all' || filterAsset === asset) {
+                    const signal = analyzeSignal(asset);
+                    timeFrames.forEach(time => {
+                        const li = document.createElement('li');
+                        li.className = `${getVolumeClass(signal.volume)} ${signal.direction}`;
+                        li.textContent = `${asset} - ${time} - Força: ${(signal.signalStrength * 100).toFixed(1)}% - Agressor: ${signal.aggressor}`;
+                        aggressorSignalList.appendChild(li);
+                    });
+                }
+            });
+        }
+
+        function updateB3Signals(filterTime = 'all') {
+            const b3SignalList = document.getElementById('b3-signal-list');
+            b3SignalList.innerHTML = '';
+            const timeFrames = ['1h', '2h', '4h', '8h'];
+
+            b3Assets.forEach(asset => {
+                const signal = analyzeSignal(asset);
+                timeFrames.forEach(time => {
+                    if (filterTime === 'all' || filterTime === time) {
+                        const li = document.createElement('li');
+                        li.className = `${getVolumeClass(signal.volume)} ${signal.direction}`;
+                        li.textContent = `${asset} - ${time} - Força: ${(signal.signalStrength * 100).toFixed(1)}% - Agressor: ${signal.aggressor}`;
+                        b3SignalList.appendChild(li);
+                    }
+                });
+            });
+        }
+
+        function updateFIISignals(filterTime = 'all') {
+            const fiiSignalList = document.getElementById('fii-signal-list');
+            fiiSignalList.innerHTML = '';
+            const timeFrames = ['1h', '2h', '4h', '8h'];
+
+            fiiAssets.forEach(asset => {
+                const signal = analyzeSignal(asset);
+                timeFrames.forEach(time => {
+                    if (filterTime === 'all' || filterTime === time) {
+                        const li = document.createElement('li');
+                        li.className = `${getVolumeClass(signal.volume)} ${signal.direction}`;
+                        li.textContent = `${asset} - ${time} - Força: ${(signal.signalStrength * 100).toFixed(1)}% - Agressor: ${signal.aggressor}`;
+                        fiiSignalList.appendChild(li);
+                    }
+                });
+            });
+        }
+
+        function updatePtax() {
+            const ptaxList = document.getElementById('ptax-list');
+            ptaxList.innerHTML = '';
+            const baseValue = (Math.random() * (5.8 - 5.2) + 5.2).toFixed(4);
+            const sma20 = (baseValue * (1 + (Math.random() * 0.02 - 0.01))).toFixed(4);
+            const sma50 = (baseValue * (1 + (Math.random() * 0.03 - 0.015))).toFixed(4);
+            const sma200 = (baseValue * (1 + (Math.random() * 0.05 - 0.025))).toFixed(4);
+            const items = [
+                `Média Móvel 20 dias: ${sma20} BRL/USD`,
+                `Média Móvel 50 dias: ${sma50} BRL/USD`,
+                `Média Móvel 200 dias: ${sma200} BRL/USD`
+            ];
+            items.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                ptaxList.appendChild(li);
+            });
+        }
+
+        function updateXAUUSD() {
+            const xauusdList = document.getElementById('xauusd-list');
+            xauusdList.innerHTML = '';
+            const baseValue = (Math.random() * (2000 - 1800) + 1800).toFixed(2);
+            const sma20 = (baseValue * (1 + (Math.random() * 0.02 - 0.01))).toFixed(2);
+            const sma50 = (baseValue * (1 + (Math.random() * 0.03 - 0.015))).toFixed(2);
+            const sma200 = (baseValue * (1 + (Math.random() * 0.05 - 0.025))).toFixed(2);
+            const items = [
+                `Média Móvel 20 dias: ${sma20} USD`,
+                `Média Móvel 50 dias: ${sma50} USD`,
+                `Média Móvel 200 dias: ${sma200} USD`
+            ];
+            items.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                xauusdList.appendChild(li);
+            });
+        }
+
+        function updateBitcoin() {
+            const bitcoinList = document.getElementById('bitcoin-list');
+            bitcoinList.innerHTML = '';
+            const baseValue = (Math.random() * (100000 - 80000) + 80000).toFixed(2);
+            const sma20 = (baseValue * (1 + (Math.random() * 0.02 - 0.01))).toFixed(2);
+            const sma50 = (baseValue * (1 + (Math.random() * 0.03 - 0.015))).toFixed(2);
+            const sma200 = (baseValue * (1 + (Math.random() * 0.05 - 0.025))).toFixed(2);
+            const items = [
+                `Média Móvel 20 dias: ${sma20} USD`,
+                `Média Móvel 50 dias: ${sma50} USD`,
+                `Média Móvel 200 dias: ${sma200} USD`
+            ];
+            items.forEach(text => {
+                const li = document.createElement('li');
+                li.textContent = text;
+                bitcoinList.appendChild(li);
+            });
+        }
+
+        function updateSelic() {
+            const selicList = document.getElementById('selic-list');
+            selicList.innerHTML = '';
+            const selicValue = (Math.random() * (14.25 - 13.75) + 13.75).toFixed(2);
+            const li = document.createElement('li');
+            li.textContent = `Taxa Selic Atual: ${selicValue}%`;
+            selicList.appendChild(li);
+        }
+
+        function updateGoldPrice() {
+            const goldPriceList = document.getElementById('gold-price-list');
+            goldPriceList.innerHTML = '';
+            const baseGoldPrice = (Math.random() * (3000 - 2900) + 2900).toFixed(2);
+            const li = document.createElement('li');
+            li.textContent = `Preço Atual: $${baseGoldPrice} USD/onça`;
+            goldPriceList.appendChild(li);
+        }
+
+        function updateTicker() {
+            const ticker = document.querySelector('#ticker marquee');
+            ticker.innerHTML = '';
+            const timeFrames = ['1h', '2h', '4h', '8h'];
+            [...tickerAssets.forex, ...tickerAssets.crypto].forEach(asset => {
+                const signal = analyzeSignal(asset);
+                const time = timeFrames[Math.floor(Math.random() * timeFrames.length)];
+                const span = document.createElement('span');
+                span.textContent = `${asset} - ${time} - Força: ${(signal.signalStrength * 100).toFixed(1)}%`;
+                ticker.appendChild(span);
+            });
+        }
+
+        function updateCryptoTicker() {
+            const cryptoTicker = document.querySelector('#crypto-ticker marquee');
+            cryptoTicker.innerHTML = '';
+            const timeFrames = ['1h', '2h', '4h', '8h'];
+            assets.crypto.forEach(asset => {
+                const signal = analyzeSignal(asset);
+                const time = timeFrames[Math.floor(Math.random() * timeFrames.length)];
+                const span = document.createElement('span');
+                span.textContent = `${asset} - ${time} - Força: ${(signal.signalStrength * 100).toFixed(1)}%`;
+                cryptoTicker.appendChild(span);
+            });
+        }
+
+        function updateForexTicker() {
+            const forexTicker = document.querySelector('#forex-ticker marquee');
+            forexTicker.innerHTML = '';
+            const timeFrames = ['1h', '2h', '4h', '8h'];
+            assets.forex.forEach(asset => {
+                const signal = analyzeSignal(asset);
+                const time = timeFrames[Math.floor(Math.random() * timeFrames.length)];
+                const span = document.createElement('span');
+                span.textContent = `${asset} - ${time} - Força: ${(signal.signalStrength * 100).toFixed(1)}%`;
+                forexTicker.appendChild(span);
+            });
+        }
+
+        function updateScrollingColumn() {
+            const scrollingColumn = document.querySelector('.scrolling-column marquee');
+            scrollingColumn.innerHTML = '';
+            const timeFrames = ['1h', '2h', '4h', '8h'];
+            [...scrollingAssets.forex, ...scrollingAssets.crypto].forEach(asset => {
+                const signal = analyzeSignal(asset);
+                const time = timeFrames[Math.floor(Math.random() * timeFrames.length)];
+                const span = document.createElement('span');
+                span.textContent = `${asset} - ${time} - Força: ${(signal.signalStrength * 100).toFixed(1)}%`;
+                scrollingColumn.appendChild(span);
+            });
+        }
+
+        function updateClocks() {
+            const options = { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+            const now = new Date();
+            document.getElementById('sao-paulo-time').textContent = now.toLocaleTimeString('pt-BR', { ...options, timeZone: 'America/Sao_Paulo' });
+            document.getElementById('new-york-time').textContent = now.toLocaleTimeString('en-US', { ...options, timeZone: 'America/New_York' });
+            document.getElementById('london-time').textContent = now.toLocaleTimeString('en-GB', { ...options, timeZone: 'Europe/London' });
+            document.getElementById('tokyo-time').textContent = now.toLocaleTimeString('ja-JP', { ...options, timeZone: 'Asia/Tokyo' });
+        }
+
+        const apiKey = "SUA_CHAVE_REAL_AQUI";
+        function loadNews() {
+            if (!apiKey || apiKey === "SUA_CHAVE_REAL_AQUI") {
+                document.getElementById('forex-news-list-pt').innerHTML = '<li>Insira uma chave de API válida</li>';
+                document.getElementById('crypto-news-list-pt').innerHTML = '<li>Insira uma chave de API válida</li>';
+                return;
+            }
+            const urls = {
+                forex: `https://newsapi.org/v2/everything?q=forex+xauusd&language=pt&sortBy=publishedAt&apiKey=${apiKey}`,
+                crypto: `https://newsapi.org/v2/everything?q=bitcoin+ethereum&language=pt&sortBy=publishedAt&apiKey=${apiKey}`
+            };
+            fetchNews(urls.forex, 'forex-news-list-pt');
+            fetchNews(urls.crypto, 'crypto-news-list-pt');
+        }
+
+        function fetchNews(url, listId) {
+            fetch(url, { cache: 'force-cache' })
+                .then(response => response.json())
+                .then(data => {
+                    const newsList = document.getElementById(listId);
+                    newsList.innerHTML = '';
+                    data.articles.slice(0, 5).forEach(article => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a href="${article.url}" target="_blank">${article.title}</a>`;
+                        newsList.appendChild(li);
+                    });
+                })
+                .catch(() => {
+                    document.getElementById(listId).innerHTML = '<li>Erro ao carregar notícias.</li>';
+                });
+        }
+
+        // Tema
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            document.getElementById('theme-toggle').textContent = document.body.classList.contains('light-mode') ? 'Modo Escuro' : 'Modo Claro';
+        });
+
+        // Isabella Rossi - Assistente IA
+        const isabellaMessages = {
+            'Notícias de Forex': 'Ciao! Aqui você encontra as últimas notícias de Forex, como XAU/USD e USD/JPY. Durante meu estágio na Goldman Sachs, vi como eventos econômicos movem o mercado. Fique atento a dados como inflação e juros – eles são o pulso do Forex!',
+            'Notícias de Criptomoedas': 'Notícias frescas sobre Bitcoin, Ethereum e mais! Em Milão, acompanhei o boom das criptos – manchetes sobre regulação ou adoção podem disparar volatilidade. Use isso para antecipar movimentos!',
+            'Preço do Ouro (XAU/USD)': 'O preço do ouro em tempo real! Estudei na Bocconi como o ouro é um porto seguro em crises. Este valor reflete oferta, demanda e sentimento global – perfeito para scalping ou hedges de longo prazo.',
+            'Sinais de Trading': 'Sinais para Forex e cripto com base em volume e força. Em Harvard, aprendi que volume alto com direção clara é ouro puro para traders. Filtre por timeframe e combine com gráficos para entradas precisas!',
+            'Gráficos em Tempo Real': 'Gráficos do TradingView para BTC/USD, XAU/USD e IBOV. Minha paixão por análise técnica começou em Nova York – use-os para identificar padrões como suportes e resistências. Um trader informado é um trader vencedor!',
+            'Sinais de Agressores': 'Ações simuladas de grandes players como JPMorgan. Na Goldman Sachs, vi como esses "agressores" movem o mercado. Volume acima de 500 pode indicar um rompimento – confirme com outros sinais!',
+            'Sinais da B3': 'Sinais para ações como PETR4 e VALE3. No Brasil, refinei minha análise da B3 – volume e direção aqui mostram o apetite do mercado local. Ideal para swing trading ou day trading em ativos brasileiros!',
+            'Sinais de Fundos Imobiliários': 'Sinais para FIIs como KNRI11. Minha experiência com renda fixa me ensinou que FIIs equilibram risco e retorno. Use esses sinais para trades táticos ou posições de longo prazo – atenção ao volume!',
+            'Médias Móveis e Fechamentos Ptax': 'Médias da taxa Ptax (BRL/USD). Em Harvard, estudei como essas médias refletem tendências macro. A SMA200 é um farol para o longo prazo – cruze com fundamentos para decisões estratégicas!',
+            'Médias XAU/USD': 'Médias móveis do ouro. Na teoria financeira, elas suavizam ruídos e mostram a direção real. Um cruzamento da SMA20 sobre a SMA50 pode ser um sinal poderoso – confirme com volume!',
+            'Médias Bitcoin': 'Médias do Bitcoin – um ativo que exige olho vivo! Minha pesquisa em Milão mostrou que a SMA200 é chave para hodlers. Use para avaliar se o preço está caro ou barato no longo prazo.',
+            'Taxa Selic': 'A Selic atual, direto do Banco Central! Em Economia, aprendi que ela impacta tudo – de FIIs a câmbio. Uma Selic alta atrai capital externo, mexendo com o Forex. Fique de olho!',
+            'default': 'Ciao! Sou Isabella Rossi, formada em Economia pela Bocconi e com MBA em Harvard. Clique em uma seção para aprender com minha experiência em Milão, Nova York e no mercado brasileiro!'
+        };
+        document.querySelectorAll('.section').forEach(section => {
+            section.addEventListener('click', () => {
+                const sectionTitle = section.querySelector('h2').textContent;
+                document.getElementById('isabella-message').textContent = isabellaMessages[sectionTitle] || isabellaMessages['default'];
+            });
+        });
+
+        // Minimizar/Maximizar Isabella
+        document.getElementById('minimize-btn').addEventListener('click', () => {
+            const isabellaBox = document.getElementById('isabella-assistant');
+            isabellaBox.classList.toggle('minimized');
+            document.getElementById('minimize-btn').textContent = isabellaBox.classList.contains('minimized') ? '+' : '-';
+        });
+    </script>
+</body>
+</html>

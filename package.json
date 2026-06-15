@@ -1,0 +1,16 @@
+{
+  "name": "ponteiro-backend",
+  "version": "1.0.0",
+  "description": "Backend proxy para API Apised",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
+}
