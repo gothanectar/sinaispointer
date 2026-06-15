@@ -67,7 +67,8 @@ function calcularSmartMoney(velas) {
                     obs.push({
                         tipo: 'BULLISH OB (SUPORTE)',
                         topo: velas[j].high,
-                        fundo: velas[j].low
+                        fundo: velas[j].low,
+                        timestamp: velas[j].timestamp
                     });
                     break;
                 }
@@ -80,7 +81,8 @@ function calcularSmartMoney(velas) {
                     obs.push({
                         tipo: 'BEARISH OB (RESISTÊNCIA)',
                         topo: velas[j].high,
-                        fundo: velas[j].low
+                        fundo: velas[j].low,
+                        timestamp: velas[j].timestamp
                     });
                     break;
                 }
