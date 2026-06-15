@@ -16,22 +16,15 @@ let detectedOBsSMC = [];
 async function iniciarSMCAdvanced() {
     console.log('Iniciando SMC Advanced...');
     
-    // Aguardar LightweightCharts carregar
-    let tentativas = 0;
-    while (typeof LightweightCharts === 'undefined' && tentativas < 50) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        tentativas++;
-    }
-    
-    if (typeof LightweightCharts === 'undefined') {
-        console.error('LightweightCharts não está carregado após 5 segundos');
-        return;
-    }
-    
     const containerGrafico = document.getElementById('smc-advanced-container');
     
     if (!containerGrafico) {
         console.error('Container SMC Advanced não encontrado');
+        return;
+    }
+    
+    if (typeof LightweightCharts === 'undefined') {
+        console.error('LightweightCharts não está carregado');
         return;
     }
     
@@ -58,8 +51,8 @@ async function iniciarSMCAdvanced() {
         height: 500
     });
 
-    // Série Principal de Candlesticks
-    serieVelasSMC = graficoSMC.addCandlestickSeries({
+    // Série Principal de Candlesticks - usando a API correta
+    serieVelasSMC = graficoSMC.addSeries(LightweightCharts.CandlestickSeries, {
         upColor: '#00ff88', 
         downColor: '#ff3355', 
         borderVisible: false, 
