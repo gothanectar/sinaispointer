@@ -5535,6 +5535,18 @@
             <!-- SMC Advanced Chart -->
             <div class="multi-charts-section" style="margin-bottom: 20px;">
                 <div class="multi-charts-title">📊 SMC Advanced - FVG, OB, Liquidez e CHoCH</div>
+                <!-- Seletor de Timeframes -->
+                <div style="display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap;">
+                    <button class="smc-timeframe-btn active" data-timeframe="1m" style="padding: 6px 12px; background: rgba(0, 255, 136, 0.2); border: 1px solid #00ff88; color: #00ff88; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">1m</button>
+                    <button class="smc-timeframe-btn" data-timeframe="5m" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #888; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">5m</button>
+                    <button class="smc-timeframe-btn" data-timeframe="15m" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #888; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">15m</button>
+                    <button class="smc-timeframe-btn" data-timeframe="30m" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #888; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">30m</button>
+                    <button class="smc-timeframe-btn" data-timeframe="1h" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #888; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">1h</button>
+                    <button class="smc-timeframe-btn" data-timeframe="4h" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #888; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">4h</button>
+                    <button class="smc-timeframe-btn" data-timeframe="1d" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #888; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">1d</button>
+                    <button class="smc-timeframe-btn" data-timeframe="1w" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #888; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">1w</button>
+                    <button class="smc-timeframe-btn" data-timeframe="1M" style="padding: 6px 12px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #888; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: bold; transition: all 0.2s;">1M</button>
+                </div>
                 <div id="smc-advanced-container" style="position: relative; width: 100%; height: 500px; background: #0c0d14; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); overflow: hidden;">
                     <!-- Placar flutuante de status dentro do gráfico -->
                     <div id="smc-status-overlay" style="position: absolute; top: 10px; left: 10px; z-index: 10; background: rgba(10,11,18,0.85); padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); font-family: monospace; font-size: 11px; color: #fff; pointer-events: none;">

@@ -2,13 +2,27 @@
 // SMC ADVANCED ENGINE v2.0 - FVG, OB, LIQUIDEZ E CHoCH
 // ========================================================
 const ATIVO_SMC = 'PAXGUSDT'; // Ouro pareado em dólar na Binance
-const TIMEFRAME_SMC = '15m';
+let current_timeframe_smc = '15m'; // Timeframe padrão inicial
 let historicoVelasSMC = [];
 let objetosDesenhadosSMC = [];
 let graficoSMC = null;
 let serieVelasSMC = null;
 let detectedFVGsSMC = [];
 let detectedOBsSMC = [];
+let activeWebSocketSMC = null; // Guarda a conexão para poder fechar ao trocar de TF
+
+// Mapeamento dos botões para o padrão aceito pela API da Binance
+const TIMEFRAME_MAP_SMC = {
+    '1m': '1m',
+    '5m': '5m',
+    '15m': '15m',
+    '30m': '30m',
+    '1h': '1h',
+    '4h': '4h',
+    '1d': '1d',
+    '1w': '1w',
+    '1M': '1M'
+};
 
 // ========================================================
 // INICIALIZAÇÃO DO GRÁFICO SMC AVANÇADO
@@ -74,7 +88,11 @@ async function iniciarSMCAdvanced() {
 // MOTOR MATEMÁTICO: DETECÇÃO DE SMC AVANÇADO
 // ========================================================
 function processarIndicadoresSMC(velas) {
-    if (!graficoSMC || velas.length < 10) return;
+    console.log('Processando indicadores SMC...', velas.length);
+    if (!graficoSMC || velas.length < 10) {
+        console.log('Condição não atendida para processar indicadores');
+        return;
+    }
 
     // 1. Limpa desenhos anteriores para não dar lag no gráfico
     objetosDesenhadosSMC.forEach(obj => {
@@ -300,7 +318,7 @@ function marcarLinhaEstruturaSMC(tempo, preco, texto, cor, estilo = LightweightC
 // REQUISIÇÕES DE MERCADO INTEGRADAS (BINANCE GRATUITA)
 // ========================================================
 async function carregarHistoricoSMC() {
-    const url = `https://api.binance.com/api/v3/klines?symbol=${ATIVO_SMC}&interval=${TIMEFRAME_SMC}&limit=180`;
+    const url = `https://api.binance.com/api/v3/klines?symbol=${ATIVO_SMC}&interval=${current_timeframe_smc}&limit=180`;
     try {
         const response = await fetch(url);
         const dados = await response.json();
@@ -338,7 +356,8 @@ async function carregarHistoricoSMC() {
 }
 
 function conectarWebSocketSMC() {
-    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${ATIVO_SMC.toLowerCase()}@kline_${TIMEFRAME_SMC}`);
+    const ws = new WebSocket(`wss://stream.binance.com:9443/ws/${ATIVO_SMC.toLowerCase()}@kline_${current_timeframe_smc}`);
+    activeWebSocketSMC = ws;
 
     ws.onmessage = (event) => {
         const dados = JSON.parse(event.data);
@@ -378,9 +397,54 @@ function conectarWebSocketSMC() {
     };
 
     ws.onclose = () => {
-        setTimeout(conectarWebSocketSMC, 5000);
+        // Só tenta reconectar automaticamente se a conexão não foi fechada de propósito para trocar de TF
+        if (activeWebSocketSMC && activeWebSocketSMC.url.includes(`@kline_${current_timeframe_smc}`)) {
+            setTimeout(conectarWebSocketSMC, 5000);
+        }
     };
+}
+
+// Função para mudar timeframe
+function mudarTimeframeSMC(timeframe) {
+    if (current_timeframe_smc === timeframe) return;
+    
+    // Fechar conexão WebSocket atual
+    if (activeWebSocketSMC) {
+        activeWebSocketSMC.close();
+        activeWebSocketSMC = null;
+    }
+    
+    // Atualizar timeframe atual
+    current_timeframe_smc = timeframe;
+    
+    // Limpar arrays de indicadores
+    detectedFVGsSMC = [];
+    detectedOBsSMC = [];
+    
+    // Recarregar dados com novo timeframe
+    carregarHistoricoSMC();
+    conectarWebSocketSMC();
+    
+    // Atualizar botões ativos
+    document.querySelectorAll('.smc-timeframe-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.timeframe === timeframe) {
+            btn.classList.add('active');
+        }
+    });
 }
 
 // Disparo automático na inicialização da página
 window.addEventListener('DOMContentLoaded', iniciarSMCAdvanced);
+
+// Adicionar event listeners nos botões de timeframe
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => {
+        document.querySelectorAll('.smc-timeframe-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const timeframe = btn.dataset.timeframe;
+                mudarTimeframeSMC(timeframe);
+            });
+        });
+    }, 1000);
+});
