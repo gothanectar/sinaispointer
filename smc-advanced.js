@@ -226,8 +226,15 @@ function processarIndicadoresSMC(velas) {
 // ATUALIZAR TABELA DE BULLISH/BEARISH
 // ========================================================
 function atualizarTabelaSMC() {
+    console.log('Atualizando tabela SMC...');
     const painelSMC = document.getElementById('smc-advanced-panel');
-    if (!painelSMC) return;
+    if (!painelSMC) {
+        console.error('Painel SMC não encontrado');
+        return;
+    }
+    
+    console.log('FVGs detectados:', detectedFVGsSMC.length);
+    console.log('OBs detectados:', detectedOBsSMC.length);
     
     let htmlFVG = detectedFVGsSMC.slice(-4).reverse().map(f => `
         <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size:12px; border-left: 3px solid ${f.tipo === 'BULLISH' ? '#00ff88' : '#ff3355'}; padding-left: 8px;">
@@ -269,6 +276,8 @@ function atualizarTabelaSMC() {
             <span style="color:#ffaa00;">●</span> Resistência
         </div>
     `;
+    
+    console.log('Tabela atualizada com sucesso');
 }
 
 // Auxiliar para esticar textos e marcações horizontais na tela
