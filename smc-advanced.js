@@ -7,22 +7,35 @@ let historicoVelasSMC = [];
 let objetosDesenhadosSMC = [];
 let graficoSMC = null;
 let serieVelasSMC = null;
+let detectedFVGsSMC = [];
+let detectedOBsSMC = [];
 
 // ========================================================
 // INICIALIZAÇÃO DO GRÁFICO SMC AVANÇADO
 // ========================================================
 async function iniciarSMCAdvanced() {
+    console.log('Iniciando SMC Advanced...');
+    
+    // Aguardar LightweightCharts carregar
+    let tentativas = 0;
+    while (typeof LightweightCharts === 'undefined' && tentativas < 50) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        tentativas++;
+    }
+    
+    if (typeof LightweightCharts === 'undefined') {
+        console.error('LightweightCharts não está carregado após 5 segundos');
+        return;
+    }
+    
     const containerGrafico = document.getElementById('smc-advanced-container');
     
     if (!containerGrafico) {
         console.error('Container SMC Advanced não encontrado');
         return;
     }
-
-    if (typeof LightweightCharts === 'undefined') {
-        console.error('LightweightCharts não está carregado');
-        return;
-    }
+    
+    console.log('Container encontrado, criando gráfico...');
 
     // Criar gráfico
     graficoSMC = LightweightCharts.createChart(containerGrafico, {
@@ -79,6 +92,7 @@ function processarIndicadoresSMC(velas) {
     objetosDesenhadosSMC = [];
 
     // --- 1. FAIR VALUE GAPS (FVG) ---
+    detectedFVGsSMC = [];
     for (let i = 2; i < velas.length; i++) {
         const v1 = velas[i - 2]; 
         const v2 = velas[i - 1]; 
@@ -98,6 +112,13 @@ function processarIndicadoresSMC(velas) {
                 { time: timestampSegundos + (15 * 60 * 4), value: v1.high }
             ]);
             objetosDesenhadosSMC.push(fvgBox);
+            
+            detectedFVGsSMC.push({
+                tipo: 'BULLISH',
+                topo: v3.low,
+                fundo: v1.high,
+                timestamp: v2.time
+            });
         }
         
         if (v3.high < v1.low && v2.close < v2.open) { // Bearish FVG
@@ -114,10 +135,18 @@ function processarIndicadoresSMC(velas) {
                 { time: timestampSegundos + (15 * 60 * 4), value: v3.high }
             ]);
             objetosDesenhadosSMC.push(fvgBox);
+            
+            detectedFVGsSMC.push({
+                tipo: 'BEARISH',
+                topo: v1.low,
+                fundo: v3.high,
+                timestamp: v2.time
+            });
         }
     }
 
     // --- 2. ORDER BLOCKS (OB) & CHoCH (Change of Character) ---
+    detectedOBsSMC = [];
     let ultimoTopo = velas[0].high;
     let ultimaMinima = velas[0].low;
     let tendenciaAtual = 'ALTA';
@@ -154,6 +183,37 @@ function processarIndicadoresSMC(velas) {
                 { time: timestampFim, value: velas[i-1].low }
             ]);
             objetosDesenhadosSMC.push(obSuporte);
+            
+            detectedOBsSMC.push({
+                tipo: 'BULLISH OB (SUPORTE)',
+                topo: velas[i-1].high,
+                fundo: velas[i-1].low,
+                timestamp: velas[i-1].time
+            });
+        }
+        
+        // Order Blocks Bearish
+        if (v.close < v.open && (v.open - v.close) > (vAnterior.high - vAnterior.low) * 1.6) {
+            const obResistencia = graficoSMC.addLineSeries({ 
+                color: 'rgba(255, 170, 0, 0.6)', 
+                lineWidth: 2, 
+                lineStyle: LightweightCharts.LineStyle.Solid,
+                title: 'OB Bearish' 
+            });
+            const timestampSegundos = Math.floor(velas[i-1].time / 1000);
+            const timestampFim = Math.floor(v.time / 1000) + (15 * 60 * 8);
+            obResistencia.setData([
+                { time: timestampSegundos, value: velas[i-1].high }, 
+                { time: timestampFim, value: velas[i-1].high }
+            ]);
+            objetosDesenhadosSMC.push(obResistencia);
+            
+            detectedOBsSMC.push({
+                tipo: 'BEARISH OB (RESISTÊNCIA)',
+                topo: velas[i-1].high,
+                fundo: velas[i-1].low,
+                timestamp: velas[i-1].time
+            });
         }
     }
 
@@ -164,6 +224,58 @@ function processarIndicadoresSMC(velas) {
             marcarLinhaEstruturaSMC(velas[i].time, velas[i].high, 'LIQ 💵', 'rgba(255, 255, 255, 0.4)', LightweightCharts.LineStyle.Dotted);
         }
     }
+    
+    // Atualizar tabela de bullish/bearish
+    atualizarTabelaSMC();
+}
+
+// ========================================================
+// ATUALIZAR TABELA DE BULLISH/BEARISH
+// ========================================================
+function atualizarTabelaSMC() {
+    const painelSMC = document.getElementById('smc-advanced-panel');
+    if (!painelSMC) return;
+    
+    let htmlFVG = detectedFVGsSMC.slice(-4).reverse().map(f => `
+        <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size:12px; border-left: 3px solid ${f.tipo === 'BULLISH' ? '#00ff88' : '#ff3355'}; padding-left: 8px;">
+            <span style="color:${f.tipo === 'BULLISH' ? '#00ff88' : '#ff3355'}; font-weight:bold;">FVG ${f.tipo}</span>
+            <span style="color:#bbb;">$${f.fundo.toFixed(2)} - $${f.topo.toFixed(2)}</span>
+        </div>
+    `).join('') || '<p style="color:#666; font-size:12px; margin:5px 0;">Nenhum FVG no timeframe atual</p>';
+
+    let htmlOB = detectedOBsSMC.slice(-4).reverse().map(o => `
+        <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-size:12px; border-left: 3px solid ${o.tipo.includes('BULLISH') ? '#00bfff' : '#ffaa00'}; padding-left: 8px;">
+            <span style="color:${o.tipo.includes('BULLISH') ? '#00bfff' : '#ffaa00'}; font-weight:bold;">${o.tipo.split(' ')[0]} OB</span>
+            <span style="color:#bbb;">$${o.fundo.toFixed(2)} - $${o.topo.toFixed(2)}</span>
+        </div>
+    `).join('') || '<p style="color:#666; font-size:12px; margin:5px 0;">Aguardando Order Block institucional</p>';
+
+    const ultimaVela = historicoVelasSMC[historicoVelasSMC.length - 1];
+    const precoAtual = ultimaVela ? ultimaVela.close : 0;
+
+    painelSMC.innerHTML = `
+        <div style="border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 8px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
+            <h4 style="margin:0; color:#fff; font-size:13px; letter-spacing: 0.5px;">⚡ SMC ADVANCED (GOLD)</h4>
+            <span style="font-size:11px; color:#00ff88; font-weight:bold;">● Live: $${precoAtual.toFixed(2)}</span>
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+            <div style="font-size:10px; color:#555; font-weight:bold; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Zonas de Ineficiência (FVG)</div>
+            ${htmlFVG}
+        </div>
+        
+        <div style="margin-bottom: 12px;">
+            <div style="font-size:10px; color:#555; font-weight:bold; text-transform:uppercase; margin-bottom:6px; letter-spacing:0.5px;">Order Blocks Institucionais</div>
+            ${htmlOB}
+        </div>
+        
+        <div style="font-size:10px; color:#444; margin-top:10px;">
+            <span style="color:#00ff88;">●</span> Bullish (Compra) &nbsp; 
+            <span style="color:#ff3355;">●</span> Bearish (Venda) &nbsp; 
+            <span style="color:#00bfff;">●</span> Suporte &nbsp; 
+            <span style="color:#ffaa00;">●</span> Resistência
+        </div>
+    `;
 }
 
 // Auxiliar para esticar textos e marcações horizontais na tela
