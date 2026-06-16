@@ -332,6 +332,9 @@ async function mudarTimeframeTFLab(novoTimeframe) {
 // Expõe a função globalmente para o clique nos botões funcionar
 window.mudarTimeframeTFLab = mudarTimeframeTFLab;
 
+// Expõe a função de inicialização com o nome esperado pelo HTML
+window.initTFLabSMC = iniciarTFLabSMC;
+
 // ==========================================
 // 5. CONEXÕES DE DADOS (BINANCE REST + WS)
 // ==========================================
