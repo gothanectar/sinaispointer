@@ -66,11 +66,16 @@ async function iniciarSMCAdvanced() {
     });
 
     // Série Principal de Candlesticks - usando a API correta
+    if (typeof graficoSMC.addSeries !== 'function') {
+        console.error('❌ graficoSMC.addSeries não é uma função');
+        return;
+    }
+
     serieVelasSMC = graficoSMC.addSeries(LightweightCharts.CandlestickSeries, {
-        upColor: '#00ff88', 
-        downColor: '#ff3355', 
-        borderVisible: false, 
-        wickUpColor: '#00ff88', 
+        upColor: '#00ff88',
+        downColor: '#ff3355',
+        borderVisible: false,
+        wickUpColor: '#00ff88',
         wickDownColor: '#ff3355'
     });
 
@@ -94,6 +99,11 @@ function processarIndicadoresSMC(velas) {
         return;
     }
 
+    // Desativado: API do Lightweight Charts não suporta addAreaSeries/addLineSeries
+    // As regiões não serão desenhadas visualmente, mas os sinais ainda funcionam
+    console.log('⚠️ Desenho de regiões SMC desativado (API não suportada)');
+    return;
+
     // 1. Limpa desenhos anteriores para não dar lag no gráfico
     objetosDesenhadosSMC.forEach(obj => {
         try {
@@ -104,25 +114,43 @@ function processarIndicadoresSMC(velas) {
 
     // --- 1. FAIR VALUE GAPS (FVG) ---
     detectedFVGsSMC = [];
+    
+    // Verificar se o gráfico existe antes de tentar desenhar
+    if (!graficoSMC || typeof graficoSMC.addAreaSeries !== 'function') {
+        console.log('⚠️ Gráfico SMC não inicializado ou API não suportada, pulando desenho visual');
+        // Continuar processando sinais mesmo sem desenho visual
+    }
+    
     for (let i = 2; i < velas.length; i++) {
         const v1 = velas[i - 2]; 
         const v2 = velas[i - 1]; 
         const v3 = velas[i];
         
         if (v3.low > v1.high && v2.close > v2.open) { // Bullish FVG
-            const fvgBox = graficoSMC.addAreaSeries({ 
-                topColor: 'rgba(0, 255, 136, 0.12)', 
-                bottomColor: 'rgba(0, 0, 0, 0)', 
-                lineColor: '#00ff88', 
-                lineWidth: 1, 
-                lineStyle: LightweightCharts.LineStyle.Dashed 
-            });
-            const timestampSegundos = Math.floor(v2.time / 1000);
-            fvgBox.setData([
-                { time: timestampSegundos, value: v3.low }, 
-                { time: timestampSegundos + (15 * 60 * 4), value: v1.high }
-            ]);
-            objetosDesenhadosSMC.push(fvgBox);
+            let fvgBox;
+            // Só tentar desenhar se o gráfico suportar
+            if (graficoSMC && typeof graficoSMC.addAreaSeries === 'function') {
+                try {
+                    fvgBox = graficoSMC.addAreaSeries({
+                        topColor: 'rgba(0, 255, 136, 0.12)',
+                        bottomColor: 'rgba(0, 0, 0, 0)',
+                        lineColor: '#00ff88',
+                        lineWidth: 1,
+                        lineStyle: LightweightCharts.LineStyle.Dashed
+                    });
+                } catch (e) {
+                    console.error('Erro ao criar série de área FVG bullish:', e);
+                }
+            }
+            // Só definir dados se o box foi criado com sucesso
+            if (fvgBox) {
+                const timestampSegundos = Math.floor(v2.time / 1000);
+                fvgBox.setData([
+                    { time: timestampSegundos, value: v3.low }, 
+                    { time: timestampSegundos + (15 * 60 * 4), value: v1.high }
+                ]);
+                objetosDesenhadosSMC.push(fvgBox);
+            }
             
             detectedFVGsSMC.push({
                 tipo: 'BULLISH',
@@ -133,19 +161,30 @@ function processarIndicadoresSMC(velas) {
         }
         
         if (v3.high < v1.low && v2.close < v2.open) { // Bearish FVG
-            const fvgBox = graficoSMC.addAreaSeries({ 
-                topColor: 'rgba(255, 51, 85, 0.12)', 
-                bottomColor: 'rgba(0, 0, 0, 0)', 
-                lineColor: '#ff3355', 
-                lineWidth: 1, 
-                lineStyle: LightweightCharts.LineStyle.Dashed 
-            });
-            const timestampSegundos = Math.floor(v2.time / 1000);
-            fvgBox.setData([
-                { time: timestampSegundos, value: v1.low }, 
-                { time: timestampSegundos + (15 * 60 * 4), value: v3.high }
-            ]);
-            objetosDesenhadosSMC.push(fvgBox);
+            let fvgBox;
+            // Só tentar desenhar se o gráfico suportar
+            if (graficoSMC && typeof graficoSMC.addAreaSeries === 'function') {
+                try {
+                    fvgBox = graficoSMC.addAreaSeries({
+                        topColor: 'rgba(255, 51, 85, 0.12)',
+                        bottomColor: 'rgba(0, 0, 0, 0)',
+                        lineColor: '#ff3355',
+                        lineWidth: 1,
+                        lineStyle: LightweightCharts.LineStyle.Dashed
+                    });
+                } catch (e) {
+                    console.error('Erro ao criar série de área FVG bearish:', e);
+                }
+            }
+            // Só definir dados se o box foi criado com sucesso
+            if (fvgBox) {
+                const timestampSegundos = Math.floor(v2.time / 1000);
+                fvgBox.setData([
+                    { time: timestampSegundos, value: v1.low }, 
+                    { time: timestampSegundos + (15 * 60 * 4), value: v3.high }
+                ]);
+                objetosDesenhadosSMC.push(fvgBox);
+            }
             
             detectedFVGsSMC.push({
                 tipo: 'BEARISH',
@@ -181,19 +220,30 @@ function processarIndicadoresSMC(velas) {
 
         // Desenhar caixas de Order Blocks Institucionais ativos
         if (v.close > v.open && (v.close - v.open) > (vAnterior.high - vAnterior.low) * 1.6) {
-            const obSuporte = graficoSMC.addLineSeries({ 
-                color: 'rgba(0, 191, 255, 0.6)', 
-                lineWidth: 2, 
-                lineStyle: LightweightCharts.LineStyle.Solid,
-                title: 'OB Bullish' 
-            });
-            const timestampSegundos = Math.floor(velas[i-1].time / 1000);
-            const timestampFim = Math.floor(v.time / 1000) + (15 * 60 * 8);
-            obSuporte.setData([
-                { time: timestampSegundos, value: velas[i-1].low }, 
-                { time: timestampFim, value: velas[i-1].low }
-            ]);
-            objetosDesenhadosSMC.push(obSuporte);
+            let obSuporte = null;
+            // Só tentar desenhar se o gráfico suportar
+            if (graficoSMC && typeof graficoSMC.addLineSeries === 'function') {
+                try {
+                    obSuporte = graficoSMC.addLineSeries({ 
+                        color: 'rgba(0, 191, 255, 0.6)', 
+                        lineWidth: 2, 
+                        lineStyle: LightweightCharts.LineStyle.Solid,
+                        title: 'OB Bullish' 
+                    });
+                } catch (e) {
+                    console.error('Erro ao criar série de linha OB bullish:', e);
+                }
+            }
+            // Só definir dados se a série foi criada com sucesso
+            if (obSuporte) {
+                const timestampSegundos = Math.floor(velas[i-1].time / 1000);
+                const timestampFim = Math.floor(v.time / 1000) + (15 * 60 * 8);
+                obSuporte.setData([
+                    { time: timestampSegundos, value: velas[i-1].low }, 
+                    { time: timestampFim, value: velas[i-1].low }
+                ]);
+                objetosDesenhadosSMC.push(obSuporte);
+            }
             
             detectedOBsSMC.push({
                 tipo: 'BULLISH OB (SUPORTE)',
@@ -205,19 +255,30 @@ function processarIndicadoresSMC(velas) {
         
         // Order Blocks Bearish
         if (v.close < v.open && (v.open - v.close) > (vAnterior.high - vAnterior.low) * 1.6) {
-            const obResistencia = graficoSMC.addLineSeries({ 
-                color: 'rgba(255, 170, 0, 0.6)', 
-                lineWidth: 2, 
-                lineStyle: LightweightCharts.LineStyle.Solid,
-                title: 'OB Bearish' 
-            });
-            const timestampSegundos = Math.floor(velas[i-1].time / 1000);
-            const timestampFim = Math.floor(v.time / 1000) + (15 * 60 * 8);
-            obResistencia.setData([
-                { time: timestampSegundos, value: velas[i-1].high }, 
-                { time: timestampFim, value: velas[i-1].high }
-            ]);
-            objetosDesenhadosSMC.push(obResistencia);
+            let obResistencia = null;
+            // Só tentar desenhar se o gráfico suportar
+            if (graficoSMC && typeof graficoSMC.addLineSeries === 'function') {
+                try {
+                    obResistencia = graficoSMC.addLineSeries({ 
+                        color: 'rgba(255, 170, 0, 0.6)', 
+                        lineWidth: 2, 
+                        lineStyle: LightweightCharts.LineStyle.Solid,
+                        title: 'OB Bearish' 
+                    });
+                } catch (e) {
+                    console.error('Erro ao criar série de linha OB bearish:', e);
+                }
+            }
+            // Só definir dados se a série foi criada com sucesso
+            if (obResistencia) {
+                const timestampSegundos = Math.floor(velas[i-1].time / 1000);
+                const timestampFim = Math.floor(v.time / 1000) + (15 * 60 * 8);
+                obResistencia.setData([
+                    { time: timestampSegundos, value: velas[i-1].high }, 
+                    { time: timestampFim, value: velas[i-1].high }
+                ]);
+                objetosDesenhadosSMC.push(obResistencia);
+            }
             
             detectedOBsSMC.push({
                 tipo: 'BEARISH OB (RESISTÊNCIA)',
@@ -238,6 +299,11 @@ function processarIndicadoresSMC(velas) {
     
     // Atualizar tabela de bullish/bearish
     atualizarTabelaSMC();
+
+    // Enviar sinais para o Telegram Signal Box
+    if (typeof TelegramSignalBox !== 'undefined' && TelegramSignalBox.atualizarSinaisGlobais) {
+        TelegramSignalBox.atualizarSinaisGlobais(detectedFVGsSMC, detectedOBsSMC);
+    }
 }
 
 // ========================================================
@@ -300,18 +366,28 @@ function atualizarTabelaSMC() {
 
 // Auxiliar para esticar textos e marcações horizontais na tela
 function marcarLinhaEstruturaSMC(tempo, preco, texto, cor, estilo = LightweightCharts.LineStyle.Solid) {
-    const linha = graficoSMC.addLineSeries({ 
-        color: cor, 
-        lineWidth: 1, 
-        lineStyle: estilo, 
-        title: texto 
-    });
-    const timestampSegundos = Math.floor(tempo / 1000);
-    linha.setData([
-        { time: timestampSegundos, value: preco }, 
-        { time: timestampSegundos + (15 * 60 * 6), value: preco }
-    ]);
-    objetosDesenhadosSMC.push(linha);
+    // Só tentar desenhar se o gráfico suportar
+    if (!graficoSMC || typeof graficoSMC.addLineSeries !== 'function') {
+        console.log('⚠️ Gráfico não suporta addLineSeries, pulando desenho de linha');
+        return;
+    }
+    
+    try {
+        const linha = graficoSMC.addLineSeries({ 
+            color: cor, 
+            lineWidth: 1, 
+            lineStyle: estilo, 
+            title: texto 
+        });
+        const timestampSegundos = Math.floor(tempo / 1000);
+        linha.setData([
+            { time: timestampSegundos, value: preco }, 
+            { time: timestampSegundos + (15 * 60 * 6), value: preco }
+        ]);
+        objetosDesenhadosSMC.push(linha);
+    } catch (e) {
+        console.error('Erro ao criar linha de estrutura:', e);
+    }
 }
 
 // ========================================================
