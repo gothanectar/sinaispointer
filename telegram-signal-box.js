@@ -659,7 +659,11 @@ function atualizarSinalAtual(signal, sl, tp1, tp2, tp3) {
             </div>
             <div class="signal-detail-row">
                 <span><strong>Fonte:</strong></span>
-                <span>${signal.source}</span>
+                <span>SMC (${signal.source || 'FVG'})</span>
+            </div>
+            <div class="signal-detail-row">
+                <span><strong>Timeframe:</strong></span>
+                <span>${signal.timeframe || '15m'}</span>
             </div>
             <div class="signal-detail-row">
                 <span><strong>SL:</strong></span>

@@ -98,6 +98,7 @@ export default async function handler(req, res) {
                     fvg_id: sinal.fvg_id,
                     tipo: sinal.tipo,
                     timeframe: sinal.timeframe, 
+                    fonte: 'FVG', // Padrão, pode ser atualizado se necessário
                     entrada: sinal.entrada,
                     sl: sinal.sl,
                     tp1: tp1,
