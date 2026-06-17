@@ -23442,6 +23442,34 @@ Esta régua é uma ferramenta de apoio. Sempre confirme os timeframes diretament
 
     </script>
 
+    <!-- Telegram Signal Box (carregado primeiro para estar disponível para os outros scripts) -->
+    <script src="telegram-signal-box.js"></script>
+
+    <!-- Script de Debug para Telegram Signal Box -->
+    <script>
+        setTimeout(() => {
+            console.log('🔍 Verificando TelegramSignalBox...');
+            console.log('TelegramSignalBox existe?', typeof TelegramSignalBox !== 'undefined');
+            console.log('Box existe no DOM?', document.getElementById('telegram-signal-box'));
+            
+            if (typeof TelegramSignalBox !== 'undefined') {
+                console.log('✅ TelegramSignalBox carregado com sucesso');
+                // Tentar criar o box manualmente se não existir
+                if (!document.getElementById('telegram-signal-box')) {
+                    console.log('🔧 Box não encontrado, criando manualmente...');
+                    if (typeof criarBoxTelegramManual === 'function') {
+                        criarBoxTelegramManual();
+                    } else if (typeof TelegramSignalBox !== 'undefined' && TelegramSignalBox.atualizarSinaisGlobais) {
+                        // Tentar acessar a função interna
+                        console.log('🔧 Tentando criar box via função de backup...');
+                    }
+                }
+            } else {
+                console.error('❌ TelegramSignalBox não foi carregado!');
+            }
+        }, 2000);
+    </script>
+
     <!-- TF Lab SMC Indicator -->
     <script src="tflab-smc.js"></script>
 
