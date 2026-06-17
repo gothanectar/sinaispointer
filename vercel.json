@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "crons": [
-    {
-      "path": "/api/cron-smc",
-      "schedule": "*/1 * * * *"
-    }
-  ],
   "builds": [
     {
       "src": "api/**/*.js",
