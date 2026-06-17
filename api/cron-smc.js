@@ -124,8 +124,11 @@ Ativo: *${SYMBOL}* | Período: *15m*
             await redis.set('historico_sinais', historicoSinais);
         }
 
-        return res.status(200).json({ success: true, precoAtual });
+        // Resposta curta e limpa para o cron-job.org não dar erro de saída grande
+        return res.status(200).json({ ok: true });
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error(error);
+        // Resposta curta mesmo em caso de erro
+        return res.status(500).json({ error: "Erro interno" });
     }
 }
