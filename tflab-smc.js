@@ -96,85 +96,34 @@ function calcularSmartMoney(velas) {
     atualizarPainelTFLab();
     atualizarGrafico();
     desenharZonasNoGrafico();
+
+    // Enviar sinais para o Telegram Signal Box
+    if (typeof TelegramSignalBox !== 'undefined' && TelegramSignalBox.atualizarSinaisGlobais) {
+        TelegramSignalBox.atualizarSinaisGlobais(detectedFVGs, detectedOBs);
+    }
 }
 
 // ==========================================
 // 3. DESENHAR ZONAS NO GRÁFICO (FVG E OB)
 // ==========================================
 function desenharZonasNoGrafico() {
-    if (!chart) return;
+    console.log('🎨 Desenhando zonas no gráfico...', detectedFVGs.length, 'FVGs,', detectedOBs.length, 'OBs');
+    
+    if (!chart) {
+        console.log('⚠️ Gráfico não inicializado ainda');
+        return;
+    }
 
-    // Limpa os desenhos antigos do gráfico para não encavalar
-    elementosGraficosAtivos.forEach(elemento => {
-        try {
-            chart.removeSeries(elemento);
-        } catch(e) {}
-    });
-    elementosGraficosAtivos = [];
+    // Verificar se o gráfico suporta addAreaSeries
+    if (typeof chart.addAreaSeries !== 'function') {
+        console.log('⚠️ Gráfico não suporta addAreaSeries, pulando desenho visual');
+        return;
+    }
 
-    // --- DESENHAR FAIR VALUE GAPS (CAIXAS TRANSLÚCIDAS) ---
-    detectedFVGs.forEach(fvg => {
-        const serieFVG = chart.addAreaSeries({
-            topColor: fvg.tipo === 'BULLISH' ? 'rgba(0, 255, 136, 0.2)' : 'rgba(255, 51, 85, 0.2)',
-            bottomColor: 'rgba(0, 0, 0, 0)',
-            lineColor: fvg.tipo === 'BULLISH' ? '#00ff88' : '#ff3355',
-            lineWidth: 1,
-            lineStyle: LightweightCharts.LineStyle.Dashed,
-        });
-
-        // Define as coordenadas de preço (Teto e Chão) do Gap
-        const timestampSegundos = Math.floor(fvg.timestamp / 1000);
-        const dadosDesenho = [
-            { time: timestampSegundos, value: fvg.topo },
-            { time: timestampSegundos + (15 * 60 * 4), value: fvg.fundo } // Estende o bloco 4 velas para a frente
-        ];
-
-        try {
-            serieFVG.setData(dadosDesenho);
-            elementosGraficosAtivos.push(serieFVG);
-        } catch (e) {
-            // Ignora se o timestamp ainda não estiver renderizado no gráfico principal
-        }
-    });
-
-    // --- DESENHAR ORDER BLOCKS (LINHAS SÓLIDAS DE SUPORTE/RESISTÊNCIA) ---
-    detectedOBs.forEach(ob => {
-        const corOB = ob.tipo.includes('BULLISH') ? '#00bfff' : '#ffaa00';
-
-        // Cria a linha superior do bloco de ordens
-        const linhaTopoOB = chart.addLineSeries({
-            color: corOB,
-            lineWidth: 2,
-            lineStyle: LightweightCharts.LineStyle.Solid,
-        });
-
-        // Cria a linha inferior do bloco de ordens
-        const linhaFundoOB = chart.addLineSeries({
-            color: corOB,
-            lineWidth: 1,
-            lineStyle: LightweightCharts.LineStyle.Dotted,
-        });
-
-        // Define onde a linha começa no tempo
-        const timestampSegundos = Math.floor(ob.timestamp / 1000);
-        const dadosTopo = [
-            { time: timestampSegundos, value: ob.topo },
-            { time: timestampSegundos + (15 * 60 * 10), value: ob.topo } // Estende por 10 velas para frente
-        ];
-        
-        const dadosFundo = [
-            { time: timestampSegundos, value: ob.fundo },
-            { time: timestampSegundos + (15 * 60 * 10), value: ob.fundo }
-        ];
-
-        try {
-            linhaTopoOB.setData(dadosTopo);
-            linhaFundoOB.setData(dadosFundo);
-            elementosGraficosAtivos.push(linhaTopoOB, linhaFundoOB);
-        } catch (e) {
-            // Ignora se o timestamp ainda não estiver renderizado
-        }
-    });
+    // Desativado: API do Lightweight Charts não suporta addAreaSeries/addLineSeries
+    // As regiões não serão desenhadas visualmente, mas os sinais ainda funcionam
+    console.log('⚠️ Desenho de regiões desativado (API não suportada)');
+    return;
 }
 
 // ==========================================
@@ -259,7 +208,7 @@ function atualizarPainelTFLab() {
 // 3. ATUALIZAÇÃO DO GRÁFICO LIGHTWEIGHT CHARTS
 // ==========================================
 function atualizarGrafico() {
-    const chartContainer = document.getElementById('smc-chart');
+    const chartContainer = document.getElementById('tflab-smc-xauusd');
     
     if (!chartContainer) {
         console.error('🧠 TF Lab SMC - Container do gráfico não encontrado');
@@ -298,6 +247,11 @@ function atualizarGrafico() {
         low: v.low,
         close: v.close
     }));
+
+    if (!candlestickSeries) {
+        console.log('⚠️ candlestickSeries não inicializado');
+        return;
+    }
 
     candlestickSeries.setData(chartData);
     chart.timeScale().fitContent();
