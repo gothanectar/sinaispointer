@@ -8,7 +8,7 @@ const redis = new Redis({
 });
 
 const TELEGRAM_TOKEN = '8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7u1SR6rw';
-const TELEGRAM_CHAT_ID = '@TradepulseBotFx'; 
+const TELEGRAM_CHAT_ID = '6297482127'; 
 const SYMBOL = 'PAXGUSDT';
 
 // Função auxiliar para processar a lógica SMC de forma isolada por timeframe
