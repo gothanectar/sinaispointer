@@ -36,13 +36,18 @@ async function rodarAnaliseSMC() {
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🧠 2. Cálculo de Alvos com o preço real extraído da vela
+                // 🧠 2. Cálculo de Alvos com o preço real extraído corretamente
         if (velas && velas.length > 0) {
-            const ultimaVela = velas[velas.length - 1];
-            const precoAtualOuro = parseFloat(ultimaVela[4]); // Pega o preço de fechamento real (índice 4)
+            // Se o dado vier como uma lista de velas da API de Klines, pegamos o preço de fechamento (índice 4)
+            const ultimaVelaRaw = velas[velas.length - 1];
+            
+            // CORREÇÃO DEFINITIVA: Garante a leitura se for uma lista da Binance ou se for um valor direto
+            const precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
+            
             const blocoDefendidoOB = precoAtualOuro - 4.50; // Simula uma Order Block $4.50 abaixo do preço
             
             const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
+
             
             const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
             console.log(mensagemLog);
