@@ -300,10 +300,11 @@ function processarIndicadoresSMC(velas) {
     // Atualizar tabela de bullish/bearish
     atualizarTabelaSMC();
 
-    // Enviar sinais para o Telegram Signal Box
-    if (typeof TelegramSignalBox !== 'undefined' && TelegramSignalBox.atualizarSinaisGlobais) {
-        TelegramSignalBox.atualizarSinaisGlobais(detectedFVGsSMC, detectedOBsSMC);
-    }
+    // DESATIVADO: Telegram Signal Box agora é alimentado apenas pelo backend via Redis
+    // Isso evita conflito entre detecção local e sinais do backend
+    // if (typeof TelegramSignalBox !== 'undefined' && TelegramSignalBox.atualizarSinaisGlobais) {
+    //     TelegramSignalBox.atualizarSinaisGlobais(detectedFVGsSMC, detectedOBsSMC);
+    // }
 }
 
 // ========================================================

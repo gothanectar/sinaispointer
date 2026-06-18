@@ -897,16 +897,106 @@ function forcarInclusaoNoHistoricoVisual(sinal, statusFinal) {
 }
 
 // ========================================================
-// ATUALIZAR VARIÁVEIS GLOBAIS DE SINAIS
+// CARREGAR SINAIS DO BACKEND (REDIS)
+// ========================================================
+async function carregarSinaisDoBackend() {
+    try {
+        const response = await fetch('/api/get-history');
+        const data = await response.json();
+        
+        if (data.historico && Array.isArray(data.historico)) {
+            // Separar sinal ABERTO dos sinais fechados
+            const sinalAberto = data.historico.find(s => s.status === 'ABERTO');
+            const sinaisFechados = data.historico.filter(s => s.status !== 'ABERTO');
+            
+            // Se há sinal ABERTO e ainda não está ativo no box, mostrar
+            if (sinalAberto && !signalState.signalActive) {
+                const signal = {
+                    type: sinalAberto.tipo,
+                    source: sinalAberto.fonte || 'FVG',
+                    price: sinalAberto.entrada,
+                    timeframe: sinalAberto.timeframe || '15m',
+                    timestamp: sinalAberto.id,
+                    uniqueId: sinalAberto.fvg_id || sinalAberto.id
+                };
+                
+                const sl = sinalAberto.sl;
+                const tp1 = sinalAberto.tp1;
+                const tp2 = sinalAberto.entrada + Math.abs(sinalAberto.entrada - sinalAberto.sl) * 2;
+                const tp3 = sinalAberto.entrada + Math.abs(sinalAberto.entrada - sinalAberto.sl) * 3;
+                
+                signalState.currentSignal = {
+                    ...signal,
+                    sl: sl,
+                    tp1: tp1,
+                    tp2: tp2,
+                    tp3: tp3,
+                    entryTime: sinalAberto.id,
+                    entryPrice: sinalAberto.entrada,
+                    horarioAbertura: sinalAberto.horario || new Date().toLocaleTimeString('pt-BR')
+                };
+                signalState.signalActive = true;
+                
+                atualizarSinalAtual(signal, sl, tp1, tp2, tp3);
+                console.log('📊 Sinal ABERTO carregado do backend:', signal);
+                
+                // Iniciar monitoramento de fechamento
+                if (signalState.monitoringInterval) {
+                    clearInterval(signalState.monitoringInterval);
+                }
+                signalState.monitoringInterval = setInterval(monitorarFechamentoSinal, 5000);
+            }
+            
+            // Se não há sinal ABERTO mas há sinal ativo no box, limpar
+            if (!sinalAberto && signalState.signalActive) {
+                pararSinalAtual('FECHADO NO BACKEND');
+            }
+            
+            // Atualizar tabela de histórico com sinais fechados
+            atualizarTabelaHistorico(sinaisFechados);
+        }
+    } catch (error) {
+        console.error('Erro ao carregar sinais do backend:', error);
+    }
+}
+
+// ========================================================
+// ATUALIZAR TABELA DE HISTÓRICO
+// ========================================================
+function atualizarTabelaHistorico(sinaisFechados) {
+    const corpoTabela = document.getElementById('tabela-historico-corpo');
+    if (!corpoTabela) return;
+    
+    // Limpar tabela
+    corpoTabela.innerHTML = '';
+    
+    // Adicionar sinais fechados
+    sinaisFechados.forEach(sinal => {
+        const corStatus = sinal.status.includes('GAIN') ? '#00ff88' : '#ff3355';
+        const novaLinha = document.createElement('tr');
+        novaLinha.style.borderBottom = '1px solid #333';
+        novaLinha.innerHTML = `
+            <td style="padding: 10px; color: #888;">${sinal.horario || 'N/A'}</td>
+            <td style="font-weight: bold; color: ${sinal.tipo === 'COMPRA' ? '#00ff88' : '#ff3355'}">${sinal.tipo}</td>
+            <td style="font-family: monospace; padding: 10px;">${sinal.entrada.toFixed(2)}</td>
+            <td style="font-weight: bold; color: ${corStatus}">${sinal.status}</td>
+        `;
+        corpoTabela.appendChild(novaLinha);
+    });
+}
+
+// ========================================================
+// ATUALIZAR VARIÁVEIS GLOBAIS DE SINAIS (DESATIVADO)
 // ========================================================
 function atualizarSinaisGlobais(fvgs, obs) {
+    // DESATIVADO: Telegram Signal Box agora é alimentado apenas pelo backend via Redis
     telegramFVGs = fvgs || [];
     telegramOBs = obs || [];
     
     // Processar sinais quando houver atualização
-    if (TELEGRAM_CONFIG.enabled) {
-        processarSinaisTelegram();
-    }
+    // if (TELEGRAM_CONFIG.enabled) {
+    //     processarSinaisTelegram();
+    // }
 }
 
 // ========================================================
@@ -915,6 +1005,13 @@ function atualizarSinaisGlobais(fvgs, obs) {
 function inicializarTelegramSignalBox() {
     console.log('🚀 Inicializando Telegram Signal Box...');
     criarTelegramSignalBox();
+    
+    // Carregar sinais do backend imediatamente
+    carregarSinaisDoBackend();
+    
+    // Atualizar sinais do backend a cada 5 segundos
+    setInterval(carregarSinaisDoBackend, 5000);
+    
     console.log('✅ Sistema de Telegram Signal Box inicializado');
 }
 

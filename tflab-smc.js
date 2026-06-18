@@ -97,10 +97,11 @@ function calcularSmartMoney(velas) {
     atualizarGrafico();
     desenharZonasNoGrafico();
 
-    // Enviar sinais para o Telegram Signal Box
-    if (typeof TelegramSignalBox !== 'undefined' && TelegramSignalBox.atualizarSinaisGlobais) {
-        TelegramSignalBox.atualizarSinaisGlobais(detectedFVGs, detectedOBs);
-    }
+    // DESATIVADO: Telegram Signal Box agora é alimentado apenas pelo backend via Redis
+    // Isso evita conflito entre detecção local e sinais do backend
+    // if (typeof TelegramSignalBox !== 'undefined' && TelegramSignalBox.atualizarSinaisGlobais) {
+    //     TelegramSignalBox.atualizarSinaisGlobais(detectedFVGs, detectedOBs);
+    // }
 }
 
 // ==========================================
