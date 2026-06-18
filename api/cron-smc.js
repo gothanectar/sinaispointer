@@ -61,26 +61,19 @@ function analisarTimeframeSMC(velas, precoAtual, timeframe) {
 
 module.exports = async function handler(req, res) {
     try {
-        // 1. Coleta dados de 5m, 15m e 4h em paralelo para máxima velocidade e performance na nuvem
-        // Usando api1.binance.com com headers User-Agent oficial da Binance
-        const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-            'Accept': 'application/json',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Connection': 'keep-alive',
-            'Referer': 'https://www.binance.com/'
-        };
+        // 1. Coleta dados de 5m, 15m e 4h usando CoinGecko API (gratuita, não requer autenticação)
+        // CoinGecko usa IDs diferentes: paxg para PAXG (Gold-backed token)
+        const coinId = 'paxg-gold';
         const [res5m, res15m, res4h] = await Promise.all([
-            axios.get(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=5m&limit=50`, { headers }),
-            axios.get(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=15m&limit=50`, { headers }),
-            axios.get(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=4h&limit=50`, { headers })
+            axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=1`),
+            axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=7`),
+            axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=90`)
         ]);
 
-        // Formatação dos arrays de velas
-        const velas5m = res5m.data.map(v => ({ timestamp: Number(v[0]), open: parseFloat(v[1]), high: parseFloat(v[2]), low: parseFloat(v[3]), close: parseFloat(v[4]) }));
-        const velas15m = res15m.data.map(v => ({ timestamp: Number(v[0]), open: parseFloat(v[1]), high: parseFloat(v[2]), low: parseFloat(v[3]), close: parseFloat(v[4]) }));
-        const velas4h = res4h.data.map(v => ({ timestamp: Number(v[0]), open: parseFloat(v[1]), high: parseFloat(v[2]), low: parseFloat(v[3]), close: parseFloat(v[4]) }));
+        // Formatação dos arrays de velas - CoinGecko retorna [time, open, high, low, close]
+        const velas5m = res5m.data.map(v => ({ timestamp: v[0], open: v[1], high: v[2], low: v[3], close: v[4] }));
+        const velas15m = res15m.data.map(v => ({ timestamp: v[0], open: v[1], high: v[2], low: v[3], close: v[4] }));
+        const velas4h = res4h.data.map(v => ({ timestamp: v[0], open: v[1], high: v[2], low: v[3], close: v[4] }));
 
         // O preço spot atualizado é extraído do tick de 5 minutos mais recente
         const precoAtual = velas5m[velas5m.length - 1].close; 
