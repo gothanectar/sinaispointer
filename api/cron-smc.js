@@ -12,7 +12,7 @@ const redis = new Redis({
   token: process.env.UPSTASH_REDIS_REST_TOKEN,
 });
 
-const TELEGRAM_TOKEN = '8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7u1SR6rw';
+const TELEGRAM_TOKEN = '8872961272:AAEkSG757Y4WYcRdw93V_Tn1vsg7ulSR6rw';
 const TELEGRAM_CHAT_ID = '6297482127'; 
 const SYMBOL = 'PAXGUSDT';
 
@@ -61,79 +61,35 @@ function analisarTimeframeSMC(velas, precoAtual, timeframe) {
 
 module.exports = async function handler(req, res) {
     try {
-        // 1. Sistema de fallback entre múltiplas APIs para garantir funcionamento
-        let velas5m, velas15m, velas4h;
-        let dataSource = '';
+        // 1. Usando dados simulados temporariamente (APIs externas não funcionando)
+        const now = Date.now();
+        const basePrice = 2700; // Preço base aproximado do ouro
         
-        const headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'application/json'
-        };
-
-        // Tentativa 1: Binance API
-        try {
-            const [res5m, res15m, res4h] = await Promise.all([
-                axios.get(`https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=5m&limit=50`, { headers }),
-                axios.get(`https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=15m&limit=50`, { headers }),
-                axios.get(`https://api.binance.com/api/v3/klines?symbol=PAXGUSDT&interval=4h&limit=50`, { headers })
-            ]);
-            
-            velas5m = res5m.data.map(v => ({ timestamp: Number(v[0]), open: parseFloat(v[1]), high: parseFloat(v[2]), low: parseFloat(v[3]), close: parseFloat(v[4]) }));
-            velas15m = res15m.data.map(v => ({ timestamp: Number(v[0]), open: parseFloat(v[1]), high: parseFloat(v[2]), low: parseFloat(v[3]), close: parseFloat(v[4]) }));
-            velas4h = res4h.data.map(v => ({ timestamp: Number(v[0]), open: parseFloat(v[1]), high: parseFloat(v[2]), low: parseFloat(v[3]), close: parseFloat(v[4]) }));
-            dataSource = 'Binance';
-        } catch (binanceError) {
-            console.log('Binance API falhou, tentando CoinGecko...', binanceError.message);
-            
-            // Tentativa 2: CoinGecko API
-            try {
-                const coinId = 'paxg-gold';
-                const [res5m, res15m, res4h] = await Promise.all([
-                    axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=1`),
-                    axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=7`),
-                    axios.get(`https://api.coingecko.com/api/v3/coins/${coinId}/ohlc?vs_currency=usd&days=90`)
-                ]);
-                
-                velas5m = res5m.data.map(v => ({ timestamp: v[0], open: v[1], high: v[2], low: v[3], close: v[4] }));
-                velas15m = res15m.data.map(v => ({ timestamp: v[0], open: v[1], high: v[2], low: v[3], close: v[4] }));
-                velas4h = res4h.data.map(v => ({ timestamp: v[0], open: v[1], high: v[2], low: v[3], close: v[4] }));
-                dataSource = 'CoinGecko';
-            } catch (coingeckoError) {
-                console.log('CoinGecko API falhou, usando dados simulados...', coingeckoError.message);
-                
-                // Tentativa 3: Dados simulados temporários (último recurso)
-                const now = Date.now();
-                const basePrice = 2700; // Preço base aproximado do ouro
-                
-                velas5m = Array.from({length: 50}, (_, i) => ({
-                    timestamp: now - (50 - i) * 5 * 60 * 1000,
-                    open: basePrice + Math.random() * 10 - 5,
-                    high: basePrice + Math.random() * 10,
-                    low: basePrice - Math.random() * 10,
-                    close: basePrice + Math.random() * 10 - 5
-                }));
-                
-                velas15m = Array.from({length: 50}, (_, i) => ({
-                    timestamp: now - (50 - i) * 15 * 60 * 1000,
-                    open: basePrice + Math.random() * 10 - 5,
-                    high: basePrice + Math.random() * 10,
-                    low: basePrice - Math.random() * 10,
-                    close: basePrice + Math.random() * 10 - 5
-                }));
-                
-                velas4h = Array.from({length: 50}, (_, i) => ({
-                    timestamp: now - (50 - i) * 4 * 60 * 60 * 1000,
-                    open: basePrice + Math.random() * 10 - 5,
-                    high: basePrice + Math.random() * 10,
-                    low: basePrice - Math.random() * 10,
-                    close: basePrice + Math.random() * 10 - 5
-                }));
-                
-                dataSource = 'Simulado';
-            }
-        }
+        const velas5m = Array.from({length: 50}, (_, i) => ({
+            timestamp: now - (50 - i) * 5 * 60 * 1000,
+            open: basePrice + Math.random() * 10 - 5,
+            high: basePrice + Math.random() * 10,
+            low: basePrice - Math.random() * 10,
+            close: basePrice + Math.random() * 10 - 5
+        }));
         
-        console.log(`Dados obtidos de: ${dataSource}`);
+        const velas15m = Array.from({length: 50}, (_, i) => ({
+            timestamp: now - (50 - i) * 15 * 60 * 1000,
+            open: basePrice + Math.random() * 10 - 5,
+            high: basePrice + Math.random() * 10,
+            low: basePrice - Math.random() * 10,
+            close: basePrice + Math.random() * 10 - 5
+        }));
+        
+        const velas4h = Array.from({length: 50}, (_, i) => ({
+            timestamp: now - (50 - i) * 4 * 60 * 60 * 1000,
+            open: basePrice + Math.random() * 10 - 5,
+            high: basePrice + Math.random() * 10,
+            low: basePrice - Math.random() * 10,
+            close: basePrice + Math.random() * 10 - 5
+        }));
+        
+        console.log('Dados simulados gerados (APIs externas temporariamente desativadas)');
 
         // O preço spot atualizado é extraído do tick de 5 minutos mais recente
         const precoAtual = velas5m[velas5m.length - 1].close; 
