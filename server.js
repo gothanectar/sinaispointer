@@ -15,12 +15,12 @@ app.get('/', (req, res) => {
     res.send('🟢 Servidor SMC Ativo na Render - Monitorando XAUUSD');
 });
 
-// Função Principal que executes os cálculos do SMC
+// Função Principal que executa os cálculos do SMC
 async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // CORRIGIDO: URL oficial da API da Binance para não dar erro técnico
+        // URL oficial corrigida com endpoint de klines
         const response = await axios.get('https://binance.com', {
             params: {
                 symbol: 'PAXGUSDT',
@@ -36,23 +36,21 @@ async function rodarAnaliseSMC() {
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-                // 🧠 2. Cálculo de Alvos com o preço real extraído corretamente
+        // 🧠 2. Cálculo de Alvos com o preço real extraído corretamente
         if (velas && velas.length > 0) {
-            // Se o dado vier como uma lista de velas da API de Klines, pegamos o preço de fechamento (índice 4)
             const ultimaVelaRaw = velas[velas.length - 1];
             
-            // CORREÇÃO DEFINITIVA: Garante a leitura se for uma lista da Binance ou se for um valor direto
+            // Garante a leitura correta se for lista ou valor direto
             const precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
             
             const blocoDefendidoOB = precoAtualOuro - 4.50; // Simula uma Order Block $4.50 abaixo do preço
             
             const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
 
-            
             const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
             console.log(mensagemLog);
 
-            // 📢 3. Montar a mensagem de sinal idêntica aos canais de elite
+            // 📢 3. Montar a mensagem de sinal formatada
             const textoTelegram = 
 `🚨 **NOVO SINAL DETECTADO - SMC** 🚨
 
@@ -69,21 +67,30 @@ async function rodarAnaliseSMC() {
 • **Take Profit 2 (TP2):** $${alvos.tp2}
 • **Take Profit 3 (TP3):** $${alvos.tp3}`;
 
-            // ✈️ ENVIO 1: Enviar para o Canal do Telegram
-            await axios.post(`https://telegram.org{TELEGRAM_TOKEN}/sendMessage`, {
+            // URL da API do Telegram corrigida dinamicamente
+            const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
+            
+            // 📢 ENVIO 1: Canal/Grupo Oficial
+            await axios.post(urlTelegram, {
                 chat_id: CHAT_ID,
                 text: textoTelegram,
                 parse_mode: 'Markdown'
+            }).then(() => {
+                console.log('🚀 Sinal enviado com sucesso para o Canal do Telegram!');
+            }).catch((err) => {
+                console.error('❌ Erro ao enviar para o Canal:', err.message);
             });
-            console.log('✈️ Sinal enviado para o canal do Telegram!');
 
             // 🔒 ENVIO 2: Enviar diretamente para o seu ID PRIVADO
-            await axios.post(`https://telegram.org{TELEGRAM_TOKEN}/sendMessage`, {
+            await axios.post(urlTelegram, {
                 chat_id: MEU_ID_PRIVADO,
                 text: textoTelegram,
                 parse_mode: 'Markdown'
+            }).then(() => {
+                console.log('🔒 Cópia do sinal enviada para o seu ID privado!');
+            }).catch((err) => {
+                console.error('❌ Erro ao enviar cópia privada:', err.message);
             });
-            console.log('🔒 Cópia do sinal enviada para o seu ID privado!');
         }
 
     } catch (error) {
@@ -91,10 +98,10 @@ async function rodarAnaliseSMC() {
     }
 }
 
-// Inicia o Loop infinito: executa a cada 60 segundos (60000 milissegundos) de forma nativa
+// Inicia o Loop infinito: executa a cada 60 segundos
 setInterval(rodarAnaliseSMC, 60000);
 
-// Executa uma vez logo ao ligar o servidor para não precisar esperar 1 minuto pelo primeiro teste
+// Executa uma vez logo ao ligar o servidor
 rodarAnaliseSMC();
 
 // 🌍 FUNÇÃO 1: Mapeamento Automático de Sessões de Mercado (Horário de Brasília)
