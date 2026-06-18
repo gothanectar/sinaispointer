@@ -156,6 +156,8 @@ Ativo: *${SYMBOL}* | Período Gráfico: *Sinal de ${sinal.timeframe}*
 
     } catch (error) {
         console.error("Erro no motor operacional:", error);
-        return res.status(500).json({ error: "Falha de execução de rotas" });
+        console.error("Detalhes do erro:", error.message);
+        console.error("Stack trace:", error.stack);
+        return res.status(500).json({ error: "Falha de execução de rotas", message: error.message, stack: error.stack });
     }
 }
