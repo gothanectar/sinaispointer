@@ -37,12 +37,11 @@ function analisarTimeframeSMC(velas, precoAtual, timeframe) {
 module.exports = async function handler(req, res) {
     try {
         // 1. Coleta dados de 5m, 15m e 4h em paralelo para máxima velocidade e performance na nuvem
-        // Usando proxy CORS para contornar bloqueio geográfico da Binance
-        const proxyUrl = 'https://corsproxy.io/?';
+        // Usando api1.binance.com para contornar bloqueio geográfico da Binance
         const [res5m, res15m, res4h] = await Promise.all([
-            axios.get(`${proxyUrl}${encodeURIComponent(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=5m&limit=50`)}`),
-            axios.get(`${proxyUrl}${encodeURIComponent(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=15m&limit=50`)}`),
-            axios.get(`${proxyUrl}${encodeURIComponent(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=4h&limit=50`)}`)
+            axios.get(`https://api1.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=5m&limit=50`),
+            axios.get(`https://api1.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=15m&limit=50`),
+            axios.get(`https://api1.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=4h&limit=50`)
         ]);
 
         // Formatação dos arrays de velas
