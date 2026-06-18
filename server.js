@@ -36,19 +36,15 @@ async function rodarAnaliseSMC() {
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🧠 2. Cálculo de Alvos com o preço real extraído com segurança técnica
-        if (velas && velas.length > 0) {
-            const ultimaVelaRaw = velas[velas.length - 1];
+        // 🧠 2. Tratamento e Validação da Matriz de Velas da Binance
+        const dadosVelas = Array.isArray(velas) ? velas : [];
+
+        if (dadosVelas.length > 0) {
+            const ultimaVelaRaw = dadosVelas[dadosVelas.length - 1];
             
-            // GARANTIA TOTAL: Se a Binance mandar Array (Klines padrão), pega o índice 4 (Close)
+            // Extrai o índice 4 (Preço de Fechamento da Vela na Binance)
             let precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
             
-            // Fallback de segurança se a conversão falhar por algum motivo do formato
-            if (isNaN(precoAtualOuro)) {
-                console.log('⚠️ Aviso: Formato de vela alternativo detectado. Aplicando fallback.');
-                precoAtualOuro = parseFloat(ultimaVelaRaw);
-            }
-
             // Validação final antes de rodar os cálculos matemáticos para evitar travamentos
             if (isNaN(precoAtualOuro)) {
                 throw new Error('Não foi possível extrair um preço numérico válido da última vela.');
@@ -101,6 +97,8 @@ async function rodarAnaliseSMC() {
             }).catch((err) => {
                 console.error('❌ Erro detalhado no ID Privado:', err.response ? err.response.data : err.message);
             });
+        } else {
+            console.log('⚠️ Erro: A API da Binance não retornou uma lista válida de velas.');
         }
 
     } catch (error) {
