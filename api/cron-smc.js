@@ -68,9 +68,9 @@ module.exports = async function handler(req, res) {
             'Accept': 'application/json'
         };
         const [res5m, res15m, res4h] = await Promise.all([
-            axios.get(`https://api.binance.us/api/v3/klines?symbol=${SYMBOL}&interval=5m&limit=50`, { headers }),
-            axios.get(`https://api.binance.us/api/v3/klines?symbol=${SYMBOL}&interval=15m&limit=50`, { headers }),
-            axios.get(`https://api.binance.us/api/v3/klines?symbol=${SYMBOL}&interval=4h&limit=50`, { headers })
+            axios.get(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=5m&limit=50`, { headers }),
+            axios.get(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=15m&limit=50`, { headers }),
+            axios.get(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=4h&limit=50`, { headers })
         ]);
 
         // Formatação dos arrays de velas
