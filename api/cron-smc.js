@@ -22,14 +22,39 @@ function analisarTimeframeSMC(velas, precoAtual, timeframe) {
     const v1 = velas[velas.length - 3];
     const v2 = velas[velas.length - 2];
     const v3 = velas[velas.length - 1];
+    const v4 = velas[velas.length - 4];
 
-    // Rastreamento de Fair Value Gap (FVG) Bullish
+    // 1. Rastreamento de Fair Value Gap (FVG) Bullish
     if (v3.low > v1.high && v2.close > v2.open && precoAtual <= v3.low) {
-        novoSinal = { tipo: 'COMPRA', entrada: precoAtual, sl: v1.high * 0.999, fvg_id: `${timeframe}_${v2.timestamp}` };
+        novoSinal = { tipo: 'COMPRA', entrada: precoAtual, sl: v1.high * 0.999, fvg_id: `${timeframe}_FVG_${v2.timestamp}`, fonte: 'FVG' };
     }
-    // Rastreamento de Fair Value Gap (FVG) Bearish
+    // 2. Rastreamento de Fair Value Gap (FVG) Bearish
     else if (v3.high < v1.low && v2.close < v2.open && precoAtual >= v3.high) {
-        novoSinal = { tipo: 'VENDA', entrada: precoAtual, sl: v1.low * 1.001, fvg_id: `${timeframe}_${v2.timestamp}` };
+        novoSinal = { tipo: 'VENDA', entrada: precoAtual, sl: v1.low * 1.001, fvg_id: `${timeframe}_FVG_${v2.timestamp}`, fonte: 'FVG' };
+    }
+    // 3. Rastreamento de Order Block (OB) Bullish - última vela de movimento forte antes de reversão
+    else if (v2.close > v2.open && v2.close - v2.open > (v2.high - v2.low) * 0.6 && v3.close < v3.open && precoAtual >= v2.low && precoAtual <= v2.high) {
+        novoSinal = { tipo: 'COMPRA', entrada: precoAtual, sl: v2.low * 0.999, fvg_id: `${timeframe}_OB_${v2.timestamp}`, fonte: 'OB' };
+    }
+    // 4. Rastreamento de Order Block (OB) Bearish
+    else if (v2.close < v2.open && v2.open - v2.close > (v2.high - v2.low) * 0.6 && v3.close > v3.open && precoAtual >= v2.low && precoAtual <= v2.high) {
+        novoSinal = { tipo: 'VENDA', entrada: precoAtual, sl: v2.high * 1.001, fvg_id: `${timeframe}_OB_${v2.timestamp}`, fonte: 'OB' };
+    }
+    // 5. Rastreamento de Break of Structure (BOS) Bullish - quebra de estrutura de baixa
+    else if (v3.high > v1.high && v2.close > v2.open && precoAtual <= v3.high && precoAtual >= v3.low) {
+        novoSinal = { tipo: 'COMPRA', entrada: precoAtual, sl: v3.low * 0.999, fvg_id: `${timeframe}_BOS_${v3.timestamp}`, fonte: 'BOS' };
+    }
+    // 6. Rastreamento de Break of Structure (BOS) Bearish - quebra de estrutura de alta
+    else if (v3.low < v1.low && v2.close < v2.open && precoAtual >= v3.low && precoAtual <= v3.high) {
+        novoSinal = { tipo: 'VENDA', entrada: precoAtual, sl: v3.high * 1.001, fvg_id: `${timeframe}_BOS_${v3.timestamp}`, fonte: 'BOS' };
+    }
+    // 7. Rastreamento de Change of Character (ChoCH) Bullish - mudança de caráter de baixa para alta
+    else if (v3.close > v1.high && v2.close > v2.open && v3.close > v3.open && precoAtual <= v3.close && precoAtual >= v3.open) {
+        novoSinal = { tipo: 'COMPRA', entrada: precoAtual, sl: v3.low * 0.999, fvg_id: `${timeframe}_ChoCH_${v3.timestamp}`, fonte: 'ChoCH' };
+    }
+    // 8. Rastreamento de Change of Character (ChoCH) Bearish - mudança de caráter de alta para baixa
+    else if (v3.close < v1.low && v2.close < v2.open && v3.close < v3.open && precoAtual >= v3.close && precoAtual <= v3.open) {
+        novoSinal = { tipo: 'VENDA', entrada: precoAtual, sl: v3.high * 1.001, fvg_id: `${timeframe}_ChoCH_${v3.timestamp}`, fonte: 'ChoCH' };
     }
     return novoSinal;
 }
@@ -108,7 +133,7 @@ module.exports = async function handler(req, res) {
                     fvg_id: sinal.fvg_id,
                     tipo: sinal.tipo,
                     timeframe: sinal.timeframe, 
-                    fonte: 'FVG', // Padrão, pode ser atualizado se necessário
+                    fonte: sinal.fonte, // Usa a fonte detectada (FVG, OB, BOS, ChoCH)
                     entrada: sinal.entrada,
                     sl: sinal.sl,
                     tp1: tp1,
@@ -123,6 +148,7 @@ module.exports = async function handler(req, res) {
                 const textoTelegram = 
 `${emojiPeso} *NOVO SINAL DETECTADO (${sinal.timeframe})* ${emojiPeso}
 Ativo: *${SYMBOL}* | Período Gráfico: *Sinal de ${sinal.timeframe}*
+📊 *Fonte:* ${sinalCompleto.fonte}
 
 📥 *AÇÃO:* ${sinalCompleto.tipo}
 💵 *PREÇO ENTRADA:* ${sinalCompleto.entrada.toFixed(2)}
