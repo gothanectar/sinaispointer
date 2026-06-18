@@ -401,14 +401,14 @@ function playAlertSound(type = 'default') {
 
         // Configurar som diferente baseado no tipo
         if (type === 'tp') {
-            // Som de sucesso (TP atingido) - melodia ascendente
-            oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
-            oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.15);
-            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.3);
+            // Som de sucesso (TP atingido) - 3 beeps ascendentes curtos e distintos
+            oscillator.frequency.setValueAtTime(1000, audioContext.currentTime);
+            oscillator.frequency.setValueAtTime(1200, audioContext.currentTime + 0.1);
+            oscillator.frequency.setValueAtTime(1400, audioContext.currentTime + 0.2);
             gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.4);
             oscillator.start(audioContext.currentTime);
-            oscillator.stop(audioContext.currentTime + 0.5);
+            oscillator.stop(audioContext.currentTime + 0.4);
             console.log('🎵 Som de TP (sucesso) reproduzido');
         } else if (type === 'sl') {
             // Som de erro (SL atingido) - melodia descendente
@@ -940,11 +940,12 @@ async function carregarSinaisDoBackend() {
                 atualizarSinalAtual(signal, sl, tp1, tp2, tp3);
                 console.log('📊 Sinal ABERTO carregado do backend:', signal);
                 
-                // Iniciar monitoramento de fechamento
-                if (signalState.monitoringInterval) {
-                    clearInterval(signalState.monitoringInterval);
-                }
-                signalState.monitoringInterval = setInterval(monitorarFechamentoSinal, 5000);
+                // DESATIVADO: Monitoramento local de fechamento para evitar conflito com backend
+                // O backend agora monitora e atualiza o status no Redis
+                // if (signalState.monitoringInterval) {
+                //     clearInterval(signalState.monitoringInterval);
+                // }
+                // signalState.monitoringInterval = setInterval(monitorarFechamentoSinal, 5000);
             }
             
             // Se não há sinal ABERTO mas há sinal ativo no box, limpar
