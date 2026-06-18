@@ -64,8 +64,12 @@ module.exports = async function handler(req, res) {
         // 1. Coleta dados de 5m, 15m e 4h em paralelo para máxima velocidade e performance na nuvem
         // Usando api1.binance.com com headers User-Agent oficial da Binance
         const headers = {
-            'User-Agent': 'binance-api-node-client',
-            'Accept': 'application/json'
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Connection': 'keep-alive',
+            'Referer': 'https://www.binance.com/'
         };
         const [res5m, res15m, res4h] = await Promise.all([
             axios.get(`https://api.binance.com/api/v3/klines?symbol=${SYMBOL}&interval=5m&limit=50`, { headers }),
