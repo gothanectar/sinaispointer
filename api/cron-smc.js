@@ -1,5 +1,5 @@
-import { Redis } from '@upstash/redis';
-import axios from 'axios';
+const { Redis } = require('@upstash/redis');
+const axios = require('axios');
 
 // Inicialização automática das chaves de ambiente injetadas pela Vercel/Upstash
 const redis = new Redis({
@@ -29,7 +29,7 @@ function analisarTimeframeSMC(velas, precoAtual, timeframe) {
     return novoSinal;
 }
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
     try {
         // 1. Coleta dados de 5m, 15m e 4h em paralelo para máxima velocidade e performance na nuvem
         const [res5m, res15m, res4h] = await Promise.all([
