@@ -1,6 +1,11 @@
 const { Redis } = require('@upstash/redis');
 const axios = require('axios');
 
+// Verificar se variáveis de ambiente estão configuradas
+if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+  console.error('Variáveis de ambiente do Upstash Redis não configuradas');
+}
+
 // Inicialização automática das chaves de ambiente injetadas pela Vercel/Upstash
 const redis = new Redis({
   url: process.env.UPSTASH_REDIS_REST_URL,
