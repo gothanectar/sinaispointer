@@ -36,15 +36,25 @@ async function rodarAnaliseSMC() {
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🧠 2. Cálculo de Alvos com o preço real extraído corretamente
+        // 🧠 2. Cálculo de Alvos com o preço real extraído com segurança técnica
         if (velas && velas.length > 0) {
             const ultimaVelaRaw = velas[velas.length - 1];
             
-            // Garante a leitura correta se for lista ou valor direto
-            const precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
+            // GARANTIA TOTAL: Se a Binance mandar Array (Klines padrão), pega o índice 4 (Close)
+            let precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
+            
+            // Fallback de segurança se a conversão falhar por algum motivo do formato
+            if (isNaN(precoAtualOuro)) {
+                console.log('⚠️ Aviso: Formato de vela alternativo detectado. Aplicando fallback.');
+                precoAtualOuro = parseFloat(ultimaVelaRaw);
+            }
+
+            // Validação final antes de rodar os cálculos matemáticos para evitar travamentos
+            if (isNaN(precoAtualOuro)) {
+                throw new Error('Não foi possível extrair um preço numérico válido da última vela.');
+            }
             
             const blocoDefendidoOB = precoAtualOuro - 4.50; // Simula uma Order Block $4.50 abaixo do preço
-            
             const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
 
             const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
@@ -78,7 +88,7 @@ async function rodarAnaliseSMC() {
             }).then(() => {
                 console.log('🚀 Sinal enviado com sucesso para o Canal do Telegram!');
             }).catch((err) => {
-                console.error('❌ Erro ao enviar para o Canal:', err.message);
+                console.error('❌ Erro detalhado no Canal:', err.response ? err.response.data : err.message);
             });
 
             // 🔒 ENVIO 2: Enviar diretamente para o seu ID PRIVADO
@@ -89,7 +99,7 @@ async function rodarAnaliseSMC() {
             }).then(() => {
                 console.log('🔒 Cópia do sinal enviada para o seu ID privado!');
             }).catch((err) => {
-                console.error('❌ Erro ao enviar cópia privada:', err.message);
+                console.error('❌ Erro detalhado no ID Privado:', err.response ? err.response.data : err.message);
             });
         }
 
