@@ -31,6 +31,11 @@ async function rodarAnaliseSMC() {
 
         const velas = response.data;
         console.log('✅ Dados obtidos da Binance com sucesso!');
+        
+        // 🔍 TESTE DE DIAGNÓSTICO: Mostra no log o formato exato que a Binance está entregando
+        console.log('🔎 TIPO DO DADO RECEBIDO:', typeof velas);
+        console.log('🔎 É ARRAY?', Array.isArray(velas));
+        console.log('🔎 PRIMEIRA PARTE DO CONTEÚDO:', JSON.stringify(velas).substring(0, 200));
 
         // 🌍 1. Chamar a nova lógica de Mapeamento de Sessão de Elite
         const sessaoAtual = obterSessaoAtual();
@@ -44,7 +49,6 @@ async function rodarAnaliseSMC() {
             dadosVelas = velas.data || Object.values(velas) || [];
         }
 
-        // Se mesmo assim não for array, tenta forçar a conversão caso venha como texto
         if (typeof velas === 'string') {
             try { dadosVelas = JSON.parse(velas); } catch(e) {}
         }
