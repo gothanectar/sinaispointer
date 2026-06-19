@@ -36,15 +36,30 @@ async function rodarAnaliseSMC() {
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🧠 2. Tratamento e Validação da Matriz de Velas da Binance
-        const dadosVelas = Array.isArray(velas) ? velas : [];
+        // 🧠 2. Tratamento e Validação da Matriz de Velas da Binance (Super Flexível)
+        let dadosVelas = [];
+        if (Array.isArray(velas)) {
+            dadosVelas = velas;
+        } else if (velas && typeof velas === 'object') {
+            dadosVelas = velas.data || Object.values(velas) || [];
+        }
 
-        if (dadosVelas.length > 0) {
+        // Se mesmo assim não for array, tenta forçar a conversão caso venha como texto
+        if (typeof velas === 'string') {
+            try { dadosVelas = JSON.parse(velas); } catch(e) {}
+        }
+
+        if (Array.isArray(dadosVelas) && dadosVelas.length > 0) {
             const ultimaVelaRaw = dadosVelas[dadosVelas.length - 1];
             
-            // Extrai o índice 4 (Preço de Fechamento da Vela na Binance)
+            // Extrai o preço (índice 4 se for array interna, ou o valor direto)
             let precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
             
+            // Fallback de segurança se a conversão falhar por algum motivo do formato
+            if (isNaN(precoAtualOuro) && Array.isArray(ultimaVelaRaw)) {
+                precoAtualOuro = parseFloat(ultimaVelaRaw[1]); // Tenta o preço de abertura como segundo recurso
+            }
+
             // Validação final antes de rodar os cálculos matemáticos para evitar travamentos
             if (isNaN(precoAtualOuro)) {
                 throw new Error('Não foi possível extrair um preço numérico válido da última vela.');
