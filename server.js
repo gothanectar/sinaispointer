@@ -12,32 +12,21 @@ const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-// ROTA DE HEALTH CHECK (Obrigatória para o Render aceitar o deploy)
-app.get('/', (req, res) => {
-    res.send('🚀 Servidor online');
-});
-
-const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
+const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
 const redisClient = redis.createClient({
-    url: process.env.REDIS_URL,
-    socket: {
-        tls: true,
-        rejectUnauthorized: false
-    }
+    url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
 redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
 let ultimoSinalTimestamp = 0;
-const COOLDOWN_MINUTOS = 5; 
+const COOLDOWN_MINUTOS = 8; // Cooldown mais flexível
 
-// LÓGICA ORIGINAL DA BINANCE (Forçando IPv4 para nunca mais dar NaN no Render)
+// Preço REAL da Binance Futures
 async function getPrecoRealXAUUSD() {
     try {
-        const response = await axios.get('https://binance.com', {
-            family: 4 // Força o uso de IPv4 e impede o erro de rede do Render
-        });
+        const response = await axios.get('https://fapi.binance.com/fapi/v1/ticker/price?symbol=XAUUSDT');
         return parseFloat(response.data.price);
     } catch (error) {
         console.error("❌ Erro Binance:", error.message);
@@ -55,7 +44,7 @@ async function enviarTelegram(chat_id, texto) {
     }
 }
 
-// Lógica SMC original com FVG + ChoCH + BOS
+// Lógica SMC com FVG + ChoCH + BOS
 async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
@@ -154,9 +143,9 @@ function calcularAlvosSMC(direcao, precoEntrada, bloco) {
 }
 
 // Inicia o robô
-setInterval(rodarAnaliseSMC, 45000); 
+setInterval(rodarAnaliseSMC, 45000); // 45 segundos
 rodarAnaliseSMC();
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, () => {
     console.log(`🚀 Servidor SMC rodando na porta ${PORT}`);
 });
