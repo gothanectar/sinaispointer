@@ -20,48 +20,20 @@ async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // 🌐 Conexão aberta e sem bloqueios para o Ouro Forex Real (XAUUSD=X)
-        const response = await axios.get('https://yahoo.com', {
+        // 🌐 PARCEIRO SEGURO E DESBLOQUEADO: API Oficial da CoinGecko (Preço do Ouro Spot via PAXG)
+        // Este endpoint é livre, não exige chaves e aceita a Render abertamente!
+        const response = await axios.get('https://coingecko.com', {
             params: {
-                interval: '15m',
-                range: '1d'
-            },
-            headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                ids: 'pax-gold',
+                vs_currencies: 'usd'
             }
         });
 
-        const dadosYahoo = response.data;
-        let precoAtualOuro = null;
-
-        // 🧠 SISTEMA DE VARREDURA DE ALTA PRECISÃO (Contorna qualquer mudança estrutural do Yahoo)
-        if (dadosYahoo && dadosYahoo.chart && dadosYahoo.chart.result && dadosYahoo.chart.result[0]) {
-            const result = dadosYahoo.chart.result[0];
-            
-            // Tentativa 1: Meta Data Direta
-            if (result.meta && result.meta.regularMarketPrice) {
-                precoAtualOuro = parseFloat(result.meta.regularMarketPrice);
-            }
-            // Tentativa 2: Caso o Yahoo mude para a propriedade de fechamento anterior
-            if ((!precoAtualOuro || isNaN(precoAtualOuro)) && result.meta && result.meta.chartPreviousClose) {
-                precoAtualOuro = parseFloat(result.meta.chartPreviousClose);
-            }
-            // Tentativa 3: Matriz de Indicadores de Cotação Real (Fechamento da última vela de 15m)
-            if ((!precoAtualOuro || isNaN(precoAtualOuro)) && result.indicators && result.indicators.quote && result.indicators.quote[0]) {
-                const closePrices = result.indicators.quote[0].close || [];
-                // Busca de trás para frente o último número válido na lista de fechamentos
-                for (let i = closePrices.length - 1; i >= 0; i--) {
-                    if (closePrices[i] !== null && !isNaN(closePrices[i])) {
-                        precoAtualOuro = parseFloat(closePrices[i]);
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Validação final de Segurança do Preço
-        if (precoAtualOuro && !isNaN(precoAtualOuro)) {
-            console.log(`✅ Preço do Ouro Forex Real (XAUUSD) obtido com sucesso: $${precoAtualOuro.toFixed(2)}`);
+        const dadosGecko = response.data;
+        
+        if (dadosGecko && dadosGecko['pax-gold'] && dadosGecko['pax-gold'].usd) {
+            const precoAtualOuro = parseFloat(dadosGecko['pax-gold'].usd);
+            console.log(`✅ Preço do Ouro (XAUUSD) obtido com sucesso via CoinGecko: $${precoAtualOuro.toFixed(2)}`);
             
             // 🌍 1. Mapeamento de Sessão de Elite
             const sessaoAtual = obterSessaoAtual();
@@ -74,11 +46,11 @@ async function rodarAnaliseSMC() {
             const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
             console.log(mensagemLog);
 
-            // 📢 3. Montar a mensagem de sinal formatada com todas as estruturas implementadas
+            // 📢 3. Montar a mensagem de sinal formatada com todas as estruturas do seu site
             const textoTelegram = 
 `🚨 **NOVO SINAL DETECTADO - SMART MONEY CONCEPTS (SMC)** 🚨
 
-📈 **Ativo:** XAUUSD (Ouro Forex Real)
+📈 **Ativo:** XAUUSD (Ouro Real)
 ⏱️ **Sessão:** ${sessaoAtual}
 🧠 **Estruturas Identificadas:** FVG + OB + BOS + ChoCH Confirmados
 
@@ -115,7 +87,7 @@ async function rodarAnaliseSMC() {
                 console.error('❌ Erro detalhado no ID Privado:', err.response ? err.response.data : err.message);
             });
         } else {
-            console.log('⚠️ Erro: A varredura não conseguiu encontrar um preço numérico dentro do JSON do Yahoo Finance.');
+            console.log('⚠️ Erro: Estrutura de resposta incompatível da API CoinGecko.');
         }
 
     } catch (error) {
