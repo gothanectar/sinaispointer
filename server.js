@@ -20,50 +20,29 @@ async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // URL oficial corrigida com endpoint de klines
-        const response = await axios.get('https://binance.com', {
+        // 🌐 MUDANÇA CRUCIAL: Usando a API da Gate.io que não bloqueia servidores e entrega dados REAIS
+        const response = await axios.get('https://gateio.ws', {
             params: {
-                symbol: 'PAXGUSDT',
+                currency_pair: 'PAXG_USDT',
                 interval: '15m',
                 limit: 100
             }
         });
 
         const velas = response.data;
-        console.log('✅ Dados obtidos da Binance com sucesso!');
-        
-        // 🔍 TESTE DE DIAGNÓSTICO: Mostra no log o formato exato que a Binance está entregando
-        console.log('🔎 TIPO DO DADO RECEBIDO:', typeof velas);
-        console.log('🔎 É ARRAY?', Array.isArray(velas));
-        console.log('🔎 PRIMEIRA PARTE DO CONTEÚDO:', JSON.stringify(velas).substring(0, 200));
+        console.log('✅ Dados obtidos da API com sucesso!');
 
-        // 🌍 1. Chamar a nova lógica de Mapeamento de Sessão de Elite
+        // 🌍 1. Mapeamento de Sessão de Elite
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🧠 2. Tratamento e Validação da Matriz de Velas da Binance (Super Flexível)
-        let dadosVelas = [];
-        if (Array.isArray(velas)) {
-            dadosVelas = velas;
-        } else if (velas && typeof velas === 'object') {
-            dadosVelas = velas.data || Object.values(velas) || [];
-        }
-
-        if (typeof velas === 'string') {
-            try { dadosVelas = JSON.parse(velas); } catch(e) {}
-        }
-
-        if (Array.isArray(dadosVelas) && dadosVelas.length > 0) {
-            const ultimaVelaRaw = dadosVelas[dadosVelas.length - 1];
+        // 🧠 2. Tratamento e Validação da Matriz de Velas
+        if (Array.isArray(velas) && velas.length > 0) {
+            const ultimaVelaRaw = velas[velas.length - 1];
             
-            // Extrai o preço (índice 4 se for array interna, ou o valor direto)
-            let precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
+            // Na Gate.io, o índice 2 é o preço de fechamento (Close) da vela
+            let precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[2]) : parseFloat(ultimaVelaRaw);
             
-            // Fallback de segurança se a conversão falhar por algum motivo do formato
-            if (isNaN(precoAtualOuro) && Array.isArray(ultimaVelaRaw)) {
-                precoAtualOuro = parseFloat(ultimaVelaRaw[1]); // Tenta o preço de abertura como segundo recurso
-            }
-
             // Validação final antes de rodar os cálculos matemáticos para evitar travamentos
             if (isNaN(precoAtualOuro)) {
                 throw new Error('Não foi possível extrair um preço numérico válido da última vela.');
@@ -92,7 +71,7 @@ async function rodarAnaliseSMC() {
 • **Take Profit 2 (TP2):** $${alvos.tp2}
 • **Take Profit 3 (TP3):** $${alvos.tp3}`;
 
-            // URL da API do Telegram corrigida dinamicamente
+            // URL da API do Telegram
             const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
             
             // 📢 ENVIO 1: Canal/Grupo Oficial
@@ -117,7 +96,7 @@ async function rodarAnaliseSMC() {
                 console.error('❌ Erro detalhado no ID Privado:', err.response ? err.response.data : err.message);
             });
         } else {
-            console.log('⚠️ Erro: A API da Binance não retornou uma lista válida de velas.');
+            console.log('⚠️ Erro: A API não retornou uma lista válida de velas.');
         }
 
     } catch (error) {
