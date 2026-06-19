@@ -12,6 +12,11 @@ const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
+// ROTA DE HEALTH CHECK (Obrigatória para o Render saber que o serviço está online)
+app.get('/', (req, res) => {
+    res.send('🚀 Robô SMC ativo e rodando perfeitamente em produção!');
+});
+
 const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
 const redisClient = redis.createClient({
@@ -22,11 +27,10 @@ const redisClient = redis.createClient({
     }
 });
 
-
 redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
 let ultimoSinalTimestamp = 0;
-const COOLDOWN_MINUTOS = 5; // Cooldown mais flexível
+const COOLDOWN_MINUTOS = 5; // Mantido em 5 minutos conforme sua alteração
 
 // Preço REAL da Binance Futures
 async function getPrecoRealXAUUSD() {
@@ -151,6 +155,7 @@ function calcularAlvosSMC(direcao, precoEntrada, bloco) {
 setInterval(rodarAnaliseSMC, 45000); // 45 segundos
 rodarAnaliseSMC();
 
-app.listen(PORT, () => {
+// BINDING DE PORTA FIXO EM '0.0.0.0' (Obrigatório para o Render mapear a rede interna)
+app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Servidor SMC rodando na porta ${PORT}`);
 });
