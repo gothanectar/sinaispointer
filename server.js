@@ -5,8 +5,8 @@ const redis = require('redis');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔐 TOKEN FORÇADO (para resolver o erro Unauthorized)
-const TELEGRAM_TOKEN = "8872961272:AAEkSG757Y4WYcRdw93V_Tn1vsg7ulSR6rw";
+// 🔐 NOVO TOKEN ATUALIZADO
+const TELEGRAM_TOKEN = "8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7ulSR6rw";
 const CHAT_ID = "-1002224151740";
 const MEU_ID_PRIVADO = "6297482127";
 
@@ -15,22 +15,17 @@ app.use(express.json());
 // 🔗 URL do Telegram
 const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
-console.log("🔗 URL Telegram configurada com sucesso!");
+console.log("🔗 Token carregado com sucesso! (length:", TELEGRAM_TOKEN.length, ")");
 
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
 redisClient.connect()
-    .then(() => console.log('📦 Conectado ao banco Redis de São Paulo com sucesso!'))
-    .catch(err => console.error('❌ Erro de conexão no Redis SP:', err.message));
+    .then(() => console.log('📦 Conectado ao Redis de São Paulo!'))
+    .catch(err => console.error('❌ Erro Redis:', err.message));
 
-// Rota de saúde
-app.get('/', (req, res) => {
-    res.send('🟢 Servidor SMC Ativo na Render - Monitorando XAUUSD');
-});
-
-// Função de envio Telegram
+// Função de envio
 async function enviarTelegram(chat_id, texto) {
     try {
         await axios.post(urlTelegram, {
@@ -63,7 +58,7 @@ async function rodarAnaliseSMC() {
 
         console.log(`🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`);
 
-        // Salvar no Redis
+        // Redis
         if (redisClient.isOpen) {
             await redisClient.set('sinal_atual', JSON.stringify({
                 preco: precoAtualOuro.toFixed(2),
@@ -74,7 +69,7 @@ async function rodarAnaliseSMC() {
                 sessao: sessaoAtual,
                 timestamp: new Date().getTime()
             }));
-            console.log('💾 Dados gravados com sucesso no Redis!');
+            console.log('💾 Dados gravados no Redis!');
         }
 
         const textoTelegram = 
@@ -118,29 +113,18 @@ function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
     let risco = Math.abs(precoEntrada - blocoExtremo);
     if (risco < 2.50) risco = 2.50;
 
-    let stopLoss, tp1, tp2, tp3;
-
     if (tipoOperacao === 'COMPRA') {
-        stopLoss = precoEntrada - risco;
-        tp1 = precoEntrada + (risco * 1.0);
-        tp2 = precoEntrada + (risco * 2.0);
-        tp3 = precoEntrada + (risco * 3.5);
-    } else {
-        stopLoss = precoEntrada + risco;
-        tp1 = precoEntrada - (risco * 1.0);
-        tp2 = precoEntrada - (risco * 2.0);
-        tp3 = precoEntrada - (risco * 3.5);
+        return {
+            sl: (precoEntrada - risco).toFixed(2),
+            tp1: (precoEntrada + risco * 1.0).toFixed(2),
+            tp2: (precoEntrada + risco * 2.0).toFixed(2),
+            tp3: (precoEntrada + risco * 3.5).toFixed(2)
+        };
     }
-
-    return {
-        sl: stopLoss.toFixed(2),
-        tp1: tp1.toFixed(2),
-        tp2: tp2.toFixed(2),
-        tp3: tp3.toFixed(2)
-    };
+    return { sl: "0", tp1: "0", tp2: "0", tp3: "0" };
 }
 
-// Inicia loop e servidor
+// Inicia tudo
 setInterval(rodarAnaliseSMC, 60000);
 rodarAnaliseSMC();
 
