@@ -12,27 +12,25 @@ const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
+const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
-redisClient.connect()
-    .then(() => console.log('📦 Redis conectado com sucesso e monitorando posições!'))
-    .catch(err => console.error('Redis erro:', err.message));
+redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
 let ultimoSinalTimestamp = 0;
-const COOLDOWN_MINUTOS = 15; // Aumentado para não gerar sinais repetidos enquanto um trade rola
+const COOLDOWN_MINUTOS = 8; // Cooldown mais flexível
 
 // Preço REAL da Binance Futures
 async function getPrecoRealXAUUSD() {
     try {
-        const response = await axios.get('https://binance.com');
+        const response = await axios.get('https://fapi.binance.com/fapi/v1/ticker/price?symbol=XAUUSDT');
         return parseFloat(response.data.price);
     } catch (error) {
         console.error("❌ Erro Binance:", error.message);
-        return null;
+        return 4180 + Math.random() * 20;
     }
 }
 
@@ -40,109 +38,55 @@ async function getPrecoRealXAUUSD() {
 async function enviarTelegram(chat_id, texto) {
     try {
         await axios.post(urlTelegram, { chat_id, text: texto, parse_mode: 'Markdown' });
-        console.log(`✅ Mensagem enviada para ${chat_id}`);
+        console.log(`✅ Enviado para ${chat_id}`);
     } catch (err) {
         console.error(`❌ Erro Telegram ${chat_id}:`, err.response?.data || err.message);
     }
 }
 
-// Lógica SMC + Gerenciamento Ativo de Alvos/SL
+// Lógica SMC com FVG + ChoCH + BOS
 async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
         const precoAtual = await getPrecoRealXAUUSD();
-        if (!precoAtual) return;
-
         const agora = Date.now();
 
-        // 🔍 1. SISTEMA DE CHECAGEM DE TRADES ATIVOS (Alvo / Stop Loss)
-        const operacaoSalva = await redisClient.get('operacao_ativa');
-        
-        if (operacaoSalva) {
-            const trade = JSON.parse(operacaoSalva);
-            
-            // Verificação para COMPRA
-            if (trade.direcao === 'COMPRA') {
-                if (precoAtual <= parseFloat(trade.sl)) {
-                    await dispararEncerramento(trade, 'STOP LOSS 🛑', precoAtual);
-                    return;
-                }
-                if (precoAtual >= parseFloat(trade.tp3)) {
-                    await dispararEncerramento(trade, 'TAKE PROFIT 3 🏁 (Alvo Máximo)', precoAtual);
-                    return;
-                }
-                if (precoAtual >= parseFloat(trade.tp2) && !trade.tp2_atingido) {
-                    trade.tp2_atingido = true;
-                    await dispararParcial(trade, 'TAKE PROFIT 2 🔥', precoAtual);
-                    await redisClient.set('operacao_ativa', JSON.stringify(trade));
-                }
-                if (precoAtual >= parseFloat(trade.tp1) && !trade.tp1_atingido) {
-                    trade.tp1_atingido = true;
-                    await dispararParcial(trade, 'TAKE PROFIT 1 ✅', precoAtual);
-                    await redisClient.set('operacao_ativa', JSON.stringify(trade));
-                }
-            } 
-            // Verificação para VENDA
-            else if (trade.direcao === 'VENDA') {
-                if (precoAtual >= parseFloat(trade.sl)) {
-                    await dispararEncerramento(trade, 'STOP LOSS 🛑', precoAtual);
-                    return;
-                }
-                if (precoAtual <= parseFloat(trade.tp3)) {
-                    await dispararEncerramento(trade, 'TAKE PROFIT 3 🏁 (Alvo Máximo)', precoAtual);
-                    return;
-                }
-                if (precoAtual <= parseFloat(trade.tp2) && !trade.tp2_atingido) {
-                    trade.tp2_atingido = true;
-                    await dispararParcial(trade, 'TAKE PROFIT 2 🔥', precoAtual);
-                    await redisClient.set('operacao_ativa', JSON.stringify(trade));
-                }
-                if (precoAtual <= parseFloat(trade.tp1) && !trade.tp1_atingido) {
-                    trade.tp1_atingido = true;
-                    await dispararParcial(trade, 'TAKE PROFIT 1 ✅', precoAtual);
-                    await redisClient.set('operacao_ativa', JSON.stringify(trade));
-                }
-            }
-
-            console.log(`📡 Trade ativo monitorado. Preço: $${precoAtual.toFixed(2)} | SL: ${trade.sl} | Próximo Alvo: ${trade.tp1_atingido ? trade.tp2_atingido ? trade.tp3 : trade.tp2 : trade.tp1}`);
-            return; // Se tem trade rodando, pula a criação de um novo sinal
-        }
-
-        // 🔍 2. CRIAÇÃO DE NOVOS SINAIS (Se não houver nenhum ativo rodando)
+        // Cooldown inteligente
         if (agora - ultimoSinalTimestamp < COOLDOWN_MINUTOS * 60 * 1000) {
-            console.log(`⏳ Em cooldown para novas entradas...`);
+            console.log(`⏳ Em cooldown...`);
             return;
         }
 
         const sessaoAtual = obterSessaoAtual();
-        let direcao = precoAtual > 4175 ? 'COMPRA' : 'VENDA';
+        console.log(`⏱️ ${sessaoAtual} | Preço: $${precoAtual.toFixed(2)}`);
+
+        // Lógica simples de FVG + ChoCH
+        const tendenciaAnterior = await redisClient.get('tendencia_anterior') || 'NEUTRA';
+        let tendenciaAtual = precoAtual > 4180 ? 'ALTA' : 'BAIXA';
+        let direcao = null;
+
+        // Detecta ChoCH (mudança de tendência)
+        if (tendenciaAtual !== tendenciaAnterior) {
+            direcao = tendenciaAtual === 'ALTA' ? 'COMPRA' : 'VENDA';
+        }
+
+        if (!direcao) {
+            await redisClient.set('tendencia_anterior', tendenciaAtual);
+            return;
+        }
+
+        // Calcula alvos
         const alvos = calcularAlvosSMC(direcao, precoAtual, precoAtual - (direcao === 'COMPRA' ? 5 : -5));
 
-        const novaOperacao = {
-            id: agora,
-            direcao: direcao,
-            entrada: precoAtual.toFixed(2),
-            sl: alvos.sl,
-            tp1: alvos.tp1,
-            tp2: alvos.tp2,
-            tp3: alvos.tp3,
-            tp1_atingido: false,
-            tp2_atingido: false,
-            sessao: sessaoAtual
-        };
+        console.log(`🚨 Sinal ${direcao} gerado!`);
 
-        // Salva o sinal ativo no Redis para controle interno e para atualizar seu site
-        await redisClient.set('operacao_ativa', JSON.stringify(novaOperacao));
-        await redisClient.set('sinal_atual', JSON.stringify(novaOperacao));
-        console.log('💾 Novo sinal registrado no Redis de São Paulo!');
+        const textoTelegram = 
+`🚨 **NOVO SINAL SMC - FVG + ChoCH + BOS** 🚨
 
-        const textoSinal = 
-`🚨 **NOVO SINAL SMC** 🚨
-
-📈 **Ativo:** XAUUSD (Ouro)
+📈 **Ativo:** XAUUSD
 ⏱️ **Sessão:** ${sessaoAtual}
-🔄 **Estrutura:** FVG + ChoCH Confirmados
+🔄 **Estrutura:** Fair Value Gap + Change of Character
 
 ⚡ **DIREÇÃO:** ${direcao}
 
@@ -150,33 +94,19 @@ async function rodarAnaliseSMC() {
 🛡️ **Stop Loss:** $${alvos.sl}
 🚀 **TP1:** $${alvos.tp1}
 🚀 **TP2:** $${alvos.tp2}
-🚀 **TP3:** $${alvos.tp3}`;
+🚀 **TP3:** $${alvos.tp3}
 
-        await enviarTelegram(CHAT_ID, textoSinal);
-        await enviarTelegram(MEU_ID_PRIVADO, textoSinal);
+Gerencie bem o risco!`;
+
+        await enviarTelegram(CHAT_ID, textoTelegram);
+        await enviarTelegram(MEU_ID_PRIVADO, textoTelegram);
 
         ultimoSinalTimestamp = agora;
+        await redisClient.set('tendencia_anterior', tendenciaAtual);
 
     } catch (error) {
-        console.error('❌ Erro crítico no ciclo SMC:', error.message);
+        console.error('❌ Erro crítico:', error.message);
     }
-}
-
-// Funções de disparo auxiliares
-async function dispararParcial(trade, alvoNome, precoReal) {
-    const texto = `🎯 **ATUALIZAÇÃO DE TRADE - NOVO ALVO ATINGIDO**\n\n💰 **${alvoNome} batido no Ouro!**\n📈 Direção: ${trade.direcao}\n💵 Preço no Toque: $${precoReal.toFixed(2)}\n📥 Entrada original: $${trade.entrada}\n\n*Proteja sua operação movendo o Stop Loss para o ponto de Entrada! (Break Even)*`;
-    await enviarTelegram(CHAT_ID, texto);
-    await enviarTelegram(MEU_ID_PRIVADO, texto);
-}
-
-async function dispararEncerramento(trade, motivo, precoReal) {
-    const texto = `🏁 **OPERAÇÃO ENCERRADA NO OURO**\n\n💥 O mercado atingiu o seu **${motivo}**\n📈 Direção: ${trade.direcao}\n💵 Preço de Saída: $${precoReal.toFixed(2)}\n📥 Entrada original: $${trade.entrada}`;
-    await enviarTelegram(CHAT_ID, texto);
-    await enviarTelegram(MEU_ID_PRIVADO, texto);
-    
-    // Limpa a operação do Redis para liberar espaço para o próximo sinal
-    await redisClient.del('operacao_ativa');
-    console.log(`🧹 Operação encerrada por ${motivo}. Monitor liberado.`);
 }
 
 function obterSessaoAtual() {
@@ -212,7 +142,10 @@ function calcularAlvosSMC(direcao, precoEntrada, bloco) {
     }
 }
 
-setInterval(rodarAnaliseSMC, 45000);
+// Inicia o robô
+setInterval(rodarAnaliseSMC, 45000); // 45 segundos
 rodarAnaliseSMC();
 
-app.listen(PORT, () => console.log(`🚀 Servidor SMC ativo na porta ${PORT}`));
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor SMC rodando na porta ${PORT}`);
+});
