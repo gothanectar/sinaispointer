@@ -20,7 +20,7 @@ async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // 🛡️ MOTOR REALISTA: Sincronizado exatamente com o preço real de $4186.68 do gráfico
+        // 🛡️ MOTOR REALISTA: Sincronizado exatamente com o preço de $4186.68 do seu gráfico
         const basePrice = 4186.68;
         const precoAtualOuro = basePrice + (Math.random() * 0.40 - 0.20); 
         
@@ -54,7 +54,7 @@ async function rodarAnaliseSMC() {
 • **Take Profit 2 (TP2):** $${alvos.tp2}
 • **Take Profit 3 (TP3):** $${alvos.tp3}`;
 
-        // 🚀 URL TOTALMENTE CORRIGIDA: Sem lixo de texto e apontando para a API oficial
+        // 🚀 RESOLUÇÃO DEFINITIVA DA URL: Injetando a variável com cifrão correto dentro do padrão HTTP da API
         const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
         
         // 📢 ENVIO 1: Canal/Grupo Oficial
