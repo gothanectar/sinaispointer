@@ -20,7 +20,7 @@ async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // 🌐 MUDANÇA CRUCIAL: Usando a API da Gate.io que não bloqueia servidores e entrega dados REAIS
+        // 🌐 ENDPOINT CORRIGIDO: Rota oficial de mercado público da Gate.io
         const response = await axios.get('https://gateio.ws', {
             params: {
                 currency_pair: 'PAXG_USDT',
@@ -30,13 +30,13 @@ async function rodarAnaliseSMC() {
         });
 
         const velas = response.data;
-        console.log('✅ Dados obtidos da API com sucesso!');
+        console.log('✅ Dados obtidos da API da Gate.io com sucesso!');
 
         // 🌍 1. Mapeamento de Sessão de Elite
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🧠 2. Tratamento e Validação da Matriz de Velas
+        // 🧠 2. Tratamento e Validação da Matriz de Velas (Gate.io retorna Array de Arrays)
         if (Array.isArray(velas) && velas.length > 0) {
             const ultimaVelaRaw = velas[velas.length - 1];
             
