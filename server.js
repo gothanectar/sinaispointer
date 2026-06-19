@@ -1,17 +1,23 @@
 const express = require('express');
 const axios = require('axios');
-const redis = require('redis'); // 📦 Adicionado suporte ao Redis de São Paulo
+const redis = require('redis');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurações do seu novo Bot do Telegram
-const TELEGRAM_TOKEN = "8872961272:AAEkSG757Y4WYcRdw93V_Tn1vsg7ulSR6rw";
-const CHAT_ID = "-1002224151740"; // ID do seu canal/grupo
-const MEU_ID_PRIVADO = "6297482127"; // Seu ID privado configurado
+// 🔐 TOKEN DO TELEGRAM (prioridade para variável de ambiente)
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN || "8872961272:AAEkSG757Y4WYcRdw93V_Tn1vsg7ulSR6rw";
+const CHAT_ID = "-1002224151740";
+const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-// 🔌 Inicializa o cliente Redis de São Paulo (Vai ler a variável da Render)
+// 🔗 URL CORRETA do Telegram Bot API
+const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+
+console.log("🔗 URL Telegram configurada:", urlTelegram.replace(TELEGRAM_TOKEN, "TOKEN_ESCONDIDO"));
+
+// 🔌 Redis
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
@@ -20,34 +26,45 @@ redisClient.connect()
     .then(() => console.log('📦 Conectado ao banco Redis de São Paulo com sucesso!'))
     .catch(err => console.error('❌ Erro de conexão no Redis SP:', err.message));
 
-// Rota padrão para a Render saber que o servidor está vivo e online
+// Rota de saúde
 app.get('/', (req, res) => {
     res.send('🟢 Servidor SMC Ativo na Render - Monitorando XAUUSD');
 });
 
-// Função Principal que executa os cálculos do SMC
+// Função de envio para Telegram
+async function enviarTelegram(chat_id, texto) {
+    try {
+        await axios.post(urlTelegram, {
+            chat_id: chat_id,
+            text: texto,
+            parse_mode: 'Markdown'
+        });
+        console.log(`✅ Mensagem enviada com sucesso para ${chat_id}`);
+    } catch (err) {
+        console.error(`❌ Erro ao enviar para ${chat_id}:`, 
+            err.response ? err.response.data : err.message);
+    }
+}
+
+// Função principal
 async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // 🛡️ MOTOR REALISTA: Sincronizado exatamente com o preço de $4186.68 do seu gráfico
         const basePrice = 4186.68;
         const precoAtualOuro = basePrice + (Math.random() * 0.40 - 0.20); 
         
         console.log(`✅ Preço Realista do Ouro sincronizado com o painel: $${precoAtualOuro.toFixed(2)}`);
 
-        // 🌍 1. Mapeamento de Sessão de Elite
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🧠 2. Cálculo Dinâmico de Parâmetros SMC
-        const blocoDefendidoOB = precoAtualOuro - 4.50; // Simula uma Order Block abaixo do preço
+        const blocoDefendidoOB = precoAtualOuro - 4.50;
         const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
 
-        const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
-        console.log(mensagemLog);
+        console.log(`🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`);
 
-        // 💾 SALVAMENTO NO REDIS: Grava o sinal no banco de São Paulo para o seu site ler na hora!
+        // Salvar no Redis
         if (redisClient.isOpen) {
             await redisClient.set('sinal_atual', JSON.stringify({
                 preco: precoAtualOuro.toFixed(2),
@@ -61,7 +78,7 @@ async function rodarAnaliseSMC() {
             console.log('💾 Dados gravados com sucesso no Redis de São Paulo!');
         }
 
-        // 📢 3. Montar a mensagem de sinal formatada com todas as estruturas implementadas
+        // Mensagem para Telegram
         const textoTelegram = 
 `🚨 **NOVO SINAL DETECTADO - SMART MONEY CONCEPTS (SMC)** 🚨
 
@@ -78,62 +95,28 @@ async function rodarAnaliseSMC() {
 • **Take Profit 2 (TP2):** $${alvos.tp2}
 • **Take Profit 3 (TP3):** $${alvos.tp3}`;
 
-        // 🚀 URL 100% CORRIGIDA E BLINDADA: Sem chaves e apontando para o servidor oficial de bots do Telegram
-        const urlTelegram = "https://telegram.org" + TELEGRAM_TOKEN + "/sendMessage";
-        
-        // 📢 ENVIO 1: Canal/Grupo Oficial
-        await axios.post(urlTelegram, {
-            chat_id: CHAT_ID,
-            text: textoTelegram,
-            parse_mode: 'Markdown'
-        }).then(() => {
-            console.log('🚀 Sinal enviado com sucesso para o Canal do Telegram!');
-        }).catch((err) => {
-            console.error('❌ Erro detalhado no Canal:', err.response ? err.response.data : err.message);
-        });
-
-        // 🔒 ENVIO 2: Enviar diretamente para o seu ID PRIVADO
-        await axios.post(urlTelegram, {
-            chat_id: MEU_ID_PRIVADO,
-            text: textoTelegram,
-            parse_mode: 'Markdown'
-        }).then(() => {
-            console.log('🔒 Cópia do sinal enviada para o seu ID privado!');
-        }).catch((err) => {
-            console.error('❌ Erro detalhado no ID Privado:', err.response ? err.response.data : err.message);
-        });
+        // Enviar mensagens
+        await enviarTelegram(CHAT_ID, textoTelegram);
+        await enviarTelegram(MEU_ID_PRIVADO, textoTelegram);
 
     } catch (error) {
         console.error('❌ Erro crítico no ciclo SMC:', error.message);
     }
 }
 
-// Inicia o Loop infinito: executa a cada 60 segundos
-setInterval(rodarAnaliseSMC, 60000);
-
-// Executa uma vez logo ao ligar o servidor
-rodarAnaliseSMC();
-
-// 🌍 FUNÇÃO 1: Mapeamento Automático de Sessões de Mercado (Horário de Brasília)
+// ==================== FUNÇÕES AUXILIARES ====================
 function obterSessaoAtual() {
     const agora = new Date();
     const opcoes = { timeZone: 'America/Sao_Paulo', hour: '2-digit', hour12: false };
     const horaBrasilia = parseInt(new Intl.DateTimeFormat('pt-BR', opcoes).format(agora));
 
-    if (horaBrasilia >= 20 || horaBrasilia < 4) {
-        return "SESSÃO DA ÁSIA (Consolidação/Liquidez)";
-    } else if (horaBrasilia >= 4 && horaBrasilia < 8) {
-        return "SESSÃO DE LONDRES (Alta Volatilidade)";
-    } else if (horaBrasilia >= 8 && horaBrasilia < 12) {
-        return "OVERLAP: LONDRES & NOVA YORK (Volume Máximo)";
-    } else if (horaBrasilia >= 12 && horaBrasilia < 17) {
-        return "SESSÃO DE NOVA YORK (Volume Americano)";
-    } else {
-        return "MERCADO LENTO (Fim de Dia)";
-    }
+    if (horaBrasilia >= 20 || horaBrasilia < 4) return "SESSÃO DA ÁSIA (Consolidação/Liquidez)";
+    else if (horaBrasilia >= 4 && horaBrasilia < 8) return "SESSÃO DE LONDRES (Alta Volatilidade)";
+    else if (horaBrasilia >= 8 && horaBrasilia < 12) return "OVERLAP: LONDRES & NOVA YORK (Volume Máximo)";
+    else if (horaBrasilia >= 12 && horaBrasilia < 17) return "SESSÃO DE NOVA YORK (Volume Americano)";
+    else return "MERCADO LENTO (Fim de Dia)";
 }
 
-// 🧠 FUNÇÃO 2: Cálculo Dinâmico de Alvos (SMC Proporcional) baseado no Risco
 function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
     let risco = Math.abs(precoEntrada - blocoExtremo);
     if (risco < 2.50) risco = 2.50;
@@ -160,6 +143,11 @@ function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
     };
 }
 
+// Inicia o loop
+setInterval(rodarAnaliseSMC, 60000);
+rodarAnaliseSMC(); // Primeira execução
+
+// Inicia servidor
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando com sucesso na porta ${PORT}`);
 });
