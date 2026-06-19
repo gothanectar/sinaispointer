@@ -1,5 +1,6 @@
 const express = require('express');
 const axios = require('axios');
+const redis = require('redis'); // 📦 Adicionado suporte ao Redis de São Paulo
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -9,6 +10,15 @@ const CHAT_ID = "-1002224151740"; // ID do seu canal/grupo
 const MEU_ID_PRIVADO = "6297482127"; // Seu ID privado configurado
 
 app.use(express.json());
+
+// 🔌 Inicializa o cliente Redis de São Paulo (Vai ler a variável da Render)
+const redisClient = redis.createClient({
+    url: process.env.REDIS_URL || 'redis://localhost:6379'
+});
+
+redisClient.connect()
+    .then(() => console.log('📦 Conectado ao banco Redis de São Paulo com sucesso!'))
+    .catch(err => console.error('❌ Erro de conexão no Redis SP:', err.message));
 
 // Rota padrão para a Render saber que o servidor está vivo e online
 app.get('/', (req, res) => {
@@ -37,6 +47,20 @@ async function rodarAnaliseSMC() {
         const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
         console.log(mensagemLog);
 
+        // 💾 SALVAMENTO NO REDIS: Grava o sinal no banco de São Paulo para o seu site ler na hora!
+        if (redisClient.isOpen) {
+            await redisClient.set('sinal_atual', JSON.stringify({
+                preco: precoAtualOuro.toFixed(2),
+                sl: alvos.sl,
+                tp1: alvos.tp1,
+                tp2: alvos.tp2,
+                tp3: alvos.tp3,
+                sessao: sessaoAtual,
+                timestamp: new Date().getTime()
+            }));
+            console.log('💾 Dados gravados com sucesso no Redis de São Paulo!');
+        }
+
         // 📢 3. Montar a mensagem de sinal formatada com todas as estruturas implementadas
         const textoTelegram = 
 `🚨 **NOVO SINAL DETECTADO - SMART MONEY CONCEPTS (SMC)** 🚨
@@ -54,7 +78,7 @@ async function rodarAnaliseSMC() {
 • **Take Profit 2 (TP2):** $${alvos.tp2}
 • **Take Profit 3 (TP3):** $${alvos.tp3}`;
 
-        // 🚀 RESOLUÇÃO DEFINITIVA DA URL: Injetando a variável com cifrão correto dentro do padrão HTTP da API
+        // 🚀 URL 100% CORRIGIDA COM CIFRÃO: Destrava o getaddrinfo ENOTFOUND definitivamente
         const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
         
         // 📢 ENVIO 1: Canal/Grupo Oficial

@@ -12,7 +12,8 @@
     "@upstash/redis": "^1.28.0",
     "axios": "^1.6.0",
     "express": "^5.2.1",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "redis": "^6.0.0"
   },
   "devDependencies": {
     "vercel": "^32.0.0"
