@@ -20,30 +20,30 @@ async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // 🌐 ENDPOINT CORRIGIDO: Rota oficial de mercado público da Gate.io
-        const response = await axios.get('https://gateio.ws', {
+        // 🌐 URL DA MEXC TOTALMENTE ABERTA: Busca as velas de 15m do par PAXG/USDT (Ouro)
+        const response = await axios.get('https://mexc.com', {
             params: {
-                currency_pair: 'PAXG_USDT',
+                symbol: 'PAXGUSDT',
                 interval: '15m',
-                limit: 100
+                limit: 50
             }
         });
 
         const velas = response.data;
-        console.log('✅ Dados obtidos da API da Gate.io com sucesso!');
+        console.log('✅ Dados obtidos da API da Mexc com sucesso!');
 
         // 🌍 1. Mapeamento de Sessão de Elite
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🧠 2. Tratamento e Validação da Matriz de Velas (Gate.io retorna Array de Arrays)
+        // 🧠 2. Tratamento e Validação da Matriz de Velas
         if (Array.isArray(velas) && velas.length > 0) {
             const ultimaVelaRaw = velas[velas.length - 1];
             
-            // Na Gate.io, o índice 2 é o preço de fechamento (Close) da vela
-            let precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[2]) : parseFloat(ultimaVelaRaw);
+            // Na Mexc, o índice 4 representa o preço de fechamento (Close) da última vela
+            let precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
             
-            // Validação final antes de rodar os cálculos matemáticos para evitar travamentos
+            // Validação final para evitar travamentos
             if (isNaN(precoAtualOuro)) {
                 throw new Error('Não foi possível extrair um preço numérico válido da última vela.');
             }
@@ -155,6 +155,8 @@ function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
         tp3: tp3.toFixed(2)
     };
 }
+
+app.use(express.json());
 
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando com sucesso na porta ${PORT}`);
