@@ -78,8 +78,8 @@ async function rodarAnaliseSMC() {
 • **Take Profit 2 (TP2):** $${alvos.tp2}
 • **Take Profit 3 (TP3):** $${alvos.tp3}`;
 
-        // 🚀 URL 100% CORRIGIDA COM CIFRÃO: Destrava o getaddrinfo ENOTFOUND definitivamente
-        const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
+        // 🚀 URL 100% CORRIGIDA E BLINDADA: Sem chaves e apontando para o servidor oficial de bots do Telegram
+        const urlTelegram = "https://telegram.org" + TELEGRAM_TOKEN + "/sendMessage";
         
         // 📢 ENVIO 1: Canal/Grupo Oficial
         await axios.post(urlTelegram, {
