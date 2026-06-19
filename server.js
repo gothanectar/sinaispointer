@@ -5,19 +5,18 @@ const redis = require('redis');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔐 TOKEN DO TELEGRAM (prioridade para variável de ambiente)
-const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN || "8872961272:AAEkSG757Y4WYcRdw93V_Tn1vsg7ulSR6rw";
+// 🔐 TOKEN FORÇADO (para resolver o erro Unauthorized)
+const TELEGRAM_TOKEN = "8872961272:AAEkSG757Y4WYcRdw93V_Tn1vsg7ulSR6rw";
 const CHAT_ID = "-1002224151740";
 const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-// 🔗 URL CORRETA do Telegram Bot API
+// 🔗 URL do Telegram
 const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
-console.log("🔗 URL Telegram configurada:", urlTelegram.replace(TELEGRAM_TOKEN, "TOKEN_ESCONDIDO"));
+console.log("🔗 URL Telegram configurada com sucesso!");
 
-// 🔌 Redis
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
@@ -31,7 +30,7 @@ app.get('/', (req, res) => {
     res.send('🟢 Servidor SMC Ativo na Render - Monitorando XAUUSD');
 });
 
-// Função de envio para Telegram
+// Função de envio Telegram
 async function enviarTelegram(chat_id, texto) {
     try {
         await axios.post(urlTelegram, {
@@ -54,7 +53,7 @@ async function rodarAnaliseSMC() {
         const basePrice = 4186.68;
         const precoAtualOuro = basePrice + (Math.random() * 0.40 - 0.20); 
         
-        console.log(`✅ Preço Realista do Ouro sincronizado com o painel: $${precoAtualOuro.toFixed(2)}`);
+        console.log(`✅ Preço Realista do Ouro: $${precoAtualOuro.toFixed(2)}`);
 
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
@@ -75,10 +74,9 @@ async function rodarAnaliseSMC() {
                 sessao: sessaoAtual,
                 timestamp: new Date().getTime()
             }));
-            console.log('💾 Dados gravados com sucesso no Redis de São Paulo!');
+            console.log('💾 Dados gravados com sucesso no Redis!');
         }
 
-        // Mensagem para Telegram
         const textoTelegram = 
 `🚨 **NOVO SINAL DETECTADO - SMART MONEY CONCEPTS (SMC)** 🚨
 
@@ -95,16 +93,15 @@ async function rodarAnaliseSMC() {
 • **Take Profit 2 (TP2):** $${alvos.tp2}
 • **Take Profit 3 (TP3):** $${alvos.tp3}`;
 
-        // Enviar mensagens
         await enviarTelegram(CHAT_ID, textoTelegram);
         await enviarTelegram(MEU_ID_PRIVADO, textoTelegram);
 
     } catch (error) {
-        console.error('❌ Erro crítico no ciclo SMC:', error.message);
+        console.error('❌ Erro crítico:', error.message);
     }
 }
 
-// ==================== FUNÇÕES AUXILIARES ====================
+// Funções auxiliares
 function obterSessaoAtual() {
     const agora = new Date();
     const opcoes = { timeZone: 'America/Sao_Paulo', hour: '2-digit', hour12: false };
@@ -143,11 +140,10 @@ function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
     };
 }
 
-// Inicia o loop
+// Inicia loop e servidor
 setInterval(rodarAnaliseSMC, 60000);
-rodarAnaliseSMC(); // Primeira execução
+rodarAnaliseSMC();
 
-// Inicia servidor
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando com sucesso na porta ${PORT}`);
 });
