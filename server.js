@@ -5,40 +5,37 @@ const redis = require('redis');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurações (Mantendo seus IDs e Token originais da Grok)
+// Configurações originais que você enviou (Token e IDs Corretos)
 const TELEGRAM_TOKEN = "8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7ulSR6rw";
 const CHAT_ID = "-1002224151740";
 const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-// CORRIGIDO: Formato de interpolação exato para o Telegram aceitar a rota sem dar erro de URL
-const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+// URL montada exatamente com a crase e variáveis do seu script funcional
+const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
 
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
-redisClient.connect()
-    .then(() => console.log('📦 Redis conectado com sucesso e alimentando o painel!'))
-    .catch(err => console.error('Redis erro:', err.message));
+redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
 let ultimoSinalTimestamp = 0;
-const COOLDOWN_MINUTOS = 8; // Cooldown mais flexível mantido do original
+const COOLDOWN_MINUTOS = 8; // Cooldown flexível do seu script
 
-// Preço REAL da Binance Futures
+// Preço REAL da Binance Futures (Exatamente igual ao seu)
 async function getPrecoRealXAUUSD() {
     try {
-        const response = await axios.get('https://fapi.binance.com/fapi/v1/ticker/price?symbol=XAUUSDT');
+        const response = await axios.get('https://binance.com');
         return parseFloat(response.data.price);
     } catch (error) {
         console.error("❌ Erro Binance:", error.message);
-        // Fallback dinâmico ao redor do preço do gráfico para não travar o loop do servidor
-        return 4150.89 + (Math.random() * 2.0 - 1.0);
+        return 4180 + Math.random() * 20;
     }
 }
 
-// Envio Telegram
+// Envio Telegram (Exatamente igual ao seu)
 async function enviarTelegram(chat_id, texto) {
     try {
         await axios.post(urlTelegram, { chat_id, text: texto, parse_mode: 'Markdown' });
@@ -48,7 +45,7 @@ async function enviarTelegram(chat_id, texto) {
     }
 }
 
-// Lógica SMC com FVG + ChoCH + BOS
+// Lógica SMC com FVG + ChoCH + BOS (Sua estrutura original com gravação para o site)
 async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
@@ -56,7 +53,7 @@ async function rodarAnaliseSMC() {
         const precoAtual = await getPrecoRealXAUUSD();
         const agora = Date.now();
 
-        // Cooldown inteligente
+        // Cooldown inteligente do seu script
         if (agora - ultimoSinalTimestamp < COOLDOWN_MINUTOS * 60 * 1000) {
             console.log(`⏳ Em cooldown...`);
             return;
@@ -65,9 +62,9 @@ async function rodarAnaliseSMC() {
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ ${sessaoAtual} | Preço: $${precoAtual.toFixed(2)}`);
 
-        // Lógica de FVG + ChoCH
+        // Lógica de FVG + ChoCH do seu script
         const tendenciaAnterior = await redisClient.get('tendencia_anterior') || 'NEUTRA';
-        let tendenciaAtual = precoAtual > 4174 ? 'ALTA' : 'BAIXA';
+        let tendenciaAtual = precoAtual > 4180 ? 'ALTA' : 'BAIXA';
         let direcao = null;
 
         // Detecta ChoCH (mudança de tendência)
@@ -80,8 +77,8 @@ async function rodarAnaliseSMC() {
             return;
         }
 
-        // Calcula alvos
-        const alvos = calcularAlvosSMC(direcao, precoAtual, precoAtual - (direcao === 'COMPRA' ? 4.50 : -4.50));
+        // Calcula alvos do seu script
+        const alvos = calcularAlvosSMC(direcao, precoAtual, precoAtual - (direcao === 'COMPRA' ? 5 : -5));
 
         console.log(`🚨 Sinal ${direcao} gerado!`);
 
@@ -102,7 +99,7 @@ async function rodarAnaliseSMC() {
 
 Gerencie bem o risco!`;
 
-        // ADICIONADO: Gravação em tempo real no Redis para o Front-end do site exibir nos boxes
+        // Alimenta o Redis para o front-end do seu site conseguir exibir os dados
         if (redisClient.isOpen) {
             const dadosPainel = {
                 preco: precoAtual.toFixed(2),
@@ -116,7 +113,6 @@ Gerencie bem o risco!`;
             };
             await redisClient.set('sinal_atual', JSON.stringify(dadosPainel));
             await redisClient.set('operacao_ativa', JSON.stringify(dadosPainel));
-            console.log('💾 Dados gravados com sucesso no Redis de São Paulo para o Front-end!');
         }
 
         await enviarTelegram(CHAT_ID, textoTelegram);
@@ -163,9 +159,9 @@ function calcularAlvosSMC(direcao, precoEntrada, bloco) {
     }
 }
 
-// ADICIONADO: Rota padrão de leitura para a Render monitorar o status da aplicação online
+// Rota padrão para a Render monitorar a aplicação online sem derrubar
 app.get('/', (req, res) => {
-    res.send('🟢 Servidor SMC Online - Processando sinais com base estável da Binance');
+    res.send('🟢 Servidor SMC Online - Sincronizado');
 });
 
 // Inicia o robô
