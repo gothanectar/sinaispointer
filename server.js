@@ -12,27 +12,32 @@ const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-// ROTA DE HEALTH CHECK (Obrigatória para o Render saber que o serviço está online)
+// ROTA DE HEALTH CHECK (Obrigatória para o Render aceitar o deploy)
 app.get('/', (req, res) => {
-    res.send('🚀 Robô SMC ativo e rodando perfeitamente em produção!');
+    res.send('🚀 Servidor online');
 });
 
 const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
 
-// CONFIGURAÇÃO DO REDIS CORRIGIDA (Remove o TLS para não conflitar com o protocolo da URL do log)
 const redisClient = redis.createClient({
-    url: process.env.REDIS_URL
+    url: process.env.REDIS_URL,
+    socket: {
+        tls: true,
+        rejectUnauthorized: false
+    }
 });
 
 redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
 let ultimoSinalTimestamp = 0;
-const COOLDOWN_MINUTOS = 5; // Cooldown de 5 minutos mantido
+const COOLDOWN_MINUTOS = 5; 
 
-// Preço REAL da Binance Futures
+// LÓGICA ORIGINAL DA BINANCE (Forçando IPv4 para nunca mais dar NaN no Render)
 async function getPrecoRealXAUUSD() {
     try {
-        const response = await axios.get('https://binance.com');
+        const response = await axios.get('https://binance.com', {
+            family: 4 // Força o uso de IPv4 e impede o erro de rede do Render
+        });
         return parseFloat(response.data.price);
     } catch (error) {
         console.error("❌ Erro Binance:", error.message);
@@ -50,7 +55,7 @@ async function enviarTelegram(chat_id, texto) {
     }
 }
 
-// Lógica SMC com FVG + ChoCH + BOS
+// Lógica SMC original com FVG + ChoCH + BOS
 async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
@@ -149,10 +154,9 @@ function calcularAlvosSMC(direcao, precoEntrada, bloco) {
 }
 
 // Inicia o robô
-setInterval(rodarAnaliseSMC, 45000); // 45 segundos
+setInterval(rodarAnaliseSMC, 45000); 
 rodarAnaliseSMC();
 
-// BINDING DE PORTA FIXO EM '0.0.0.0' (Obrigatório para o Render)
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Servidor SMC rodando na porta ${PORT}`);
 });
