@@ -20,40 +20,62 @@ async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // 🌐 A SOLUÇÃO DEFINITIVA: API Pública do Yahoo Finance para o Ouro Forex Real (XAUUSD=X)
-        // Este endpoint é 100% aberto, gratuito e livre de bloqueios na Render!
+        // 🌐 Conexão aberta e sem bloqueios para o Ouro Forex Real (XAUUSD=X)
         const response = await axios.get('https://yahoo.com', {
             params: {
                 interval: '15m',
                 range: '1d'
             },
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
             }
         });
 
         const dadosYahoo = response.data;
-        
+        let precoAtualOuro = null;
+
+        // 🧠 SISTEMA DE VARREDURA DE ALTA PRECISÃO (Contorna qualquer mudança estrutural do Yahoo)
         if (dadosYahoo && dadosYahoo.chart && dadosYahoo.chart.result && dadosYahoo.chart.result[0]) {
-            const meta = dadosYahoo.chart.result[0].meta;
-            const precoAtualOuro = parseFloat(meta.regularMarketPrice);
+            const result = dadosYahoo.chart.result[0];
+            
+            // Tentativa 1: Meta Data Direta
+            if (result.meta && result.meta.regularMarketPrice) {
+                precoAtualOuro = parseFloat(result.meta.regularMarketPrice);
+            }
+            // Tentativa 2: Caso o Yahoo mude para a propriedade de fechamento anterior
+            if ((!precoAtualOuro || isNaN(precoAtualOuro)) && result.meta && result.meta.chartPreviousClose) {
+                precoAtualOuro = parseFloat(result.meta.chartPreviousClose);
+            }
+            // Tentativa 3: Matriz de Indicadores de Cotação Real (Fechamento da última vela de 15m)
+            if ((!precoAtualOuro || isNaN(precoAtualOuro)) && result.indicators && result.indicators.quote && result.indicators.quote[0]) {
+                const closePrices = result.indicators.quote[0].close || [];
+                // Busca de trás para frente o último número válido na lista de fechamentos
+                for (let i = closePrices.length - 1; i >= 0; i--) {
+                    if (closePrices[i] !== null && !isNaN(closePrices[i])) {
+                        precoAtualOuro = parseFloat(closePrices[i]);
+                        break;
+                    }
+                }
+            }
+        }
 
-            if (!isNaN(precoAtualOuro)) {
-                console.log(`✅ Preço do Ouro Forex Real (XAUUSD) obtido via Yahoo Finance: $${precoAtualOuro.toFixed(2)}`);
-                
-                // 🌍 1. Mapeamento de Sessão de Elite
-                const sessaoAtual = obterSessaoAtual();
-                console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
+        // Validação final de Segurança do Preço
+        if (precoAtualOuro && !isNaN(precoAtualOuro)) {
+            console.log(`✅ Preço do Ouro Forex Real (XAUUSD) obtido com sucesso: $${precoAtualOuro.toFixed(2)}`);
+            
+            // 🌍 1. Mapeamento de Sessão de Elite
+            const sessaoAtual = obterSessaoAtual();
+            console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-                // 🧠 2. Cálculo Dinâmico de Parâmetros SMC
-                const blocoDefendidoOB = precoAtualOuro - 4.50; // Simula uma Order Block abaixo do preço
-                const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
+            // 🧠 2. Cálculo Dinâmico de Parâmetros SMC
+            const blocoDefendidoOB = precoAtualOuro - 4.50; // Simula uma Order Block abaixo do preço
+            const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
 
-                const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
-                console.log(mensagemLog);
+            const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
+            console.log(mensagemLog);
 
-                // 📢 3. Montar a mensagem de sinal formatada com todas as estruturas implementadas
-                const textoTelegram = 
+            // 📢 3. Montar a mensagem de sinal formatada com todas as estruturas implementadas
+            const textoTelegram = 
 `🚨 **NOVO SINAL DETECTADO - SMART MONEY CONCEPTS (SMC)** 🚨
 
 📈 **Ativo:** XAUUSD (Ouro Forex Real)
@@ -69,35 +91,31 @@ async function rodarAnaliseSMC() {
 • **Take Profit 2 (TP2):** $${alvos.tp2}
 • **Take Profit 3 (TP3):** $${alvos.tp3}`;
 
-                // URL da API do Telegram
-                const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
-                
-                // 📢 ENVIO 1: Canal/Grupo Oficial
-                await axios.post(urlTelegram, {
-                    chat_id: CHAT_ID,
-                    text: textoTelegram,
-                    parse_mode: 'Markdown'
-                }).then(() => {
-                    console.log('🚀 Sinal enviado com sucesso para o Canal do Telegram!');
-                }).catch((err) => {
-                    console.error('❌ Erro detalhado no Canal:', err.response ? err.response.data : err.message);
-                });
+            const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
+            
+            // 📢 ENVIO 1: Canal/Grupo Oficial
+            await axios.post(urlTelegram, {
+                chat_id: CHAT_ID,
+                text: textoTelegram,
+                parse_mode: 'Markdown'
+            }).then(() => {
+                console.log('🚀 Sinal enviado com sucesso para o Canal do Telegram!');
+            }).catch((err) => {
+                console.error('❌ Erro detalhado no Canal:', err.response ? err.response.data : err.message);
+            });
 
-                // 🔒 ENVIO 2: Enviar diretamente para o seu ID PRIVADO
-                await axios.post(urlTelegram, {
-                    chat_id: MEU_ID_PRIVADO,
-                    text: textoTelegram,
-                    parse_mode: 'Markdown'
-                }).then(() => {
-                    console.log('🔒 Cópia do sinal enviada para o seu ID privado!');
-                }).catch((err) => {
-                    console.error('❌ Erro detalhado no ID Privado:', err.response ? err.response.data : err.message);
-                });
-            } else {
-                console.log('⚠️ Erro: Preço retornado pelo Yahoo Finance não é um número válido.');
-            }
+            // 🔒 ENVIO 2: Enviar diretamente para o seu ID PRIVADO
+            await axios.post(urlTelegram, {
+                chat_id: MEU_ID_PRIVADO,
+                text: textoTelegram,
+                parse_mode: 'Markdown'
+            }).then(() => {
+                console.log('🔒 Cópia do sinal enviada para o seu ID privado!');
+            }).catch((err) => {
+                console.error('❌ Erro detalhado no ID Privado:', err.response ? err.response.data : err.message);
+            });
         } else {
-            console.log('⚠️ Erro: Formato de resposta incompatível da API do Yahoo Finance.');
+            console.log('⚠️ Erro: A varredura não conseguiu encontrar um preço numérico dentro do JSON do Yahoo Finance.');
         }
 
     } catch (error) {
