@@ -1,21 +1,18 @@
 {
   "name": "ponteiro-backend",
   "version": "1.0.0",
-  "description": "Backend proxy para API Apised",
-  "main": "index.js",
+  "description": "Backend proxy para API Apised e MetaTrader 5",
+  "main": "server.js",
   "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod",
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node server.js"
   },
   "dependencies": {
     "@upstash/redis": "^1.28.0",
     "axios": "^1.6.0",
-    "express": "^5.2.1",
+    "express": "^4.19.2",
     "node-fetch": "^2.7.0",
-    "redis": "^6.0.0"
-  },
-  "devDependencies": {
-    "vercel": "^32.0.0"
+    "redis": "^4.6.13",
+    "ws": "^8.16.0"
   }
 }
