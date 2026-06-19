@@ -12,7 +12,8 @@ const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
+// CORRIGIDO: URL blindada concatenando o token corretamente para o axios
+const urlTelegram = "https://telegram.org" + TELEGRAM_TOKEN + "/sendMessage";
 
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
@@ -60,15 +61,15 @@ async function rodarAnaliseSMC() {
         const precoAtual = await getPrecoRealXAUUSD();
         const sessaoAtual = obterSessaoAtual();
         
-        console.log(`💰 Preço Atual: $${precoAtual.toFixed(2)} | ⏱️ ${sessaoAtual}`);
+        console.log(`💰 Preço Actual: $${precoAtual.toFixed(2)} | ⏱️ ${sessaoAtual}`);
 
         const agora = Date.now();
         let direcao = precoAtual > 4174 ? 'COMPRA' : 'VENDA';
         const alvos = calcularAlvosSMC(direcao, precoAtual, precoAtual - (direcao === 'COMPRA' ? 4.50 : -4.50));
 
-        // 🧠 CRIANDO SINAL COM ID ÚNICO E FORMATO DE FECHAMENTO (Sua sugestão perfeita!)
+        // CRIANDO SINAL COM ID ÚNICO E FORMATO DE FECHAMENTO
         const operacaoComID = {
-            sinal_id: agora, // ID único gerado pelo timestamp (Ex: 1718823456789)
+            sinal_id: agora, 
             direcao: direcao,
             entrada: precoAtual.toFixed(2),
             sl: alvos.sl,
@@ -133,7 +134,6 @@ function obterSessaoAtual() {
     else return "MERCADO LENTO";
 }
 
-// Cálculo Dinâmico Baseado no Risco Institucional
 function calcularAlvosSMC(direcao, precoEntrada, bloco) {
     let risco = Math.abs(precoEntrada - bloco);
     if (risco < 4) risco = 4;
