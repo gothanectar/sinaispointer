@@ -21,7 +21,7 @@ const redisClient = redis.createClient({
 redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
 let ultimoSinalTimestamp = 0;
-const COOLDOWN_MINUTOS = 8; // Cooldown mais flexível
+const COOLDOWN_MINUTOS = 5; // Cooldown mais flexível
 
 // Preço REAL da Binance Futures
 async function getPrecoRealXAUUSD() {
