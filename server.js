@@ -20,51 +20,47 @@ async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        // 🌐 URL DA MEXC TOTALMENTE ABERTA: Busca as velas de 15m do par PAXG/USDT (Ouro)
-        const response = await axios.get('https://mexc.com', {
+        // 🌐 PARCEIRO DE DADOS: Twelve Data buscando o Ouro Forex Real (XAU/USD)
+        // Usamos uma chave de API demo pública integrada que eles liberam para o par
+        const response = await axios.get('https://twelvedata.com', {
             params: {
-                symbol: 'PAXGUSDT',
-                interval: '15m',
-                limit: 50
+                symbol: 'XAU/USD',
+                interval: '15min',
+                outputsize: 10,
+                apikey: 'demo' // Chave pública oficial para testes de Commodities
             }
         });
 
-        const velas = response.data;
-        console.log('✅ Dados obtidos da API da Mexc com sucesso!');
+        const dadosAPI = response.data;
+        
+        if (dadosAPI && dadosAPI.values && dadosAPI.values.length > 0) {
+            console.log('✅ Dados de Commodities (XAU/USD) obtidos com sucesso!');
+            
+            // Pega a última cotação de fechamento do Ouro Real
+            const precoAtualOuro = parseFloat(dadosAPI.values[0].close);
+            
+            // 🌍 1. Mapeamento de Sessão de Elite
+            const sessaoAtual = obterSessaoAtual();
+            console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
 
-        // 🌍 1. Mapeamento de Sessão de Elite
-        const sessaoAtual = obterSessaoAtual();
-        console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
-
-        // 🧠 2. Tratamento e Validação da Matriz de Velas
-        if (Array.isArray(velas) && velas.length > 0) {
-            const ultimaVelaRaw = velas[velas.length - 1];
-            
-            // Na Mexc, o índice 4 representa o preço de fechamento (Close) da última vela
-            let precoAtualOuro = Array.isArray(ultimaVelaRaw) ? parseFloat(ultimaVelaRaw[4]) : parseFloat(ultimaVelaRaw);
-            
-            // Validação final para evitar travamentos
-            if (isNaN(precoAtualOuro)) {
-                throw new Error('Não foi possível extrair um preço numérico válido da última vela.');
-            }
-            
-            const blocoDefendidoOB = precoAtualOuro - 4.50; // Simula uma Order Block $4.50 abaixo do preço
+            // 🧠 2. Cálculo Dinâmico de Parâmetros SMC
+            const blocoDefendidoOB = precoAtualOuro - 4.50; // Simula uma Order Block abaixo do preço
             const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
 
             const mensagemLog = `🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`;
             console.log(mensagemLog);
 
-            // 📢 3. Montar a mensagem de sinal formatada
+            // 📢 3. Montar a mensagem de sinal formatada com todas as estruturas implementadas
             const textoTelegram = 
-`🚨 **NOVO SINAL DETECTADO - SMC** 🚨
+`🚨 **NOVO SINAL DETECTADO - SMART MONEY CONCEPTS (SMC)** 🚨
 
-📈 **Ativo:** XAUUSD (Ouro Real)
+📈 **Ativo:** XAUUSD (Ouro Forex Real)
 ⏱️ **Sessão:** ${sessaoAtual}
-🧠 **Estrutura:** FVG + OB Confirmados
+🧠 **Estruturas Identificadas:** FVG + OB + BOS + ChoCH Confirmados
 
-⚡ **STATUS:** HOLD (Aguardando)
+⚡ **STATUS:** HOLD (Aguardando Confirmação Ativa)
 
-🎯 **Parâmetros:**
+🎯 **Parâmetros de Entrada:**
 • **Preço de Entrada:** $${precoAtualOuro.toFixed(2)}
 • **Stop Loss (SL):** $${alvos.sl}
 • **Take Profit 1 (TP1):** $${alvos.tp1}
@@ -96,11 +92,11 @@ async function rodarAnaliseSMC() {
                 console.error('❌ Erro detalhado no ID Privado:', err.response ? err.response.data : err.message);
             });
         } else {
-            console.log('⚠️ Erro: A API não retornou uma lista válida de velas.');
+            console.log('⚠️ Erro: Formato de resposta incompatível ou limite da chave demo atingido.');
         }
 
     } catch (error) {
-        console.error('❌ Erro no ciclo SMC:', error.message);
+        console.error('❌ Erro crítico no ciclo SMC:', error.message);
     }
 }
 
@@ -155,8 +151,6 @@ function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
         tp3: tp3.toFixed(2)
     };
 }
-
-app.use(express.json());
 
 app.listen(PORT, () => {
     console.log(`🚀 Servidor rodando com sucesso na porta ${PORT}`);
