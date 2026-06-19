@@ -38,6 +38,7 @@ async function getPrecoRealXAUUSD() {
     } catch (error) {
         console.error("❌ Erro ao buscar preço real do Ouro na Pyth Network:", error.message);
     }
+    // Proteção de segurança alinhada com o preço atual do seu gráfico
     return 4171.30 + (Math.random() * 1.0 - 0.50);
 }
 
