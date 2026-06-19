@@ -17,25 +17,22 @@ app.get('/', (req, res) => {
     res.send('🚀 Robô SMC ativo e rodando perfeitamente em produção!');
 });
 
-const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
+const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
 
+// CONFIGURAÇÃO DO REDIS CORRIGIDA (Remove o TLS para não conflitar com o protocolo da URL do log)
 const redisClient = redis.createClient({
-    url: process.env.REDIS_URL,
-    socket: {
-        tls: true,
-        rejectUnauthorized: false
-    }
+    url: process.env.REDIS_URL
 });
 
 redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
 let ultimoSinalTimestamp = 0;
-const COOLDOWN_MINUTOS = 5; // Mantido em 5 minutos conforme sua alteração
+const COOLDOWN_MINUTOS = 5; // Cooldown de 5 minutos mantido
 
 // Preço REAL da Binance Futures
 async function getPrecoRealXAUUSD() {
     try {
-        const response = await axios.get('https://fapi.binance.com/fapi/v1/ticker/price?symbol=XAUUSDT');
+        const response = await axios.get('https://binance.com');
         return parseFloat(response.data.price);
     } catch (error) {
         console.error("❌ Erro Binance:", error.message);
@@ -155,7 +152,7 @@ function calcularAlvosSMC(direcao, precoEntrada, bloco) {
 setInterval(rodarAnaliseSMC, 45000); // 45 segundos
 rodarAnaliseSMC();
 
-// BINDING DE PORTA FIXO EM '0.0.0.0' (Obrigatório para o Render mapear a rede interna)
+// BINDING DE PORTA FIXO EM '0.0.0.0' (Obrigatório para o Render)
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Servidor SMC rodando na porta ${PORT}`);
 });
