@@ -38,7 +38,6 @@ async function getPrecoRealXAUUSD() {
     } catch (error) {
         console.error("❌ Erro ao buscar preço real do Ouro na Pyth Network:", error.message);
     }
-    // Fallback dinâmico caso a internet falhe por um segundo
     return 4171.30 + (Math.random() * 1.0 - 0.50);
 }
 
