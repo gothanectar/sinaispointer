@@ -173,6 +173,17 @@ app.get('/', (req, res) => {
 setInterval(rodarAnaliseSMC, 45000); 
 rodarAnaliseSMC();
 
+// Rota para o JavaScript do seu site ler os dados do robô e preencher as caixas
+app.get('/api/sinal', async (req, res) => {
+    try {
+        if (!redisClient.isOpen) return res.status(500).json({ erro: "Banco desconectado" });
+        const dados = await redisClient.get('sinal_atual');
+        res.json(dados ? JSON.parse(dados) : { status: "AGUARDANDO" });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 app.listen(PORT, () => {
     console.log(`🚀 Servidor SMC rodando na porta ${PORT}`);
 });
