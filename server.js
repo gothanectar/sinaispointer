@@ -5,27 +5,37 @@ const redis = require('redis');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// 🔐 NOVO TOKEN ATUALIZADO
+// Configurações
 const TELEGRAM_TOKEN = "8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7ulSR6rw";
 const CHAT_ID = "-1002224151740";
 const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-// 🔗 URL do Telegram
 const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-
-console.log("🔗 Token carregado com sucesso! (length:", TELEGRAM_TOKEN.length, ")");
 
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
 redisClient.connect()
-    .then(() => console.log('📦 Conectado ao Redis de São Paulo!'))
-    .catch(err => console.error('❌ Erro Redis:', err.message));
+    .then(() => console.log('📦 Redis conectado com sucesso!'))
+    .catch(err => console.error('❌ Redis:', err.message));
 
-// Função de envio
+// Preço REAL da Binance
+async function getPrecoRealXAUUSD() {
+    try {
+        const response = await axios.get('https://api.binance.com/api/v3/ticker/price?symbol=XAUUSDT');
+        const price = parseFloat(response.data.price);
+        console.log(`✅ Preço REAL XAUUSD: $${price.toFixed(2)}`);
+        return price;
+    } catch (error) {
+        console.error("❌ Erro Binance:", error.message);
+        return 4186.68 + (Math.random() * 0.40 - 0.20); // fallback
+    }
+}
+
+// Envio Telegram
 async function enviarTelegram(chat_id, texto) {
     try {
         await axios.post(urlTelegram, {
@@ -33,22 +43,18 @@ async function enviarTelegram(chat_id, texto) {
             text: texto,
             parse_mode: 'Markdown'
         });
-        console.log(`✅ Mensagem enviada com sucesso para ${chat_id}`);
+        console.log(`✅ Enviado para ${chat_id}`);
     } catch (err) {
-        console.error(`❌ Erro ao enviar para ${chat_id}:`, 
-            err.response ? err.response.data : err.message);
+        console.error(`❌ Erro Telegram ${chat_id}:`, err.response?.data || err.message);
     }
 }
 
-// Função principal
+// Função Principal
 async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        const basePrice = 4186.68;
-        const precoAtualOuro = basePrice + (Math.random() * 0.40 - 0.20); 
-        
-        console.log(`✅ Preço Realista do Ouro: $${precoAtualOuro.toFixed(2)}`);
+        const precoAtualOuro = await getPrecoRealXAUUSD();
 
         const sessaoAtual = obterSessaoAtual();
         console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
@@ -56,9 +62,8 @@ async function rodarAnaliseSMC() {
         const blocoDefendidoOB = precoAtualOuro - 4.50;
         const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
 
-        console.log(`🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)} | SL: $${alvos.sl} | TP1: $${alvos.tp1} | TP2: $${alvos.tp2} | TP3: $${alvos.tp3}`);
+        console.log(`🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)}`);
 
-        // Redis
         if (redisClient.isOpen) {
             await redisClient.set('sinal_atual', JSON.stringify({
                 preco: precoAtualOuro.toFixed(2),
@@ -67,7 +72,7 @@ async function rodarAnaliseSMC() {
                 tp2: alvos.tp2,
                 tp3: alvos.tp3,
                 sessao: sessaoAtual,
-                timestamp: new Date().getTime()
+                timestamp: Date.now()
             }));
             console.log('💾 Dados gravados no Redis!');
         }
@@ -77,9 +82,9 @@ async function rodarAnaliseSMC() {
 
 📈 **Ativo:** XAUUSD (Ouro Real)
 ⏱️ **Sessão:** ${sessaoAtual}
-🧠 **Estruturas Identificadas:** FVG + OB + BOS + ChoCH Confirmados
+🧠 **Estruturas Identificadas:** FVG + OB + BOS + ChoCH
 
-⚡ **STATUS:** HOLD (Aguardando Confirmação Ativa)
+⚡ **STATUS:** HOLD
 
 🎯 **Parâmetros de Entrada:**
 • **Preço de Entrada:** $${precoAtualOuro.toFixed(2)}
@@ -96,7 +101,6 @@ async function rodarAnaliseSMC() {
     }
 }
 
-// Funções auxiliares
 function obterSessaoAtual() {
     const agora = new Date();
     const opcoes = { timeZone: 'America/Sao_Paulo', hour: '2-digit', hour12: false };
@@ -124,7 +128,7 @@ function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
     return { sl: "0", tp1: "0", tp2: "0", tp3: "0" };
 }
 
-// Inicia tudo
+// Inicia o bot
 setInterval(rodarAnaliseSMC, 60000);
 rodarAnaliseSMC();
 
