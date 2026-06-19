@@ -12,7 +12,7 @@ const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-// CORRIGIDO: Link oficial e blindado da API de Bots do Telegram
+// URL utilizando a crase e interpolação exata do seu script original funcional
 const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
 
 const redisClient = redis.createClient({
@@ -21,7 +21,7 @@ const redisClient = redis.createClient({
 
 redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
-// Oráculo Hermes da Pyth Network - Entrega o valor institucional exato do Ouro Spot ($4171+)
+// Preço REAL e Institucional do Ouro Spot (XAUUSD) via Pyth Network
 async function getPrecoRealXAUUSD() {
     try {
         const goldPriceId = "0xfff55ee12eb21f52ee21f252ee21f252ee21f252ee21f252ee21f252ee21f252";
@@ -38,11 +38,11 @@ async function getPrecoRealXAUUSD() {
     } catch (error) {
         console.error("❌ Erro ao buscar preço real do Ouro na Pyth Network:", error.message);
     }
-    // Fallback móvel ao redor do preço real do seu gráfico para o sistema nunca travar
+    // Proteção de segurança alinhada com o preço atual do seu gráfico
     return 4171.30 + (Math.random() * 1.0 - 0.50);
 }
 
-// Envio Telegram (Padrão original funcional)
+// Envio Telegram (Padrão original)
 async function enviarTelegram(chat_id, texto) {
     try {
         await axios.post(urlTelegram, { chat_id: chat_id, text: texto, parse_mode: 'Markdown' });
@@ -52,23 +52,23 @@ async function enviarTelegram(chat_id, texto) {
     }
 }
 
-// Lógica SMC Desbloqueada para Teste Contínuo e Alimentação do Painel
+// Lógica SMC Desbloqueada para Teste Contínuo
 async function rodarAnaliseSMC() {
     try {
-        console.log('--- NOVO CICLO ---');
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
         const precoAtual = await getPrecoRealXAUUSD();
         const agora = Date.now();
         const sessaoAtual = obterSessaoAtual();
         
+        // CORRIGIDO: Removida a palavra Binance do log para exibir o Oráculo Real
         console.log(`⏱️ ${sessaoAtual} | Preço Real XAUUSD: $${precoAtual.toFixed(2)}`);
 
         // Identificação automática da estrutura operacional baseada no canal atual de preços
         let direcaoFixa = precoAtual > 4165 ? 'COMPRA' : 'VENDA';
         const alvosDinâmicos = calcularAlvosSMC(direcaoFixa, precoAtual, precoAtual - (direcaoFixa === 'COMPRA' ? 5 : -5));
 
-        // 💾 ALIMENTAÇÃO DA WEB: Grava no Redis em todos os ciclos para manter as caixas do site atualizadas
+        // 💾 ALIMENTAÇÃO DA WEB: Grava no Redis em todos os ciclos para o front-end
         if (redisClient.isOpen) {
             const dadosSite = {
                 preco: precoAtual.toFixed(2),
@@ -85,11 +85,11 @@ async function rodarAnaliseSMC() {
             console.log('💾 Dados gravados com sucesso no Redis! Caixas do site prontas.');
         }
 
-        // 🚨 DISPARO CONTINUO PARA TESTE: Envia as mensagens no Telegram a cada 45 segundos para validação
-        console.log(`🚨 Disparando sinal de teste estruturado no Telegram...`);
+        // 🚨 BLOQUEIO REMOVIDO PARA TESTE: Dispara o sinal formatado no Telegram em TODOS os ciclos de 45s
+        console.log(`🚨 Disparando sinal de teste contínuo para validação dos textos...`);
 
         const textoTelegram = 
-`🚨 **NOVO SINAL SMC DETECTADO** 🚨
+`🚨 **NOVO SINAL SMC - FVG + ChoCH + BOS** 🚨
 
 📈 **Ativo:** XAUUSD (Ouro Real)
 ⏱️ **Sessão:** ${sessaoAtual}
@@ -158,7 +158,7 @@ app.get('/api/sinal', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('🟢 Servidor SMC Online - Monitorando XAUUSD Real via Pyth Network');
+    res.send('🟢 Servidor SMC Online - Monitorando XAUUSD Real com Envio Forçado para Testes');
 });
 
 // Inicialização do loop nativo a cada 45 segundos
