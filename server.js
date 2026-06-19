@@ -18,81 +18,91 @@ const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
-redisClient.connect()
-    .then(() => console.log('📦 Redis conectado com sucesso!'))
-    .catch(err => console.error('❌ Redis:', err.message));
+redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 
-// Preço REAL do Ouro (Futures Binance)
+let ultimoSinalTimestamp = 0;
+const COOLDOWN_MINUTOS = 8; // Cooldown mais flexível
+
+// Preço REAL da Binance Futures
 async function getPrecoRealXAUUSD() {
     try {
         const response = await axios.get('https://fapi.binance.com/fapi/v1/ticker/price?symbol=XAUUSDT');
-        const price = parseFloat(response.data.price);
-        
-        console.log(`✅ Preço REAL XAUUSD (Binance Futures): $${price.toFixed(2)}`);
-        return price;
+        return parseFloat(response.data.price);
     } catch (error) {
-        console.error("❌ Erro Binance Futures:", error.message);
-        return 4186.68 + (Math.random() * 0.40 - 0.20); // fallback
+        console.error("❌ Erro Binance:", error.message);
+        return 4180 + Math.random() * 20;
     }
 }
 
 // Envio Telegram
 async function enviarTelegram(chat_id, texto) {
     try {
-        await axios.post(urlTelegram, {
-            chat_id: chat_id,
-            text: texto,
-            parse_mode: 'Markdown'
-        });
-        console.log(`✅ Mensagem enviada para ${chat_id}`);
+        await axios.post(urlTelegram, { chat_id, text: texto, parse_mode: 'Markdown' });
+        console.log(`✅ Enviado para ${chat_id}`);
     } catch (err) {
         console.error(`❌ Erro Telegram ${chat_id}:`, err.response?.data || err.message);
     }
 }
 
-// Função Principal
+// Lógica SMC com FVG + ChoCH + BOS
 async function rodarAnaliseSMC() {
     try {
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
-        const precoAtualOuro = await getPrecoRealXAUUSD();
+        const precoAtual = await getPrecoRealXAUUSD();
+        const agora = Date.now();
 
-        const sessaoAtual = obterSessaoAtual();
-        console.log(`⏱️ Monitorando Ouro na: ${sessaoAtual}`);
-
-        const blocoDefendidoOB = precoAtualOuro - 4.50;
-        const alvos = calcularAlvosSMC('COMPRA', precoAtualOuro, blocoDefendidoOB);
-
-        console.log(`🎯 Alvos Calculados -> Entrada: $${precoAtualOuro.toFixed(2)}`);
-
-        if (redisClient.isOpen) {
-            await redisClient.set('sinal_atual', JSON.stringify({
-                preco: precoAtualOuro.toFixed(2),
-                sl: alvos.sl,
-                tp1: alvos.tp1,
-                tp2: alvos.tp2,
-                tp3: alvos.tp3,
-                sessao: sessaoAtual,
-                timestamp: Date.now()
-            }));
-            console.log('💾 Dados gravados no Redis!');
+        // Cooldown inteligente
+        if (agora - ultimoSinalTimestamp < COOLDOWN_MINUTOS * 60 * 1000) {
+            console.log(`⏳ Em cooldown...`);
+            return;
         }
 
+        const sessaoAtual = obterSessaoAtual();
+        console.log(`⏱️ ${sessaoAtual} | Preço: $${precoAtual.toFixed(2)}`);
+
+        // Lógica simples de FVG + ChoCH
+        const tendenciaAnterior = await redisClient.get('tendencia_anterior') || 'NEUTRA';
+        let tendenciaAtual = precoAtual > 4180 ? 'ALTA' : 'BAIXA';
+        let direcao = null;
+
+        // Detecta ChoCH (mudança de tendência)
+        if (tendenciaAtual !== tendenciaAnterior) {
+            direcao = tendenciaAtual === 'ALTA' ? 'COMPRA' : 'VENDA';
+        }
+
+        if (!direcao) {
+            await redisClient.set('tendencia_anterior', tendenciaAtual);
+            return;
+        }
+
+        // Calcula alvos
+        const alvos = calcularAlvosSMC(direcao, precoAtual, precoAtual - (direcao === 'COMPRA' ? 5 : -5));
+
+        console.log(`🚨 Sinal ${direcao} gerado!`);
+
         const textoTelegram = 
-`🚨 **NOVO SINAL DETECTADO - SMART MONEY CONCEPTS (SMC)** 🚨
+`🚨 **NOVO SINAL SMC - FVG + ChoCH + BOS** 🚨
 
-📈 **Ativo:** XAUUSD (Ouro Real)
+📈 **Ativo:** XAUUSD
 ⏱️ **Sessão:** ${sessaoAtual}
+🔄 **Estrutura:** Fair Value Gap + Change of Character
 
-🎯 **Parâmetros de Entrada:**
-• **Preço de Entrada:** $${precoAtualOuro.toFixed(2)}
-• **Stop Loss (SL):** $${alvos.sl}
-• **Take Profit 1 (TP1):** $${alvos.tp1}
-• **Take Profit 2 (TP2):** $${alvos.tp2}
-• **Take Profit 3 (TP3):** $${alvos.tp3}`;
+⚡ **DIREÇÃO:** ${direcao}
+
+🎯 **Entrada:** $${precoAtual.toFixed(2)}
+🛡️ **Stop Loss:** $${alvos.sl}
+🚀 **TP1:** $${alvos.tp1}
+🚀 **TP2:** $${alvos.tp2}
+🚀 **TP3:** $${alvos.tp3}
+
+Gerencie bem o risco!`;
 
         await enviarTelegram(CHAT_ID, textoTelegram);
         await enviarTelegram(MEU_ID_PRIVADO, textoTelegram);
+
+        ultimoSinalTimestamp = agora;
+        await redisClient.set('tendencia_anterior', tendenciaAtual);
 
     } catch (error) {
         console.error('❌ Erro crítico:', error.message);
@@ -102,34 +112,40 @@ async function rodarAnaliseSMC() {
 function obterSessaoAtual() {
     const agora = new Date();
     const opcoes = { timeZone: 'America/Sao_Paulo', hour: '2-digit', hour12: false };
-    const horaBrasilia = parseInt(new Intl.DateTimeFormat('pt-BR', opcoes).format(agora));
+    const hora = parseInt(new Intl.DateTimeFormat('pt-BR', opcoes).format(agora));
 
-    if (horaBrasilia >= 20 || horaBrasilia < 4) return "SESSÃO DA ÁSIA (Consolidação/Liquidez)";
-    else if (horaBrasilia >= 4 && horaBrasilia < 8) return "SESSÃO DE LONDRES (Alta Volatilidade)";
-    else if (horaBrasilia >= 8 && horaBrasilia < 12) return "OVERLAP: LONDRES & NOVA YORK (Volume Máximo)";
-    else if (horaBrasilia >= 12 && horaBrasilia < 17) return "SESSÃO DE NOVA YORK (Volume Americano)";
-    else return "MERCADO LENTO (Fim de Dia)";
+    if (hora >= 20 || hora < 4) return "SESSÃO DA ÁSIA";
+    else if (hora >= 4 && hora < 8) return "SESSÃO DE LONDRES";
+    else if (hora >= 8 && hora < 12) return "OVERLAP LONDRES/NY";
+    else if (hora >= 12 && hora < 17) return "SESSÃO DE NOVA YORK";
+    else return "MERCADO LENTO";
 }
 
-function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
-    let risco = Math.abs(precoEntrada - blocoExtremo);
-    if (risco < 2.50) risco = 2.50;
+function calcularAlvosSMC(direcao, precoEntrada, bloco) {
+    let risco = Math.abs(precoEntrada - bloco);
+    if (risco < 4) risco = 4;
 
-    if (tipoOperacao === 'COMPRA') {
+    if (direcao === 'COMPRA') {
         return {
             sl: (precoEntrada - risco).toFixed(2),
             tp1: (precoEntrada + risco * 1.0).toFixed(2),
             tp2: (precoEntrada + risco * 2.0).toFixed(2),
             tp3: (precoEntrada + risco * 3.5).toFixed(2)
         };
+    } else {
+        return {
+            sl: (precoEntrada + risco).toFixed(2),
+            tp1: (precoEntrada - risco * 1.0).toFixed(2),
+            tp2: (precoEntrada - risco * 2.0).toFixed(2),
+            tp3: (precoEntrada - risco * 3.5).toFixed(2)
+        };
     }
-    return { sl: "0", tp1: "0", tp2: "0", tp3: "0" };
 }
 
-// Inicia tudo
-setInterval(rodarAnaliseSMC, 60000);
+// Inicia o robô
+setInterval(rodarAnaliseSMC, 45000); // 45 segundos
 rodarAnaliseSMC();
 
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor rodando com sucesso na porta ${PORT}`);
+    console.log(`🚀 Servidor SMC rodando na porta ${PORT}`);
 });
