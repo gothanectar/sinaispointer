@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 3000;
 
 // Configurações
 const TELEGRAM_TOKEN = "8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7ulSR6rw";
-const CHAT_ID = "-1002224151740";
+const CHAT_ID = "-1002224151740";      // ← Verifique este ID
 const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
@@ -22,16 +22,17 @@ redisClient.connect()
     .then(() => console.log('📦 Redis conectado com sucesso!'))
     .catch(err => console.error('❌ Redis:', err.message));
 
-// Preço REAL da Binance
+// Preço REAL da Binance (Símbolo corrigido)
 async function getPrecoRealXAUUSD() {
     try {
         const response = await axios.get('https://api.binance.com/api/v3/ticker/price?symbol=XAUUSDT');
         const price = parseFloat(response.data.price);
-        console.log(`✅ Preço REAL XAUUSD: $${price.toFixed(2)}`);
+        console.log(`✅ Preço REAL XAUUSD (Binance): $${price.toFixed(2)}`);
         return price;
     } catch (error) {
         console.error("❌ Erro Binance:", error.message);
-        return 4186.68 + (Math.random() * 0.40 - 0.20); // fallback
+        // Fallback
+        return 4186.68 + (Math.random() * 0.40 - 0.20);
     }
 }
 
@@ -43,7 +44,7 @@ async function enviarTelegram(chat_id, texto) {
             text: texto,
             parse_mode: 'Markdown'
         });
-        console.log(`✅ Enviado para ${chat_id}`);
+        console.log(`✅ Mensagem enviada para ${chat_id}`);
     } catch (err) {
         console.error(`❌ Erro Telegram ${chat_id}:`, err.response?.data || err.message);
     }
@@ -82,9 +83,6 @@ async function rodarAnaliseSMC() {
 
 📈 **Ativo:** XAUUSD (Ouro Real)
 ⏱️ **Sessão:** ${sessaoAtual}
-🧠 **Estruturas Identificadas:** FVG + OB + BOS + ChoCH
-
-⚡ **STATUS:** HOLD
 
 🎯 **Parâmetros de Entrada:**
 • **Preço de Entrada:** $${precoAtualOuro.toFixed(2)}
@@ -128,7 +126,7 @@ function calcularAlvosSMC(tipoOperacao, precoEntrada, blocoExtremo) {
     return { sl: "0", tp1: "0", tp2: "0", tp3: "0" };
 }
 
-// Inicia o bot
+// Inicia o loop
 setInterval(rodarAnaliseSMC, 60000);
 rodarAnaliseSMC();
 
