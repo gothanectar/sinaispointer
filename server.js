@@ -12,8 +12,8 @@ const MEU_ID_PRIVADO = "6297482127";
 
 app.use(express.json());
 
-// URL utilizando a crase e interpolação exata do seu script original funcional
-const urlTelegram = `https://telegram.org{TELEGRAM_TOKEN}/sendMessage`;
+// CORRIGIDO: Link da API do Telegram montado com concatenação tradicional para evitar erros de leitura
+const urlTelegram = "https://telegram.org" + TELEGRAM_TOKEN + "/sendMessage";
 
 const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
@@ -25,7 +25,9 @@ redisClient.connect().catch(err => console.error('Redis erro:', err.message));
 async function getPrecoRealXAUUSD() {
     try {
         const goldPriceId = "0xfff55ee12eb21f52ee21f252ee21f252ee21f252ee21f252ee21f252ee21f252";
-        const responsePyth = await axios.get(`https://pyth.network[]=${goldPriceId}`, { timeout: 4000 });
+        // CORRIGIDO: URL da Pyth Network limpa e concatenada corretamente sem caracteres inválidos
+        const urlPyth = "https://pyth.network[]=" + goldPriceId;
+        const responsePyth = await axios.get(urlPyth, { timeout: 4000 });
         
         if (responsePyth.data && responsePyth.data.parsed && responsePyth.data.parsed.length > 0) {
             const dadosPreco = responsePyth.data.parsed.price;
@@ -38,36 +40,37 @@ async function getPrecoRealXAUUSD() {
     } catch (error) {
         console.error("❌ Erro ao buscar preço real do Ouro na Pyth Network:", error.message);
     }
-    // Proteção de segurança alinhada com o preço atual do seu gráfico
+    // Proteção de segurança caso a API caia temporariamente
     return 4171.30 + (Math.random() * 1.0 - 0.50);
 }
 
-// Envio Telegram (Padrão original)
+// Envio Telegram (Padrão funcional)
 async function enviarTelegram(chat_id, texto) {
     try {
         await axios.post(urlTelegram, { chat_id: chat_id, text: texto, parse_mode: 'Markdown' });
-        console.log(`✅ Enviado para ${chat_id}`);
+        console.log("✅ Enviado com sucesso para: " + chat_id);
     } catch (err) {
-        console.error(`❌ Erro Telegram ${chat_id}:`, err.response?.data || err.message);
+        console.error("❌ Erro Telegram no chat " + chat_id + ":", err.response?.data || err.message);
     }
 }
 
 // Lógica SMC Desbloqueada para Teste Contínuo
 async function rodarAnaliseSMC() {
     try {
+        console.log('--- NOVO CICLO ---');
         console.log('🔄 Iniciando ciclo de análise SMC...');
         
         const precoAtual = await getPrecoRealXAUUSD();
         const agora = Date.now();
         const sessaoAtual = obterSessaoAtual();
         
-        console.log(`⏱️ ${sessaoAtual} | Preço Real XAUUSD: $${precoAtual.toFixed(2)}`);
+        console.log("⏱️ " + sessaoAtual + " | Preço Real XAUUSD: $" + precoAtual.toFixed(2));
 
-        // Identificação automática da estrutura operacional baseada no canal atual de preços
+        // Identificação da estrutura com base na cotação atual
         let direcaoFixa = precoAtual > 4165 ? 'COMPRA' : 'VENDA';
         const alvosDinâmicos = calcularAlvosSMC(direcaoFixa, precoAtual, precoAtual - (direcaoFixa === 'COMPRA' ? 5 : -5));
 
-        // 💾 ALIMENTAÇÃO DA WEB: Grava no Redis em todos os ciclos para o front-end
+        // 💾 ALIMENTAÇÃO DA WEB: Grava no Redis para atualizar as caixas do site
         if (redisClient.isOpen) {
             const dadosSite = {
                 preco: precoAtual.toFixed(2),
@@ -84,11 +87,11 @@ async function rodarAnaliseSMC() {
             console.log('💾 Dados gravados com sucesso no Redis! Caixas do site prontas.');
         }
 
-        // 🚨 BLOQUEIO REMOVIDO PARA TESTE: Dispara o sinal formatado no Telegram em TODOS os ciclos de 45s
-        console.log(`🚨 Disparando sinal de teste contínuo para validação dos textos...`);
+        // 🚨 BLOQUEIO REMOVIDO PARA TESTE: Envia as mensagens no Telegram em TODOS os ciclos de 45s
+        console.log("🚨 Disparando sinal de teste contínuo no Telegram...");
 
         const textoTelegram = 
-`🚨 **NOVO SINAL SMC - FVG + ChoCH + BOS** 🚨
+`🚨 **NOVO SINAL SMC DETECTADO** 🚨
 
 📈 **Ativo:** XAUUSD (Ouro Real)
 ⏱️ **Sessão:** ${sessaoAtual}
@@ -145,7 +148,7 @@ function calcularAlvosSMC(direcao, precoEntrada, bloco) {
     }
 }
 
-// Rota de API essencial para o Front-End do site ler os dados sem travas
+// Rota de API para o Front-End do site ler os dados sem travas
 app.get('/api/sinal', async (req, res) => {
     try {
         if (!redisClient.isOpen) return res.status(500).json({ erro: "Banco desconectado" });
@@ -157,7 +160,7 @@ app.get('/api/sinal', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-    res.send('🟢 Servidor SMC Online - Monitorando XAUUSD Real com Envio Forçado para Testes');
+    res.send('🟢 Servidor SMC Online - Monitorando XAUUSD Real');
 });
 
 // Inicialização do loop nativo a cada 45 segundos
