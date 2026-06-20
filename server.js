@@ -5,12 +5,12 @@ const redis = require('redis');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configurações
-const TELEGRAM_TOKEN = "8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7ulSR6rw";
-const CHAT_ID = "-1002224151740";
-const MEU_ID_PRIVADO = "6297482127";
-
 app.use(express.json());
+
+// ==================== CONFIGURAÇÕES ====================
+const TELEGRAM_TOKEN = "8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7ulSR6rw";
+const CHAT_ID = "-1002224151740";        // Canal
+const MEU_ID_PRIVADO = "6297482127";
 
 const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
@@ -18,134 +18,74 @@ const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
-redisClient.connect().catch(err => console.error('Redis erro:', err.message));
+redisClient.connect()
+    .then(() => console.log('📦 Redis conectado com sucesso!'))
+    .catch(err => console.error('❌ Redis:', err.message));
 
-let ultimoSinalTimestamp = 0;
-const COOLDOWN_MINUTOS = 8; // Cooldown mais flexível
-
-// Preço REAL da Binance Futures
-async function getPrecoRealXAUUSD() {
+// ==================== RECEBER SINAL DO MT5 ====================
+app.post('/nova-ordem', async (req, res) => {
     try {
-        const response = await axios.get('https://fapi.binance.com/fapi/v1/ticker/price?symbol=XAUUSDT');
-        return parseFloat(response.data.price);
-    } catch (error) {
-        console.error("❌ Erro Binance:", error.message);
-        return 4180 + Math.random() * 20;
-    }
-}
+        const { symbol, action, price, sl, tp1, tp2, tp3 } = req.body;
 
-// Envio Telegram
+        console.log(`🚨 NOVO SINAL RECEBIDO DO MT5: ${action} ${symbol} @ ${price}`);
+
+        const textoTelegram = 
+`🚨 **SINAL SMC - ${action}** 🚨
+
+📈 **Ativo:** ${symbol}
+💰 **Entrada:** $${price.toFixed(2)}
+🛡️ **Stop Loss:** $${sl.toFixed(2)}
+🎯 **TP1:** $${tp1.toFixed(2)}
+🎯 **TP2:** $${(tp2 || price * 1.02).toFixed(2)}
+🎯 **TP3:** $${(tp3 || price * 1.035).toFixed(2)}
+
+🔄 Enviado automaticamente pelo Robô MT5`;
+
+        // Enviar para Telegram
+        await enviarTelegram(CHAT_ID, textoTelegram);
+        await enviarTelegram(MEU_ID_PRIVADO, textoTelegram);
+
+        // Salvar no Redis
+        if (redisClient.isOpen) {
+            await redisClient.set('ultimo_sinal', JSON.stringify({
+                symbol,
+                action,
+                price,
+                sl,
+                tp1,
+                tp2,
+                tp3,
+                timestamp: Date.now()
+            }));
+        }
+
+        res.json({ status: "ok", message: "Sinal processado" });
+    } catch (error) {
+        console.error("❌ Erro ao processar sinal:", error.message);
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Função auxiliar para enviar no Telegram
 async function enviarTelegram(chat_id, texto) {
     try {
-        await axios.post(urlTelegram, { chat_id, text: texto, parse_mode: 'Markdown' });
-        console.log(`✅ Enviado para ${chat_id}`);
+        await axios.post(urlTelegram, {
+            chat_id: chat_id,
+            text: texto,
+            parse_mode: 'Markdown'
+        });
+        console.log(`✅ Sinal enviado para ${chat_id}`);
     } catch (err) {
         console.error(`❌ Erro Telegram ${chat_id}:`, err.response?.data || err.message);
     }
 }
 
-// Lógica SMC com FVG + ChoCH + BOS
-async function rodarAnaliseSMC() {
-    try {
-        console.log('🔄 Iniciando ciclo de análise SMC...');
-        
-        const precoAtual = await getPrecoRealXAUUSD();
-        const agora = Date.now();
+// Rota de teste
+app.get('/', (req, res) => {
+    res.send('🟢 Servidor SMC Pro Ativo - Aguardando sinais do MT5');
+});
 
-        // Cooldown inteligente
-        if (agora - ultimoSinalTimestamp < COOLDOWN_MINUTOS * 60 * 1000) {
-            console.log(`⏳ Em cooldown...`);
-            return;
-        }
-
-        const sessaoAtual = obterSessaoAtual();
-        console.log(`⏱️ ${sessaoAtual} | Preço: $${precoAtual.toFixed(2)}`);
-
-        // Lógica simples de FVG + ChoCH
-        const tendenciaAnterior = await redisClient.get('tendencia_anterior') || 'NEUTRA';
-        let tendenciaAtual = precoAtual > 4180 ? 'ALTA' : 'BAIXA';
-        let direcao = null;
-
-        // Detecta ChoCH (mudança de tendência)
-        if (tendenciaAtual !== tendenciaAnterior) {
-            direcao = tendenciaAtual === 'ALTA' ? 'COMPRA' : 'VENDA';
-        }
-
-        if (!direcao) {
-            await redisClient.set('tendencia_anterior', tendenciaAtual);
-            return;
-        }
-
-        // Calcula alvos
-        const alvos = calcularAlvosSMC(direcao, precoAtual, precoAtual - (direcao === 'COMPRA' ? 5 : -5));
-
-        console.log(`🚨 Sinal ${direcao} gerado!`);
-
-        const textoTelegram = 
-`🚨 **NOVO SINAL SMC - FVG + ChoCH + BOS** 🚨
-
-📈 **Ativo:** XAUUSD
-⏱️ **Sessão:** ${sessaoAtual}
-🔄 **Estrutura:** Fair Value Gap + Change of Character
-
-⚡ **DIREÇÃO:** ${direcao}
-
-🎯 **Entrada:** $${precoAtual.toFixed(2)}
-🛡️ **Stop Loss:** $${alvos.sl}
-🚀 **TP1:** $${alvos.tp1}
-🚀 **TP2:** $${alvos.tp2}
-🚀 **TP3:** $${alvos.tp3}
-
-Gerencie bem o risco!`;
-
-        await enviarTelegram(CHAT_ID, textoTelegram);
-        await enviarTelegram(MEU_ID_PRIVADO, textoTelegram);
-
-        ultimoSinalTimestamp = agora;
-        await redisClient.set('tendencia_anterior', tendenciaAtual);
-
-    } catch (error) {
-        console.error('❌ Erro crítico:', error.message);
-    }
-}
-
-function obterSessaoAtual() {
-    const agora = new Date();
-    const opcoes = { timeZone: 'America/Sao_Paulo', hour: '2-digit', hour12: false };
-    const hora = parseInt(new Intl.DateTimeFormat('pt-BR', opcoes).format(agora));
-
-    if (hora >= 20 || hora < 4) return "SESSÃO DA ÁSIA";
-    else if (hora >= 4 && hora < 8) return "SESSÃO DE LONDRES";
-    else if (hora >= 8 && hora < 12) return "OVERLAP LONDRES/NY";
-    else if (hora >= 12 && hora < 17) return "SESSÃO DE NOVA YORK";
-    else return "MERCADO LENTO";
-}
-
-function calcularAlvosSMC(direcao, precoEntrada, bloco) {
-    let risco = Math.abs(precoEntrada - bloco);
-    if (risco < 4) risco = 4;
-
-    if (direcao === 'COMPRA') {
-        return {
-            sl: (precoEntrada - risco).toFixed(2),
-            tp1: (precoEntrada + risco * 1.0).toFixed(2),
-            tp2: (precoEntrada + risco * 2.0).toFixed(2),
-            tp3: (precoEntrada + risco * 3.5).toFixed(2)
-        };
-    } else {
-        return {
-            sl: (precoEntrada + risco).toFixed(2),
-            tp1: (precoEntrada - risco * 1.0).toFixed(2),
-            tp2: (precoEntrada - risco * 2.0).toFixed(2),
-            tp3: (precoEntrada - risco * 3.5).toFixed(2)
-        };
-    }
-}
-
-// Inicia o robô
-setInterval(rodarAnaliseSMC, 45000); // 45 segundos
-rodarAnaliseSMC();
-
+// Inicia servidor
 app.listen(PORT, () => {
-    console.log(`🚀 Servidor SMC rodando na porta ${PORT}`);
+    console.log(`🚀 Servidor rodando na porta ${PORT} - Pronto para receber sinais do MT5`);
 });
