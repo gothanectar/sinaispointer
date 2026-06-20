@@ -18,14 +18,16 @@ const redisClient = redis.createClient({
     url: process.env.REDIS_URL || 'redis://localhost:6379'
 });
 
-redisClient.connect().catch(err => console.error('Redis erro:', err.message));
+redisClient.connect()
+    .then(() => console.log('📦 Redis conectado'))
+    .catch(err => console.error('❌ Redis:', err.message));
 
 // ==================== RECEBER SINAL DO MT5 ====================
 app.post('/nova-ordem', async (req, res) => {
     try {
         const { symbol, action, price, sl, tp1, tp2, tp3 } = req.body;
 
-        console.log(`🚨 Sinal recebido: ${action} ${symbol} @ ${price}`);
+        console.log(`🚨 Sinal MT5: ${action} ${symbol} @ ${price}`);
 
         const emoji = action === "COMPRA" ? "🟢" : "🔴";
         const cor = action === "COMPRA" ? "✅ COMPRA" : "❌ VENDA";
@@ -34,23 +36,30 @@ app.post('/nova-ordem', async (req, res) => {
 `${emoji} **NOVO SINAL SMC - ${cor}** ${emoji}
 
 📊 **Ativo:** ${symbol}
-⏰ **Horário:** ${new Date().toLocaleTimeString('pt-BR')}
+⏰ **Horário:** ${new Date().toLocaleString('pt-BR')}
 
-💰 **Entrada:** $${price.toFixed(2)}
-🛡️ **Stop Loss:** $${sl.toFixed(2)}
-🚀 **Take Profit 1:** $${tp1.toFixed(2)}
-🚀 **Take Profit 2:** $${tp2.toFixed(2)}
-🚀 **Take Profit 3:** $${tp3.toFixed(2)}
+💰 **Entrada:** $${Number(price).toFixed(2)}
+🛡️ **Stop Loss:** $${Number(sl).toFixed(2)}
+🚀 **TP1:** $${Number(tp1).toFixed(2)}
+🚀 **TP2:** $${Number(tp2).toFixed(2)}
+🚀 **TP3:** $${Number(tp3).toFixed(2)}
 
 ⚡ Gerencie seu risco com disciplina!`;
 
-        // Enviar mensagens
+        // Envia para Telegram
         await enviarTelegram(CHAT_ID, textoTelegram);
         await enviarTelegram(MEU_ID_PRIVADO, textoTelegram);
 
-        res.json({ status: "ok" });
+        // Salva no Redis para o site ler
+        if (redisClient.isOpen) {
+            await redisClient.set('ultimo_sinal', JSON.stringify({
+                symbol, action, price, sl, tp1, tp2, tp3, timestamp: Date.now()
+            }));
+        }
+
+        res.json({ status: "ok", message: "Sinal processado" });
     } catch (error) {
-        console.error("Erro:", error.message);
+        console.error("Erro ao processar sinal:", error.message);
         res.status(500).json({ error: error.message });
     }
 });
@@ -62,8 +71,9 @@ async function enviarTelegram(chat_id, texto) {
             text: texto,
             parse_mode: 'Markdown'
         });
+        console.log(`✅ Enviado para ${chat_id}`);
     } catch (err) {
-        console.error(`Erro Telegram ${chat_id}:`, err.response?.data || err.message);
+        console.error(`❌ Erro Telegram ${chat_id}:`, err.response?.data || err.message);
     }
 }
 
