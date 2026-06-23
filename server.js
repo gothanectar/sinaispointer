@@ -8,9 +8,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 // Configurações
-const TELEGRAM_TOKEN = "8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7ulSR6rw";
-const CHAT_ID = "-1002224151740";
-const MEU_ID_PRIVADO = "6297482127";
+const TELEGRAM_TOKEN = process.env.TELEGRAM_TOKEN || "8872961272:AAEKSG7S7Y4WYcRdw93V_TnlVsg7ulSR6rw";
+const CHAT_ID = process.env.CHAT_ID || "-1002224151740";
+const MEU_ID_PRIVADO = process.env.MEU_ID_PRIVADO || "6297482127";
 
 const urlTelegram = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
 
