@@ -25,9 +25,9 @@ redisClient.connect()
 // ==================== RECEBER SINAL DO MT5 ====================
 app.post('/nova-ordem', async (req, res) => {
     try {
-        const { symbol, action, price, sl, tp1, tp2, tp3 } = req.body;
+        const { symbol, action, price, sl, tp1, tp2, tp3, robot_id } = req.body;
 
-        console.log(`🚨 Sinal MT5: ${action} ${symbol} @ ${price}`);
+        console.log(`🚨 Sinal MT5 [Robô ${robot_id || 'N/A'}]: ${action} ${symbol} @ ${price}`);
 
         const emoji = action === "COMPRA" ? "🟢" : "🔴";
         const cor = action === "COMPRA" ? "✅ COMPRA" : "❌ VENDA";
@@ -35,6 +35,7 @@ app.post('/nova-ordem', async (req, res) => {
         const textoTelegram = 
 `${emoji} **NOVO SINAL SMC - ${cor}** ${emoji}
 
+🤖 **Robô ID:** ${robot_id || 'N/A'}
 📊 **Ativo:** ${symbol}
 ⏰ **Horário:** ${new Date().toLocaleString('pt-BR')}
 
@@ -53,7 +54,7 @@ app.post('/nova-ordem', async (req, res) => {
         // Salva no Redis para o site ler
         if (redisClient.isOpen) {
             await redisClient.set('ultimo_sinal', JSON.stringify({
-                symbol, action, price, sl, tp1, tp2, tp3, timestamp: Date.now()
+                symbol, action, price, sl, tp1, tp2, tp3, robot_id, timestamp: Date.now()
             }));
         }
 
