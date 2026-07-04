@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Download - TradePulse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0d0d1a 100%); }
+        .gold-gradient { background: linear-gradient(135deg, #ffd700 0%, #ffaa00 50%, #ff8c00 100%); }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full z-50 bg-black/30 backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 gold-gradient rounded-lg flex items-center justify-center">
+                    <span class="text-black font-bold text-xl">TP</span>
+                </div>
+                <span class="text-2xl font-bold">Trade<span class="text-yellow-400">Pulse</span></span>
+            </div>
+            <div class="hidden md:flex gap-8 items-center">
+                <a href="index.html" class="text-gray-400 hover:text-white transition">
+                    ← Voltar ao Gráfico
+                </a>
+                <a href="tradepulse-home.html" class="hover:text-yellow-400 transition">Home</a>
+                <a href="tradepulse-docs.html" class="hover:text-yellow-400 transition">Documentação</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-md mx-auto">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 gold-gradient rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-2xl font-bold mb-2">Área de Download</h1>
+                    <p class="text-gray-400">Insira sua chave de licença para baixar o robô</p>
+                </div>
+
+                <form id="licenseForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Chave de Licença</label>
+                        <input 
+                            type="text" 
+                            id="licenseKey" 
+                            placeholder="TP-XXXX-XXXX-XXXX"
+                            class="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-yellow-400 transition"
+                            required
+                        >
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">E-mail de Compra</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            placeholder="seu@email.com"
+                            class="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 focus:outline-none focus:border-yellow-400 transition"
+                            required
+                        >
+                    </div>
+                    <button 
+                        type="submit"
+                        class="w-full btn-gold text-black font-bold py-3 rounded-xl transition"
+                    >
+                        Validar e Baixar
+                    </button>
+                </form>
+
+                <div id="errorMessage" class="hidden mt-4 bg-red-500/20 border border-red-500/50 rounded-xl p-4 text-red-400 text-sm">
+                    Chave de licença inválida ou e-mail não encontrado.
+                </div>
+
+                <div id="successMessage" class="hidden mt-4 bg-green-500/20 border border-green-500/50 rounded-xl p-4">
+                    <p class="text-green-400 font-semibold mb-3">✅ Licença validada com sucesso!</p>
+                    <a 
+                        href="#"
+                        id="downloadLink"
+                        class="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 rounded-xl transition text-center"
+                    >
+                        📥 Baixar tradepulse_ouro.ex5
+                    </a>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-white/10">
+                    <p class="text-gray-500 text-sm text-center">
+                        Não tem uma licença? <a href="tradepulse-home.html#pricing" class="text-yellow-400 hover:underline">Compre agora</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-yellow-400/10 border border-yellow-400/30 rounded-xl p-4">
+                <p class="text-yellow-400 text-sm text-center">
+                    ⚠️ Cada licença permite download em até 3 dispositivos diferentes.
+                </p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('licenseForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const licenseKey = document.getElementById('licenseKey').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            // Simulação de validação (em produção, isso seria uma chamada API real)
+            // Aqui você implementaria a chamada ao seu backend para validar a licença
+            
+            // Por enquanto, vamos aceitar qualquer chave que comece com "TP-"
+            if (licenseKey.startsWith('TP-') && email.includes('@')) {
+                errorMessage.classList.add('hidden');
+                successMessage.classList.remove('hidden');
+                
+                // Em produção, o link de download seria gerado dinamicamente
+                document.getElementById('downloadLink').href = '#';
+            } else {
+                errorMessage.classList.remove('hidden');
+                successMessage.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

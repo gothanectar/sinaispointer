@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentação - TradePulse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/unified-styles.css">
+    <style>
+        .code-block { background: #1a1a2e; border: 1px solid rgba(255, 215, 0, 0.2); }
+        .step-number { width: 40px; height: 40px; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Navigation -->
+    <div id="navigation-container"></div>
+
+    <!-- Header -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                📖 Manual do Usuário - Robôs TradePulse
+            </h1>
+            <p class="text-gray-400 text-lg">
+                Versão 3.0 | Atualizado em Junho 2026
+            </p>
+        </div>
+    </section>
+
+    <!-- Content -->
+    <main class="max-w-4xl mx-auto px-6 pb-20">
+        <!-- Requirements -->
+        <section id="requirements" class="mb-16">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-yellow-400">1. Requisitos Mínimos</h2>
+                <ul class="space-y-3">
+                    <li class="flex items-start gap-3">
+                        <span class="text-yellow-400 mt-1">•</span>
+                        <div>
+                            <strong>Plataforma:</strong> MetaTrader 5 (MT5)
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-yellow-400 mt-1">•</span>
+                        <div>
+                            <strong>Ativo recomendado:</strong> XAUUSD (Ouro)
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-yellow-400 mt-1">•</span>
+                        <div>
+                            <strong>Tempo Gráfico (Timeframe):</strong>
+                            <ul class="ml-4 mt-2 space-y-1 text-gray-400">
+                                <li>• <strong>TradePulse Ouro H1 (Conservador):</strong> H1 (1 Hora)</li>
+                                <li>• <strong>TradePulse Institucional H1:</strong> H1 (1 Hora) ou M5 (5 Minutos)</li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-yellow-400 mt-1">•</span>
+                        <div>
+                            <strong>Tipo de Conta:</strong> Recomendado conta Hedging do tipo ECN ou Zero Spread (devido à alta frequência e necessidade de spreads baixos)
+                        </div>
+                    </li>
+                    <li class="flex items-start gap-3">
+                        <span class="text-yellow-400 mt-1">•</span>
+                        <div>
+                            <strong>Depósito Mínimo:</strong> $500 USD (para operação segura)
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Installation -->
+        <section id="installation" class="mb-16">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-yellow-400">2. Passo a Passo de Instalação</h2>
+                
+                <div class="space-y-6">
+                    <div class="flex gap-4">
+                        <div class="step-number gold-gradient rounded-full flex items-center justify-center text-black font-bold shrink-0">1</div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Baixe o arquivo</h3>
+                            <p class="text-gray-400">Baixe o arquivo <code class="bg-white/10 px-2 py-1 rounded">tradepulse_ouro.ex5</code> enviado para o seu e-mail após a compra.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="step-number gold-gradient rounded-full flex items-center justify-center text-black font-bold shrink-0">2</div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Abra o MetaTrader 5</h3>
+                            <p class="text-gray-400">No menu superior, clique em <strong>Arquivo → Abrir Pasta de Dados</strong>.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="step-number gold-gradient rounded-full flex items-center justify-center text-black font-bold shrink-0">3</div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Cole o arquivo</h3>
+                            <p class="text-gray-400">Navegue pelas pastas: <code class="bg-white/10 px-2 py-1 rounded">MQL5 → Experts</code>. Cole o arquivo do robô dentro da pasta Experts.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="step-number gold-gradient rounded-full flex items-center justify-center text-black font-bold shrink-0">4</div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Atualize o MT5</h3>
+                            <p class="text-gray-400">Volte ao painel do MT5, vá na janela Navegador, clique com o botão direito em <strong>Consultores Expert</strong> e clique em <strong>Atualizar</strong>.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="step-number gold-gradient rounded-full flex items-center justify-center text-black font-bold shrink-0">5</div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Ative o Algoritmo</h3>
+                            <p class="text-gray-400">Na barra de ferramentas superior do MT5, certifique-se de que o botão <span class="text-green-400">🟢 Algotrading</span> esteja ativado (ficará verde).</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="step-number gold-gradient rounded-full flex items-center justify-center text-black font-bold shrink-0">6</div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Coloque no Gráfico</h3>
+                            <p class="text-gray-400">Abra o gráfico do XAUUSD, mude o tempo para H1 e arraste o robô para dentro do gráfico.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <div class="step-number gold-gradient rounded-full flex items-center justify-center text-black font-bold shrink-0">7</div>
+                        <div>
+                            <h3 class="font-semibold mb-2">Configure WebRequest</h3>
+                            <p class="text-gray-400">Vá em <strong>Ferramentas → Opções → Expert Advisors</strong>. Marque "Permitir WebRequest para os URLs listados" e adicione: <code class="bg-white/10 px-2 py-1 rounded">https://sinaispointer.onrender.com</code></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Parameters -->
+        <section id="parameters" class="mb-16">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-yellow-400">3. Explicação dos Parâmetros (Configuração)</h2>
+                <p class="text-gray-400 mb-6">Ao arrastar o robô, vá na aba <strong>Parâmetros de Entrada</strong>. Aqui está o que cada função faz:</p>
+                
+                <div class="space-y-6">
+                    <div class="border-l-4 border-yellow-400 pl-4">
+                        <h3 class="font-semibold text-lg mb-2">Gestão de Risco & Mesa Proprietária</h3>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong>RiscoMaximoPerc</strong> (Padrão: 0.3): Define a porcentagem do seu saldo que será colocada em risco por operação. Se você usa mesa proprietária, mantenha entre 0.3% e 0.5%.</p>
+                            <p><strong>MaxDrawdownDiarioPerc</strong> (Padrão: 1.5): Se o robô perder essa porcentagem do capital flutuante no dia, ele fecha as operações e trava as negociações até o dia seguinte para proteger sua conta.</p>
+                            <p><strong>MaxSpreadPermitido</strong> (Padrão: 50): O robô não abrirá ordens se o spread da corretora estiver maior que este valor (em pontos). Isso evita prejuízos em notícias ou abertura de mercados.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-l-4 border-yellow-400 pl-4">
+                        <h3 class="font-semibold text-lg mb-2">Metas de Lucro</h3>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong>MetaLucroDiariaDinheiro</strong> (Padrão: 150.0): Define o lucro alvo em dinheiro para o dia. Assim que atingido, o robô encerra as atividades do dia.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-l-4 border-yellow-400 pl-4">
+                        <h3 class="font-semibold text-lg mb-2">Estratégia Breakout</h3>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong>PeriodoRange</strong> (Padrão: 20): Número de velas usadas para calcular o range de preço.</p>
+                            <p><strong>MultiplicadorSL</strong> (Padrão: 1.5): Multiplicador do range para definir o Stop Loss.</p>
+                            <p><strong>MultiplicadorTP</strong> (Padrão: 2.0): Multiplicador do range para definir o Take Profit.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-l-4 border-yellow-400 pl-4">
+                        <h3 class="font-semibold text-lg mb-2">Filtros de Qualidade</h3>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong>UsarFiltroATR</strong> (Padrão: true): Ativa filtro de volatilidade ATR.</p>
+                            <p><strong>ATRMaximo</strong> (Padrão: 80.0): ATR máximo em pontos para entrar (evita volatilidade extrema).</p>
+                            <p><strong>ATRMinimo</strong> (Padrão: 15.0): ATR mínimo em pontos para entrar (evita mercado morto).</p>
+                            <p><strong>UsarFiltroTendencia</strong> (Padrão: true): Ativa filtro de tendência com EMAs.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-l-4 border-yellow-400 pl-4">
+                        <h3 class="font-semibold text-lg mb-2">Gerenciamento de Operações</h3>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong>MaxOperacoesDia</strong> (Padrão: 5): Máximo de operações permitidas por dia.</p>
+                            <p><strong>MinDistanciaPontos</strong> (Padrão: 300): Distância mínima do range em pontos para entrar.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-l-4 border-yellow-400 pl-4">
+                        <h3 class="font-semibold text-lg mb-2">Integração Telegram</h3>
+                        <div class="space-y-3 text-gray-300">
+                            <p><strong>ServerURL</strong> (Padrão: https://sinaispointer.onrender.com/nova-ordem): URL do servidor para envio de sinais. Não altere a menos que instruído.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Troubleshooting -->
+        <section id="troubleshooting" class="mb-16">
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <h2 class="text-2xl font-bold mb-6 text-yellow-400">4. Solução de Problemas</h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-white/5 rounded-xl p-4">
+                        <h3 class="font-semibold mb-2">❌ O robô não está abrindo operações</h3>
+                        <ul class="text-gray-400 text-sm space-y-1">
+                            <li>• Verifique se o botão Algotrading está verde</li>
+                            <li>• Confirme que o timeframe está em H1</li>
+                            <li>• Verifique se o spread está abaixo do configurado</li>
+                            <li>• Confirme que WebRequest está configurado corretamente</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white/5 rounded-xl p-4">
+                        <h3 class="font-semibold mb-2">❌ Erro "WebRequest failed"</h3>
+                        <ul class="text-gray-400 text-sm space-y-1">
+                            <li>• Vá em Ferramentas → Opções → Expert Advisors</li>
+                            <li>• Marque "Permitir WebRequest para os URLs listados"</li>
+                            <li>• Adicione: https://sinaispointer.onrender.com</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white/5 rounded-xl p-4">
+                        <h3 class="font-semibold mb-2">❌ Sinais não chegam no Telegram</h3>
+                        <ul class="text-gray-400 text-sm space-y-1">
+                            <li>• Verifique se o bot está configurado no servidor</li>
+                            <li>• Confirme que o bot é admin do canal</li>
+                            <li>• Verifique o log do MT5 (Aba Experts) para erros</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Support -->
+        <section class="mb-16">
+            <div class="bg-yellow-400/10 border border-yellow-400/30 rounded-2xl p-8 text-center">
+                <h2 class="text-2xl font-bold mb-4">Precisa de Suporte?</h2>
+                <p class="text-gray-400 mb-6">
+                    Entre em contato conosco através do e-mail: <strong>suporte@tradepulse.com</strong>
+                </p>
+                <p class="text-gray-500 text-sm">
+                    Tempo de resposta: até 24 horas úteis
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-8 px-6 border-t border-white/10">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <div class="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
+                    <span class="text-black font-bold">TP</span>
+                </div>
+                <span class="text-xl font-bold">Trade<span class="text-yellow-400">Pulse</span></span>
+            </div>
+            <p class="text-gray-500 text-sm">
+                © 2026 TradePulse. Todos os direitos reservados.
+            </p>
+        </div>
+    </footer>
+    <script src="components/navigation.js"></script>
+    <script>
+        // Initialize navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = new UnifiedNavigation('docs');
+            document.getElementById('navigation-container').innerHTML = nav.render();
+            nav.init();
+        });
+    </script>
+</body>
+</html>

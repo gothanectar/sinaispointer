@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apostas Esportivas - TradePulse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/unified-styles.css">
+    <style>
+        .sport-tab {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .sport-tab.active {
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            color: #000;
+            transform: translateY(-2px);
+        }
+        .opportunity-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .opportunity-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+        }
+        .ev-positive {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.05));
+            border-left: 4px solid #00ff88;
+        }
+        .ev-negative {
+            background: linear-gradient(135deg, rgba(255, 68, 68, 0.1), rgba(255, 68, 68, 0.05));
+            border-left: 4px solid #ff4444;
+        }
+        .live-indicator {
+            animation: pulse 2s infinite;
+        }
+        .odds-comparison {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            padding: 8px;
+        }
+        .probability-bar {
+            height: 4px;
+            border-radius: 2px;
+            transition: width 0.5s ease;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Navigation (will be inserted by JavaScript) -->
+    <div id="navigation-container"></div>
+
+    <!-- Page Content -->
+    <div class="pt-20">
+        <!-- Hero Section -->
+        <section class="py-12 px-6">
+            <div class="max-w-7xl mx-auto text-center">
+                <div class="inline-block px-4 py-2 bg-green-500/20 border border-green-500/50 rounded-full mb-6">
+                    <span class="text-green-400 text-sm font-medium">🎯 Sistema +EV Ativo</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                    Apostas <span class="text-gradient-gold">Esportivas</span> Inteligentes
+                </h1>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-8">
+                    Análise matemática avançada para identificar oportunidades de valor esperado positivo (+EV) 
+                    em todos os principais esportes do mercado.
+                </p>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                    <div class="metric-card">
+                        <div class="metric-value" id="total-events">247</div>
+                        <div class="metric-label">Eventos Analisados</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value text-success" id="positive-ev">23</div>
+                        <div class="metric-label">Oportunidades +EV</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value text-warning" id="avg-probability">68.5%</div>
+                        <div class="metric-label">Probabilidade Média</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value text-info" id="roi-projection">+12.3%</div>
+                        <div class="metric-label">ROI Projetado</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sports Categories -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-wrap justify-center gap-4 mb-8">
+                    <div class="sport-tab active tp-card" data-sport="all">
+                        <span class="text-2xl mb-2">🏆</span>
+                        <div class="font-semibold">Todos</div>
+                        <div class="text-sm text-gray-400" id="count-all">247</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="futebol">
+                        <span class="text-2xl mb-2">⚽</span>
+                        <div class="font-semibold">Futebol</div>
+                        <div class="text-sm text-gray-400" id="count-futebol">89</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="basquete">
+                        <span class="text-2xl mb-2">🏀</span>
+                        <div class="font-semibold">Basquete</div>
+                        <div class="text-sm text-gray-400" id="count-basquete">45</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="tenis">
+                        <span class="text-2xl mb-2">🎾</span>
+                        <div class="font-semibold">Tênis</div>
+                        <div class="text-sm text-gray-400" id="count-tenis">67</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="volei">
+                        <span class="text-2xl mb-2">🏐</span>
+                        <div class="font-semibold">Vôlei</div>
+                        <div class="text-sm text-gray-400" id="count-volei">23</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="mma">
+                        <span class="text-2xl mb-2">🥊</span>
+                        <div class="font-semibold">MMA</div>
+                        <div class="text-sm text-gray-400" id="count-mma">12</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="esports">
+                        <span class="text-2xl mb-2">🎮</span>
+                        <div class="font-semibold">E-Sports</div>
+                        <div class="text-sm text-gray-400" id="count-esports">11</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="hockey">
+                        <span class="text-2xl mb-2">🏒</span>
+                        <div class="font-semibold">Hóquei</div>
+                        <div class="text-sm text-gray-400" id="count-hockey">8</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="beisebol">
+                        <span class="text-2xl mb-2">⚾</span>
+                        <div class="font-semibold">Beisebol</div>
+                        <div class="text-sm text-gray-400" id="count-beisebol">6</div>
+                    </div>
+                    <div class="sport-tab tp-card" data-sport="rugby">
+                        <span class="text-2xl mb-2">🏉</span>
+                        <div class="font-semibold">Rugby</div>
+                        <div class="text-sm text-gray-400" id="count-rugby">5</div>
+                    </div>
+                </div>
+
+                <!-- Filters and Controls -->
+                <div class="flex flex-wrap gap-4 mb-8 justify-center">
+                    <select id="ev-filter" class="bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                        <option value="all">Todos os Valores</option>
+                        <option value="positive">Apenas +EV</option>
+                        <option value="negative">Apenas -EV</option>
+                    </select>
+                    
+                    <select id="time-filter" class="bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                        <option value="all">Todos os Períodos</option>
+                        <option value="today">Hoje</option>
+                        <option value="tomorrow">Amanhã</option>
+                        <option value="week">Esta Semana</option>
+                    </select>
+                    
+                    <select id="sort-filter" class="bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white">
+                        <option value="ev_desc">Maior +EV Primeiro</option>
+                        <option value="probability_desc">Maior Probabilidade</option>
+                        <option value="time_asc">Mais Próximos</option>
+                        <option value="odds_asc">Menores Odds</option>
+                    </select>
+                    
+                    <button id="refresh-data" class="btn-gold px-6 py-2 rounded-lg font-semibold">
+                        🔄 Atualizar Dados
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Opportunities Grid -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div id="opportunities-container" class="grid gap-6">
+                    <!-- Opportunities will be dynamically loaded here -->
+                </div>
+
+                <!-- Loading State -->
+                <div id="loading-state" class="text-center py-12">
+                    <div class="animate-spin w-8 h-8 border-4 border-gold border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p class="text-gray-400">Carregando oportunidades...</p>
+                </div>
+
+                <!-- Empty State -->
+                <div id="empty-state" class="text-center py-12 hidden">
+                    <div class="text-6xl mb-4">📊</div>
+                    <h3 class="text-xl font-semibold mb-2">Nenhuma oportunidade encontrada</h3>
+                    <p class="text-gray-400">Tente ajustar os filtros ou aguarde novos dados.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section class="py-16 px-6 bg-black/30">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-3xl font-bold text-center mb-12">
+                    📊 Analytics <span class="text-gradient-gold">Avançadas</span>
+                </h2>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- EV Distribution Chart -->
+                    <div class="tp-card">
+                        <h3 class="text-lg font-semibold mb-4">Distribuição de Valor Esperado</h3>
+                        <canvas id="ev-chart" width="300" height="200"></canvas>
+                    </div>
+
+                    <!-- Sports Performance -->
+                    <div class="tp-card">
+                        <h3 class="text-lg font-semibold mb-4">Performance por Esporte</h3>
+                        <canvas id="sports-performance-chart" width="300" height="200"></canvas>
+                    </div>
+
+                    <!-- ROI Timeline -->
+                    <div class="tp-card">
+                        <h3 class="text-lg font-semibold mb-4">ROI ao Longo do Tempo</h3>
+                        <canvas id="roi-timeline-chart" width="300" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Live Notifications -->
+        <div id="notification-container" class="fixed top-24 right-6 z-50 space-y-4">
+            <!-- Notifications will appear here -->
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="components/navigation.js"></script>
+    <script>
+        // Initialize navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = new UnifiedNavigation('sports');
+            document.getElementById('navigation-container').innerHTML = nav.render();
+            nav.init();
+        });
+    </script>
+    <script src="js/sports-dashboard.js"></script>
+</body>
+</html>

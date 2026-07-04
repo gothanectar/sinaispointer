@@ -1,0 +1,28 @@
+# ========================================================
+# PREDICTION MARKET - FAST FOOD MVP
+# Dependências Python
+# ========================================================
+
+# Framework Web API
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0
+pydantic-settings==2.1.0
+
+# Banco de Dados
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.23
+
+# Web Scraping
+playwright==1.40.0
+beautifulsoup4==4.12.2
+requests==2.31.0
+
+# CORS e Middleware
+python-multipart==0.0.6
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+
+# Utilitários
+python-dotenv==1.0.0
+pytz==2023.3

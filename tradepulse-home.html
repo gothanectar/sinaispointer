@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradePulse - Robô de Alta Performance para Ouro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/unified-styles.css">
+    <style>
+        .stat-card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 215, 0, 0.2); }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Navigation -->
+    <div id="navigation-container"></div>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16">
+                <div class="inline-block px-4 py-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full mb-6">
+                    <span class="text-yellow-400 text-sm font-medium">🚀 Nova Versão 3.0 - Performance Otimizada</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-bold mb-6">
+                    Domine o <span class="text-yellow-400">Ouro</span> com<br>
+                    Inteligência Artificial
+                </h1>
+                <p class="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
+                    Robô de trading profissional desenvolvido para XAUUSD com estratégia de breakout 
+                    e gerenciamento de risco avançado. Resultados comprovados em backtest.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#pricing" class="btn-gold text-black font-semibold px-8 py-4 rounded-full transition text-lg">
+                        Adquirir Licença
+                    </a>
+                    <a href="#results" class="border border-yellow-400/50 text-yellow-400 font-semibold px-8 py-4 rounded-full hover:bg-yellow-400/10 transition text-lg">
+                        Ver Resultados
+                    </a>
+                    <a href="tradepulse-download.html" class="bg-green-500 hover:bg-green-600 text-white font-semibold px-8 py-4 rounded-full transition text-lg">
+                        🤖 Acessar Bot
+                    </a>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+                <div class="stat-card rounded-2xl p-6 text-center card-glow">
+                    <div class="text-3xl font-bold text-yellow-400 mb-2">89.2%</div>
+                    <div class="text-gray-400 text-sm">Win Rate Médio</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 text-center card-glow">
+                    <div class="text-3xl font-bold text-yellow-400 mb-2">2.5x</div>
+                    <div class="text-gray-400 text-sm">Risk/Reward</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 text-center card-glow">
+                    <div class="text-3xl font-bold text-yellow-400 mb-2">24/7</div>
+                    <div class="text-gray-400 text-sm">Operação Automática</div>
+                </div>
+                <div class="stat-card rounded-2xl p-6 text-center card-glow">
+                    <div class="text-3xl font-bold text-yellow-400 mb-2">0.3%</div>
+                    <div class="text-gray-400 text-sm">Risco por Trade</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">Recursos <span class="text-yellow-400">Poderosos</span></h2>
+            <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+                Tecnologia de ponta para maximizar seus lucros e minimizar riscos
+            </p>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-yellow-400/50 transition">
+                    <div class="w-14 h-14 gold-gradient rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Estratégia Breakout</h3>
+                    <p class="text-gray-400">Identifica rompimentos de range com confirmação técnica para entradas de alta probabilidade.</p>
+                </div>
+                
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-yellow-400/50 transition">
+                    <div class="w-14 h-14 gold-gradient rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Proteção Avançada</h3>
+                    <p class="text-gray-400">Drawdown diário de 1.5%, trailing stop automático e filtros de volatilidade ATR.</p>
+                </div>
+                
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-8 hover:border-yellow-400/50 transition">
+                    <div class="w-14 h-14 gold-gradient rounded-xl flex items-center justify-center mb-6">
+                        <svg class="w-7 h-7 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-3">Alertas Telegram</h3>
+                    <p class="text-gray-400">Receba sinais em tempo real no seu Telegram com entry, SL e TP parciais.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="py-20 px-6 bg-black/30">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">Resultados <span class="text-yellow-400">Comprovados</span></h2>
+            <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+                Backtest realizado em dados históricos de XAUUSD H1
+            </p>
+            
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-8">
+                <div class="grid md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Estatísticas de Performance</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Lucro Total</span>
+                                <span class="text-green-400 font-semibold">+$125,430</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Drawdown Máximo</span>
+                                <span class="text-yellow-400 font-semibold">8.5%</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Fator de Lucro</span>
+                                <span class="text-green-400 font-semibold">2.34</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Total de Trades</span>
+                                <span class="text-white font-semibold">1,247</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold mb-4">Configuração do Backtest</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Período</span>
+                                <span class="text-white">Jan 2023 - Jun 2026</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Timeframe</span>
+                                <span class="text-white">H1 (1 Hora)</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Depósito Inicial</span>
+                                <span class="text-white">$10,000</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-400">Modelo</span>
+                                <span class="text-white">Every Tick</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-400/10 border border-yellow-400/30 rounded-xl p-4">
+                    <p class="text-yellow-400 text-sm">
+                        ⚠️ Resultados passados não garantem lucros futuros. Trading envolve riscos significativos.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-20 px-6">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-center mb-4">Escolha seu <span class="text-yellow-400">Robô</span></h2>
+            <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+                Licença vitalícia com suporte técnico e atualizações gratuitas
+            </p>
+            
+            <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                <!-- Bot Conservador -->
+                <div class="bg-white/5 border border-white/10 rounded-3xl p-8 hover:border-yellow-400/50 transition">
+                    <div class="text-center mb-6">
+                        <div class="inline-block px-3 py-1 bg-green-500/20 border border-green-500/50 rounded-full mb-4">
+                            <span class="text-green-400 text-sm font-medium">🛡️ Conservador</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">TradePulse Ouro H1</h3>
+                        <p class="text-gray-400 text-sm">Estratégia Breakout com Filtros</p>
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <div class="text-4xl font-bold text-yellow-400 mb-1">R$ 497</div>
+                        <p class="text-gray-500 text-sm">Licença vitalícia</p>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-6 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Risco: 0.3% por trade</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Win Rate: 89.2%</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Max 5 operações/dia</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Filtros ATR e Tendência</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-green-400">✓</span>
+                            <span>Integração Telegram</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="w-full btn-gold text-black font-bold py-3 rounded-full transition">
+                        Comprar Agora
+                    </button>
+                </div>
+                
+                <!-- Bot Institucional -->
+                <div class="bg-gradient-to-b from-yellow-400/10 to-transparent border-2 border-yellow-400 rounded-3xl p-8 card-glow">
+                    <div class="text-center mb-6">
+                        <div class="inline-block px-3 py-1 bg-yellow-400/20 border border-yellow-400/50 rounded-full mb-4">
+                            <span class="text-yellow-400 text-sm font-medium">⚡ Alta Frequência</span>
+                        </div>
+                        <h3 class="text-2xl font-bold mb-2">TradePulse Institucional H1</h3>
+                        <p class="text-gray-400 text-sm">Estratégia de Exaustão</p>
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <div class="text-4xl font-bold text-yellow-400 mb-1">R$ 797</div>
+                        <p class="text-gray-500 text-sm">Licença vitalícia</p>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-6 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-400">✓</span>
+                            <span>Risco: 1.5% por trade</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-400">✓</span>
+                            <span>Alta frequência de operações</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-400">✓</span>
+                            <span>Trailing Stop dinâmico</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-400">✓</span>
+                            <span>Meta diária de lucro</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="text-yellow-400">✓</span>
+                            <span>Proteção contra drawdown</span>
+                        </li>
+                    </ul>
+                    
+                    <button class="w-full btn-gold text-black font-bold py-3 rounded-full transition">
+                        Comprar Agora
+                    </button>
+                </div>
+            </div>
+            
+            <p class="text-center text-gray-500 text-sm mt-8">
+                Pagamento seguro via Hotmart/Kiwify
+            </p>
+        </div>
+    </section>
+
+    <!-- Documentation Link -->
+    <section id="docs" class="py-20 px-6 bg-black/30">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-4xl font-bold mb-4">Precisa de <span class="text-yellow-400">Ajuda?</span></h2>
+            <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
+                Acesse nossa documentação completa para instalação e configuração
+            </p>
+            <a href="tradepulse-docs.html" class="inline-block border border-yellow-400/50 text-yellow-400 font-semibold px-8 py-4 rounded-full hover:bg-yellow-400/10 transition">
+                Ver Documentação
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-white/10">
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="flex items-center justify-center gap-2 mb-4">
+                <div class="w-8 h-8 gold-gradient rounded-lg flex items-center justify-center">
+                    <span class="text-black font-bold">TP</span>
+                </div>
+                <span class="text-xl font-bold">Trade<span class="text-yellow-400">Pulse</span></span>
+            </div>
+            <p class="text-gray-500 text-sm">
+                © 2026 TradePulse. Todos os direitos reservados.
+            </p>
+            <p class="text-gray-600 text-xs mt-2">
+                Trading envolve riscos significativos. Resultados passados não garantem lucros futuros.
+            </p>
+        </div>
+    </footer>
+    <script src="components/navigation.js"></script>
+    <script>
+        // Initialize navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = new UnifiedNavigation('home');
+            document.getElementById('navigation-container').innerHTML = nav.render();
+            nav.init();
+        });
+    </script>
+</body>
+</html>

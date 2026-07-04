@@ -42,6 +42,7 @@ function criarTelegramSignalBox() {
 
     const box = document.createElement('div');
     box.id = 'telegram-signal-box';
+    box.classList.add('minimized'); // Iniciar minimizado por padrão
     console.log('📦 Elemento div criado');
     
     box.innerHTML = `
@@ -49,6 +50,7 @@ function criarTelegramSignalBox() {
             <div class="telegram-header">
                 <h3>📱 Telegram Signal Box</h3>
                 <div class="telegram-controls">
+                    <button id="telegram-minimize-toggle" class="telegram-btn minimize">➖</button>
                     <button id="telegram-sound-toggle" class="telegram-btn sound-on">🔊</button>
                     <button id="telegram-enable-toggle" class="telegram-btn enable-off">📴</button>
                 </div>
@@ -111,6 +113,14 @@ function criarTelegramSignalBox() {
             z-index: 10000;
             font-family: 'Arial', sans-serif;
             color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        #telegram-signal-box.minimized {
+            width: 50px;
+            height: 50px;
+            padding: 8px;
+            overflow: hidden;
         }
 
         .telegram-box-container {
@@ -172,6 +182,35 @@ function criarTelegramSignalBox() {
 
         .telegram-btn.save {
             background: #FF9800;
+        }
+
+        .telegram-btn.minimize {
+            background: #9C27B0;
+        }
+
+        .telegram-box-container.minimized .telegram-status,
+        .telegram-box-container.minimized .telegram-config,
+        .telegram-box-container.minimized .telegram-signals-log,
+        .telegram-box-container.minimized .telegram-current-signal,
+        .telegram-box-container.minimized .telegram-info {
+            display: none;
+        }
+
+        .telegram-box-container.minimized {
+            min-height: auto;
+        }
+
+        .telegram-box-container.minimized .telegram-header h3 {
+            display: none;
+        }
+
+        .telegram-box-container.minimized .telegram-controls {
+            justify-content: center;
+        }
+
+        .telegram-box-container.minimized .telegram-header {
+            padding-bottom: 0;
+            border-bottom: none;
         }
 
         .telegram-status {
@@ -324,10 +363,24 @@ function criarTelegramSignalBox() {
 // CONFIGURAÇÃO DE EVENT LISTENERS
 // ========================================================
 function setupTelegramEventListeners() {
+    const minimizeToggle = document.getElementById('telegram-minimize-toggle');
     const soundToggle = document.getElementById('telegram-sound-toggle');
     const enableToggle = document.getElementById('telegram-enable-toggle');
     const saveConfig = document.getElementById('telegram-save-config');
     const chatIdInput = document.getElementById('telegram-chat-id');
+
+    if (minimizeToggle) {
+        minimizeToggle.addEventListener('click', () => {
+            const container = document.querySelector('.telegram-box-container');
+            const box = document.getElementById('telegram-signal-box');
+            if (container && box) {
+                container.classList.toggle('minimized');
+                box.classList.toggle('minimized');
+                minimizeToggle.textContent = container.classList.contains('minimized') ? '➕' : '➖';
+                console.log('📦 Box minimizado:', container.classList.contains('minimized'));
+            }
+        });
+    }
 
     if (soundToggle) {
         soundToggle.addEventListener('click', () => {

@@ -1,0 +1,10 @@
+streamlit
+pandas
+requests
+numpy
+plotly
+yfinance
+python-telegram-bot
+schedule
+flask
+flask-cors
