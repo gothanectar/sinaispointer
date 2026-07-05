@@ -117,9 +117,9 @@ function criarTelegramSignalBox() {
         }
 
         #telegram-signal-box.minimized {
-            width: 50px;
-            height: 50px;
-            padding: 8px;
+            width: 80px;
+            height: 80px;
+            padding: 10px;
             overflow: visible;
         }
 

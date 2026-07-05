@@ -197,21 +197,27 @@ with col2:
 
 st.markdown("---")
 
-# Tabela de histórico
-st.subheader(f"📋 Últimos {num_concursos} Concursos - {loteria_selecionada}")
+# Tabela de histórico - Limitada aos 50 últimos
+st.subheader(f"📋 Últimos 50 Concursos - {loteria_selecionada}")
 
 # Adicionar colunas de análise
 historico_df['soma'] = historico_df['dezenas_lista'].apply(sum)
 historico_df['par_impar'] = historico_df['dezenas_lista'].apply(
     lambda x: f"{sum(1 for d in x if d % 2 == 0)}P/{sum(1 for d in x if d % 2 != 0)}I"
 )
+historico_df['sequencias'] = historico_df['dezenas_lista'].apply(
+    lambda x: len([i for i in range(len(x)-1) if x[i+1] - x[i] == 1])
+)
+historico_df['repeticoes'] = historico_df['dezenas_lista'].apply(
+    lambda x: len(set(x)) - len(x)
+)
 
-# Exibir tabela formatada
-df_display = historico_df[['concurso', 'data', 'dezenas', 'soma', 'par_impar']].copy()
-df_display.columns = ['Concurso', 'Data', 'Dezenas', 'Soma', 'Par/Ímpar']
+# Exibir tabela formatada - apenas 50 últimos
+df_display = historico_df[['concurso', 'data', 'dezenas', 'soma', 'par_impar', 'sequencias', 'repeticoes']].copy()
+df_display.columns = ['Concurso', 'Data', 'Dezenas', 'Soma', 'Par/Ímpar', 'Sequências', 'Repetições']
 
 st.dataframe(
-    df_display.sort_values('concurso', ascending=False),
+    df_display.sort_values('concurso', ascending=False).head(50),
     use_container_width=True,
     hide_index=True
 )
@@ -251,6 +257,86 @@ with col3:
     
     for quad, count in sorted(quadrantes.items(), key=lambda x: x[1], reverse=True):
         st.write(f"📍 {quad}: {count} dezenas")
+
+st.markdown("---")
+
+# Estatísticas Avançadas
+st.subheader("📊 Estatísticas Avançadas")
+
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    # Média de pares e ímpares
+    media_pares = historico_df['par_impar'].apply(lambda x: int(x.split('P')[0])).mean()
+    st.metric("Média de Pares", f"{media_pares:.1f}")
+
+with col2:
+    # Média de soma
+    st.metric("Média de Soma", f"{historico_df['soma'].mean():.0f}")
+
+with col3:
+    # Desvio padrão da soma
+    st.metric("Desvio Padrão Soma", f"{historico_df['soma'].std():.1f}")
+
+with col4:
+    # Média de sequências
+    st.metric("Média Sequências", f"{historico_df['sequencias'].mean():.1f}")
+
+st.markdown("---")
+
+# Análise de Atrasos Detalhada
+st.subheader("⏰ Análise de Atrasos Detalhada")
+
+# Calcular atrasos para todos os números
+config = {
+    "MEGASENA": 60,
+    "LOTOFACIL": 25,
+    "QUINA": 80,
+    "LOTOMANIA": 100,
+    "TIMEMANIA": 31,
+    "DIASORTE": 31
+}
+max_num = config.get(loteria_selecionada, 60)
+
+atrasos_detalhados = []
+for num in range(1, max_num + 1):
+    contador = 0
+    for _, row in historico_df.iterrows():
+        if num in row['dezenas_lista']:
+            atrasos_detalhados.append({
+                'Número': str(num).zfill(2),
+                'Atraso': contador,
+                'Última Sorteio': row['data']
+            })
+            break
+        contador += 1
+    if num not in [x['Número'] for x in atrasos_detalhados]:
+        atrasos_detalhados.append({
+            'Número': str(num).zfill(2),
+            'Atraso': contador,
+            'Última Sorteio': 'Nunca'
+        })
+
+df_atrasos = pd.DataFrame(atrasos_detalhados)
+df_atrasos = df_atrasos.sort_values('Atraso', ascending=False)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    st.markdown("**Top 10 Números Mais Atrasados**")
+    st.dataframe(
+        df_atrasos.head(10),
+        use_container_width=True,
+        hide_index=True
+    )
+
+with col2:
+    st.markdown("**Top 10 Números Menos Atrasados**")
+    st.dataframe(
+        df_atrasos.tail(10),
+        use_container_width=True,
+        hide_index=True
+    )
 
 st.markdown("---")
 
