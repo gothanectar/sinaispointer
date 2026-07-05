@@ -120,7 +120,7 @@ function criarTelegramSignalBox() {
             width: 50px;
             height: 50px;
             padding: 8px;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .telegram-box-container {
@@ -206,11 +206,17 @@ function criarTelegramSignalBox() {
 
         .telegram-box-container.minimized .telegram-controls {
             justify-content: center;
+            gap: 4px;
         }
 
         .telegram-box-container.minimized .telegram-header {
             padding-bottom: 0;
             border-bottom: none;
+        }
+
+        .telegram-box-container.minimized .telegram-btn {
+            padding: 6px 8px;
+            font-size: 12px;
         }
 
         .telegram-status {

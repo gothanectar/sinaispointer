@@ -28,7 +28,7 @@ class UnifiedNavigation {
                     </div>
 
                     <!-- Desktop Navigation -->
-                    <div class="hidden md:flex gap-8 items-center">
+                    <div class="hidden md:flex gap-6 items-center">
                         <a href="/" class="nav-link ${this.isActive('home')}" data-page="home">
                             📈 Trading
                         </a>
@@ -40,6 +40,9 @@ class UnifiedNavigation {
                         </a>
                         <a href="/tradepulse-docs.html" class="nav-link ${this.isActive('docs')}" data-page="docs">
                             📖 Documentação
+                        </a>
+                        <a href="/prediction-market/frontend/index.html" class="nav-link ${this.isActive('prediction')}" data-page="prediction" target="_blank">
+                            🍔 Prediction Market
                         </a>
                         <div class="relative">
                             <button class="nav-dropdown-btn" onclick="toggleDropdown('tools-dropdown')">
@@ -87,6 +90,7 @@ class UnifiedNavigation {
                         <a href="/sports-dashboard.html" class="mobile-nav-link ${this.isActive('sports')}">⚽ Apostas Esportivas</a>
                         <a href="/analytics" class="mobile-nav-link ${this.isActive('analytics')}">📊 Analytics</a>
                         <a href="/tradepulse-docs.html" class="mobile-nav-link ${this.isActive('docs')}">📖 Documentação</a>
+                        <a href="/prediction-market/frontend/index.html" class="mobile-nav-link ${this.isActive('prediction')}">🍔 Prediction Market</a>
                         <div class="border-t border-white/10 pt-3 mt-3">
                             <a href="/index.html" class="mobile-nav-link">📊 Gráficos</a>
                             <a href="/tradepulse-download.html" class="mobile-nav-link">🤖 Download Robôs</a>
