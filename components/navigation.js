@@ -38,6 +38,9 @@ class UnifiedNavigation {
                         <a href="/analytics" class="nav-link ${this.isActive('analytics')}" data-page="analytics">
                             📊 Analytics
                         </a>
+                        <a href="/tradepulse-download.html" class="nav-link ${this.isActive('download')}" data-page="download">
+                            🤖 Download Robôs
+                        </a>
                         <a href="/tradepulse-docs.html" class="nav-link ${this.isActive('docs')}" data-page="docs">
                             📖 Documentação
                         </a>
@@ -54,9 +57,6 @@ class UnifiedNavigation {
                             <div id="tools-dropdown" class="nav-dropdown">
                                 <a href="/index.html" class="nav-dropdown-item">
                                     📊 Gráficos Multi-Timeframe
-                                </a>
-                                <a href="/tradepulse-download.html" class="nav-dropdown-item">
-                                    🤖 Download Robôs
                                 </a>
                                 <a href="#" onclick="openStreamlitApp('esportes')" class="nav-dropdown-item">
                                     ⚽ Dashboard Esportes (Avançado)
@@ -89,12 +89,13 @@ class UnifiedNavigation {
                         <a href="/" class="mobile-nav-link ${this.isActive('home')}">📈 Trading</a>
                         <a href="/sports-dashboard.html" class="mobile-nav-link ${this.isActive('sports')}">⚽ Apostas Esportivas</a>
                         <a href="/analytics" class="mobile-nav-link ${this.isActive('analytics')}">📊 Analytics</a>
+                        <a href="/tradepulse-download.html" class="mobile-nav-link ${this.isActive('download')}">🤖 Download Robôs</a>
                         <a href="/tradepulse-docs.html" class="mobile-nav-link ${this.isActive('docs')}">📖 Documentação</a>
                         <a href="/prediction-market/frontend/index.html" class="mobile-nav-link ${this.isActive('prediction')}">🍔 Prediction Market</a>
                         <div class="border-t border-white/10 pt-3 mt-3">
                             <a href="/index.html" class="mobile-nav-link">📊 Gráficos</a>
-                            <a href="/tradepulse-download.html" class="mobile-nav-link">🤖 Download Robôs</a>
-                            <a href="#pricing" class="mobile-nav-link btn-gold-mobile">Começar Agora</a>
+                            <a href="#" onclick="openStreamlitApp('esportes')" class="mobile-nav-link">⚽ Dashboard Esportes</a>
+                            <a href="#" onclick="openStreamlitApp('loterias')" class="mobile-nav-link">🎰 Dashboard Loterias</a>
                         </div>
                     </div>
                 </div>

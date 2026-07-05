@@ -18,6 +18,29 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Adicionar links de navegação no topo
+st.markdown("""
+<div style="background: rgba(0, 0, 0, 0.3); padding: 15px; border-radius: 10px; margin-bottom: 20px; border: 1px solid rgba(255, 215, 0, 0.2);">
+    <div style="display: flex; gap: 20px; align-items: center; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #ffd700, #ffaa00); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                <span style="color: black; font-weight: bold; font-size: 18px;">TP</span>
+            </div>
+            <span style="font-size: 20px; font-weight: bold;">Trade<span style="color: #ffd700;">Pulse</span></span>
+        </div>
+        <div style="flex: 1;"></div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="/" style="color: #888; text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s;">📈 Trading</a>
+            <a href="/sports-dashboard.html" style="color: #888; text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s;">⚽ Apostas Esportivas</a>
+            <a href="/analytics" style="color: #ffd700; text-decoration: none; padding: 8px 16px; border-radius: 8px; background: rgba(255, 215, 0, 0.15); border: 1px solid rgba(255, 215, 0, 0.2);">📊 Analytics</a>
+            <a href="/tradepulse-download.html" style="color: #888; text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s;">🤖 Download Robôs</a>
+            <a href="/tradepulse-docs.html" style="color: #888; text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s;">📖 Documentação</a>
+            <a href="/prediction-market/frontend/index.html" style="color: #888; text-decoration: none; padding: 8px 16px; border-radius: 8px; transition: all 0.3s;" target="_blank">🍔 Prediction Market</a>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
 DB_NAME = "plataforma_analytics.db"
 
 # ========================================================

@@ -6,6 +6,7 @@
     <title>Download - TradePulse</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/unified-styles.css">
     <style>
         * { font-family: 'Inter', sans-serif; }
         .gradient-bg { background: linear-gradient(135deg, #0f0f23 0%, #1a1a3e 50%, #0d0d1a 100%); }
@@ -14,23 +15,7 @@
 </head>
 <body class="gradient-bg min-h-screen text-white">
     <!-- Navigation -->
-    <nav class="fixed top-0 w-full z-50 bg-black/30 backdrop-blur-xl border-b border-white/10">
-        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <div class="w-10 h-10 gold-gradient rounded-lg flex items-center justify-center">
-                    <span class="text-black font-bold text-xl">TP</span>
-                </div>
-                <span class="text-2xl font-bold">Trade<span class="text-yellow-400">Pulse</span></span>
-            </div>
-            <div class="hidden md:flex gap-8 items-center">
-                <a href="index.html" class="text-gray-400 hover:text-white transition">
-                    ← Voltar ao Gráfico
-                </a>
-                <a href="tradepulse-home.html" class="hover:text-yellow-400 transition">Home</a>
-                <a href="tradepulse-docs.html" class="hover:text-yellow-400 transition">Documentação</a>
-            </div>
-        </div>
-    </nav>
+    <div id="navigation-container"></div>
 
     <!-- Main Content -->
     <main class="pt-32 pb-20 px-6">
@@ -128,6 +113,15 @@
                 errorMessage.classList.remove('hidden');
                 successMessage.classList.add('hidden');
             }
+        });
+    </script>
+    <script src="components/navigation.js"></script>
+    <script>
+        // Initialize navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = new UnifiedNavigation('download');
+            document.getElementById('navigation-container').innerHTML = nav.render();
+            nav.init();
         });
     </script>
 </body>

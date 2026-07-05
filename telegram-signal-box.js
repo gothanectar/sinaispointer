@@ -104,7 +104,7 @@ function criarTelegramSignalBox() {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            width: 350px;
+            width: 450px;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             border: 2px solid #00d2ff;
             border-radius: 12px;
@@ -114,12 +114,14 @@ function criarTelegramSignalBox() {
             font-family: 'Arial', sans-serif;
             color: #fff;
             transition: all 0.3s ease;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         #telegram-signal-box.minimized {
-            width: 80px;
-            height: 80px;
-            padding: 10px;
+            width: 50px;
+            height: 50px;
+            padding: 8px;
             overflow: visible;
         }
 
