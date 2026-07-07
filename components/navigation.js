@@ -35,6 +35,9 @@ class UnifiedNavigation {
                         <a href="/sports-dashboard.html" class="nav-link ${this.isActive('sports')}" data-page="sports">
                             ⚽ Apostas Esportivas
                         </a>
+                        <a href="/loterias.html" class="nav-link ${this.isActive('loterias')}" data-page="loterias">
+                            🎰 Loterias
+                        </a>
                         <a href="/analytics" class="nav-link ${this.isActive('analytics')}" data-page="analytics">
                             📊 Analytics
                         </a>
@@ -61,9 +64,6 @@ class UnifiedNavigation {
                                 <a href="#" onclick="openStreamlitApp('esportes')" class="nav-dropdown-item">
                                     ⚽ Dashboard Esportes (Avançado)
                                 </a>
-                                <a href="#" onclick="openStreamlitApp('loterias')" class="nav-dropdown-item">
-                                    🎰 Dashboard Loterias
-                                </a>
                             </div>
                         </div>
                     </div>
@@ -88,6 +88,7 @@ class UnifiedNavigation {
                     <div class="py-4 space-y-3">
                         <a href="/" class="mobile-nav-link ${this.isActive('home')}">📈 Trading</a>
                         <a href="/sports-dashboard.html" class="mobile-nav-link ${this.isActive('sports')}">⚽ Apostas Esportivas</a>
+                        <a href="/loterias.html" class="mobile-nav-link ${this.isActive('loterias')}">🎰 Loterias</a>
                         <a href="/analytics" class="mobile-nav-link ${this.isActive('analytics')}">📊 Analytics</a>
                         <a href="/tradepulse-download.html" class="mobile-nav-link ${this.isActive('download')}">🤖 Download Robôs</a>
                         <a href="/tradepulse-docs.html" class="mobile-nav-link ${this.isActive('docs')}">📖 Documentação</a>
@@ -95,7 +96,6 @@ class UnifiedNavigation {
                         <div class="border-t border-white/10 pt-3 mt-3">
                             <a href="/index.html" class="mobile-nav-link">📊 Gráficos</a>
                             <a href="#" onclick="openStreamlitApp('esportes')" class="mobile-nav-link">⚽ Dashboard Esportes</a>
-                            <a href="#" onclick="openStreamlitApp('loterias')" class="mobile-nav-link">🎰 Dashboard Loterias</a>
                         </div>
                     </div>
                 </div>

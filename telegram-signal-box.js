@@ -104,17 +104,17 @@ function criarTelegramSignalBox() {
             position: fixed;
             bottom: 20px;
             left: 20px;
-            width: 450px;
+            width: 500px;
             background: linear-gradient(135deg, #1a1a2e, #16213e);
             border: 2px solid #00d2ff;
             border-radius: 12px;
-            padding: 15px;
+            padding: 20px;
             box-shadow: 0 8px 32px rgba(0, 210, 255, 0.3);
             z-index: 10000;
             font-family: 'Arial', sans-serif;
             color: #fff;
             transition: all 0.3s ease;
-            max-height: 90vh;
+            max-height: 85vh;
             overflow-y: auto;
         }
 

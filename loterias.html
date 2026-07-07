@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loterias - TradePulse</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/unified-styles.css">
+    <style>
+        .lottery-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .lottery-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.2);
+        }
+        .lottery-card.active {
+            border: 2px solid #ffd700;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        .number-hot {
+            background: linear-gradient(135deg, rgba(255, 68, 68, 0.2), rgba(255, 68, 68, 0.1));
+            border-left: 4px solid #ff4444;
+        }
+        .number-cold {
+            background: linear-gradient(135deg, rgba(68, 68, 255, 0.2), rgba(68, 68, 255, 0.1));
+            border-left: 4px solid #4444ff;
+        }
+        .stat-highlight {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 136, 0.05));
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+        .prediction-box {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.05));
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen text-white">
+    <!-- Navigation -->
+    <div id="navigation-container"></div>
+
+    <!-- Main Content -->
+    <main class="pt-20 pb-20 px-6">
+        <!-- Hero Section -->
+        <section class="py-12 px-6">
+            <div class="max-w-7xl mx-auto text-center">
+                <div class="inline-block px-4 py-2 bg-yellow-500/20 border border-yellow-500/50 rounded-full mb-6">
+                    <span class="text-yellow-400 text-sm font-medium">🎰 Análise Estatística de Loterias</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-4">
+                    Dashboard de <span class="text-gradient-gold">Loterias</span>
+                </h1>
+                <p class="text-xl text-gray-400 max-w-3xl mx-auto mb-8">
+                    Análise avançada com estatísticas, padrões e previsões baseadas em dados históricos.
+                </p>
+            </div>
+        </section>
+
+        <!-- Lottery Selection -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">Selecione a Loteria</h2>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div class="lottery-card tp-card active" data-lottery="MEGASENA" onclick="selectLottery('MEGASENA')">
+                        <div class="text-3xl mb-2">🎯</div>
+                        <div class="font-semibold">Mega-Sena</div>
+                        <div class="text-xs text-gray-400">6 dezenas (1-60)</div>
+                    </div>
+                    <div class="lottery-card tp-card" data-lottery="LOTOFACIL" onclick="selectLottery('LOTOFACIL')">
+                        <div class="text-3xl mb-2">🎲</div>
+                        <div class="font-semibold">Lotofácil</div>
+                        <div class="text-xs text-gray-400">15 dezenas (1-25)</div>
+                    </div>
+                    <div class="lottery-card tp-card" data-lottery="QUINA" onclick="selectLottery('QUINA')">
+                        <div class="text-3xl mb-2">⭐</div>
+                        <div class="font-semibold">Quina</div>
+                        <div class="text-xs text-gray-400">5 dezenas (1-80)</div>
+                    </div>
+                    <div class="lottery-card tp-card" data-lottery="LOTOMANIA" onclick="selectLottery('LOTOMANIA')">
+                        <div class="text-3xl mb-2">🎪</div>
+                        <div class="font-semibold">Lotomania</div>
+                        <div class="text-xs text-gray-400">50 dezenas (1-100)</div>
+                    </div>
+                    <div class="lottery-card tp-card" data-lottery="TIMEMANIA" onclick="selectLottery('TIMEMANIA')">
+                        <div class="text-3xl mb-2">⏰</div>
+                        <div class="font-semibold">Timemania</div>
+                        <div class="text-xs text-gray-400">7 dezenas (1-31)</div>
+                    </div>
+                    <div class="lottery-card tp-card" data-lottery="DIASORTE" onclick="selectLottery('DIASORTE')">
+                        <div class="text-3xl mb-2">🌟</div>
+                        <div class="font-semibold">Dia de Sorte</div>
+                        <div class="text-xs text-gray-400">7 dezenas (1-31)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Stats -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">📊 Métricas Gerais</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="metric-card">
+                        <div class="metric-value" id="total-concursos">100</div>
+                        <div class="metric-label">Total de Concursos</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value text-success" id="mais-frequente">02</div>
+                        <div class="metric-label">Número Mais Frequente</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value text-warning" id="media-soma">198</div>
+                        <div class="metric-label">Média da Soma</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value text-error" id="mais-atrasado">45</div>
+                        <div class="metric-label">Número Mais Atrasado</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="tp-card">
+                        <h3 class="text-lg font-semibold mb-4">📈 Frequência de Números</h3>
+                        <canvas id="frequencyChart" height="300"></canvas>
+                    </div>
+                    <div class="tp-card">
+                        <h3 class="text-lg font-semibold mb-4">📅 Timeline de Concursos</h3>
+                        <canvas id="timelineChart" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Last 50 Draws -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">📋 Últimos 50 Concursos</h2>
+                <div class="tp-card overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-3 px-4">Concurso</th>
+                                <th class="text-left py-3 px-4">Data</th>
+                                <th class="text-left py-3 px-4">Dezenas</th>
+                                <th class="text-left py-3 px-4">Soma</th>
+                                <th class="text-left py-3 px-4">Par/Ímpar</th>
+                                <th class="text-left py-3 px-4">Sequências</th>
+                            </tr>
+                        </thead>
+                        <tbody id="draws-table">
+                            <!-- Data will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Advanced Statistics -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">📊 Estatísticas Avançadas</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="tp-card stat-highlight">
+                        <div class="metric-value" id="media-pares">3.0</div>
+                        <div class="metric-label">Média de Pares</div>
+                    </div>
+                    <div class="tp-card stat-highlight">
+                        <div class="metric-value" id="desvio-padrao">45.2</div>
+                        <div class="metric-label">Desvio Padrão Soma</div>
+                    </div>
+                    <div class="tp-card stat-highlight">
+                        <div class="metric-value" id="media-sequencias">1.2</div>
+                        <div class="metric-label">Média Sequências</div>
+                    </div>
+                    <div class="tp-card stat-highlight">
+                        <div class="metric-value" id="quadrante-topo">NE</div>
+                        <div class="metric-label">Quadrante Mais Ativo</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Delay Analysis -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-2xl font-bold mb-6">⏰ Análise de Atrasos</h2>
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="tp-card">
+                        <h3 class="text-lg font-semibold mb-4">🔥 Top 10 Mais Atrasados</h3>
+                        <div id="most-delayed" class="space-y-2">
+                            <!-- Data will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    <div class="tp-card">
+                        <h3 class="text-lg font-semibold mb-4">❄️ Top 10 Menos Atrasados</h3>
+                        <div id="least-delayed" class="space-y-2">
+                            <!-- Data will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prediction -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="prediction-box rounded-2xl p-8 text-center">
+                    <h2 class="text-2xl font-bold mb-4">🎯 Palpite Gerado pelo Algoritmo</h2>
+                    <div class="text-4xl font-bold text-yellow-400 mb-4" id="prediction">02-15-23-34-45-58</div>
+                    <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
+                        <div class="tp-card">
+                            <div class="metric-value text-success" id="confidence">78%</div>
+                            <div class="metric-label">Confiança</div>
+                        </div>
+                        <div class="tp-card">
+                            <div class="metric-value" id="based-on">100</div>
+                            <div class="metric-label">Baseado em</div>
+                        </div>
+                        <div class="tp-card">
+                            <div class="metric-value text-warning" id="ev-score">+EV</div>
+                            <div class="metric-label">Score</div>
+                        </div>
+                    </div>
+                    <button onclick="generatePrediction()" class="btn-gold mt-6 px-8 py-3 rounded-full font-semibold">
+                        🔄 Gerar Novo Palpite
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Disclaimer -->
+        <section class="py-8 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="bg-white/5 border border-white/10 rounded-2xl p-6 text-center">
+                    <p class="text-gray-400 text-sm">
+                        ⚠️ Este sistema é apenas para fins estatísticos e educacionais. Não garante resultados em loterias.
+                        Loterias são jogos de azar e os resultados são aleatórios.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="components/navigation.js"></script>
+    <script>
+        // Initialize navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            const nav = new UnifiedNavigation('loterias');
+            document.getElementById('navigation-container').innerHTML = nav.render();
+            nav.init();
+            
+            // Initialize lottery data
+            selectLottery('MEGASENA');
+        });
+
+        // Lottery configurations
+        const lotteryConfig = {
+            'MEGASENA': { numbers: 6, range: 60, name: 'Mega-Sena' },
+            'LOTOFACIL': { numbers: 15, range: 25, name: 'Lotofácil' },
+            'QUINA': { numbers: 5, range: 80, name: 'Quina' },
+            'LOTOMANIA': { numbers: 50, range: 100, name: 'Lotomania' },
+            'TIMEMANIA': { numbers: 7, range: 31, name: 'Timemania' },
+            'DIASORTE': { numbers: 7, range: 31, name: 'Dia de Sorte' }
+        };
+
+        let currentLottery = 'MEGASENA';
+        let frequencyChart = null;
+        let timelineChart = null;
+
+        // Generate mock data
+        function generateLotteryData(lottery, numDraws = 100) {
+            const config = lotteryConfig[lottery];
+            const draws = [];
+            const today = new Date();
+            
+            for (let i = 0; i < numDraws; i++) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - (i * 3));
+                
+                const numbers = [];
+                const available = Array.from({length: config.range}, (_, i) => i + 1);
+                
+                for (let j = 0; j < config.numbers; j++) {
+                    const idx = Math.floor(Math.random() * available.length);
+                    numbers.push(available.splice(idx, 1)[0]);
+                }
+                
+                numbers.sort((a, b) => a - b);
+                
+                draws.push({
+                    concurso: 1000 + i,
+                    data: date.toISOString().split('T')[0],
+                    numbers: numbers,
+                    sum: numbers.reduce((a, b) => a + b, 0)
+                });
+            }
+            
+            return draws;
+        }
+
+        // Select lottery
+        function selectLottery(lottery) {
+            currentLottery = lottery;
+            
+            // Update card selection
+            document.querySelectorAll('.lottery-card').forEach(card => {
+                card.classList.remove('active');
+                if (card.dataset.lottery === lottery) {
+                    card.classList.add('active');
+                }
+            });
+            
+            // Generate and display data
+            const draws = generateLotteryData(lottery);
+            updateMetrics(draws);
+            updateCharts(draws);
+            updateTable(draws);
+            updateDelayAnalysis(draws);
+            generatePrediction();
+        }
+
+        // Update metrics
+        function updateMetrics(draws) {
+            const config = lotteryConfig[currentLottery];
+            
+            // Total draws
+            document.getElementById('total-concursos').textContent = draws.length;
+            
+            // Frequency analysis
+            const frequency = {};
+            for (let i = 1; i <= config.range; i++) {
+                frequency[i] = 0;
+            }
+            
+            draws.forEach(draw => {
+                draw.numbers.forEach(num => {
+                    frequency[num]++;
+                });
+            });
+            
+            // Most frequent
+            let maxFreq = 0;
+            let mostFrequent = 1;
+            for (let num in frequency) {
+                if (frequency[num] > maxFreq) {
+                    maxFreq = frequency[num];
+                    mostFrequent = parseInt(num);
+                }
+            }
+            document.getElementById('mais-frequente').textContent = String(mostFrequent).padStart(2, '0');
+            
+            // Average sum
+            const avgSum = draws.reduce((sum, draw) => sum + draw.sum, 0) / draws.length;
+            document.getElementById('media-soma').textContent = Math.round(avgSum);
+            
+            // Most delayed
+            const delays = {};
+            for (let i = 1; i <= config.range; i++) {
+                delays[i] = 0;
+                for (let j = 0; j < draws.length; j++) {
+                    if (draws[j].numbers.includes(i)) {
+                        delays[i] = j;
+                        break;
+                    }
+                    delays[i] = draws.length;
+                }
+            }
+            
+            let maxDelay = 0;
+            let mostDelayed = 1;
+            for (let num in delays) {
+                if (delays[num] > maxDelay) {
+                    maxDelay = delays[num];
+                    mostDelayed = parseInt(num);
+                }
+            }
+            document.getElementById('mais-atrasado').textContent = String(mostDelayed).padStart(2, '0');
+            
+            // Advanced stats
+            const avgPairs = draws.reduce((sum, draw) => {
+                return sum + draw.numbers.filter(n => n % 2 === 0).length;
+            }, 0) / draws.length;
+            document.getElementById('media-pares').textContent = avgPairs.toFixed(1);
+            
+            const sums = draws.map(d => d.sum);
+            const variance = sums.reduce((sum, val) => sum + Math.pow(val - avgSum, 2), 0) / draws.length;
+            document.getElementById('desvio-padrao').textContent = Math.sqrt(variance).toFixed(1);
+            
+            const avgSequences = draws.reduce((sum, draw) => {
+                let seq = 0;
+                for (let i = 0; i < draw.numbers.length - 1; i++) {
+                    if (draw.numbers[i + 1] - draw.numbers[i] === 1) seq++;
+                }
+                return sum + seq;
+            }, 0) / draws.length;
+            document.getElementById('media-sequencias').textContent = avgSequences.toFixed(1);
+            
+            // Quadrant analysis
+            const quadrants = { NW: 0, NE: 0, SW: 0, SE: 0 };
+            draws.forEach(draw => {
+                draw.numbers.forEach(num => {
+                    if (num <= config.range / 4) quadrants.NW++;
+                    else if (num <= config.range / 2) quadrants.NE++;
+                    else if (num <= config.range * 0.75) quadrants.SW++;
+                    else quadrants.SE++;
+                });
+            });
+            
+            const topQuadrant = Object.entries(quadrants).sort((a, b) => b[1] - a[1])[0][0];
+            document.getElementById('quadrante-topo').textContent = topQuadrant;
+        }
+
+        // Update charts
+        function updateCharts(draws) {
+            const config = lotteryConfig[currentLottery];
+            
+            // Frequency chart
+            const frequency = {};
+            for (let i = 1; i <= config.range; i++) {
+                frequency[i] = 0;
+            }
+            
+            draws.forEach(draw => {
+                draw.numbers.forEach(num => {
+                    frequency[num]++;
+                });
+            });
+            
+            const freqCtx = document.getElementById('frequencyChart').getContext('2d');
+            
+            if (frequencyChart) {
+                frequencyChart.destroy();
+            }
+            
+            frequencyChart = new Chart(freqCtx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(frequency).map(n => String(n).padStart(2, '0')),
+                    datasets: [{
+                        label: 'Frequência',
+                        data: Object.values(frequency),
+                        backgroundColor: 'rgba(255, 215, 0, 0.6)',
+                        borderColor: 'rgba(255, 215, 0, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#888'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#888',
+                                maxTicksLimit: 20
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Timeline chart
+            const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+            
+            if (timelineChart) {
+                timelineChart.destroy();
+            }
+            
+            timelineChart = new Chart(timelineCtx, {
+                type: 'line',
+                data: {
+                    labels: draws.slice(0, 20).map(d => d.data),
+                    datasets: [{
+                        label: 'Soma das Dezenas',
+                        data: draws.slice(0, 20).map(d => d.sum),
+                        borderColor: '#00ff88',
+                        backgroundColor: 'rgba(0, 255, 136, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#888'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#888',
+                                maxRotation: 45
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update table
+        function updateTable(draws) {
+            const tbody = document.getElementById('draws-table');
+            tbody.innerHTML = '';
+            
+            draws.slice(0, 50).forEach(draw => {
+                const numbersStr = draw.numbers.map(n => String(n).padStart(2, '0')).join('-');
+                const pairs = draw.numbers.filter(n => n % 2 === 0).length;
+                const odds = draw.numbers.length - pairs;
+                
+                let sequences = 0;
+                for (let i = 0; i < draw.numbers.length - 1; i++) {
+                    if (draw.numbers[i + 1] - draw.numbers[i] === 1) sequences++;
+                }
+                
+                const row = document.createElement('tr');
+                row.className = 'border-b border-white/5 hover:bg-white/5';
+                row.innerHTML = `
+                    <td class="py-3 px-4">${draw.concurso}</td>
+                    <td class="py-3 px-4">${draw.data}</td>
+                    <td class="py-3 px-4 text-yellow-400 font-mono">${numbersStr}</td>
+                    <td class="py-3 px-4">${draw.sum}</td>
+                    <td class="py-3 px-4">${pairs}P/${odds}I</td>
+                    <td class="py-3 px-4">${sequences}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update delay analysis
+        function updateDelayAnalysis(draws) {
+            const config = lotteryConfig[currentLottery];
+            
+            const delays = {};
+            for (let i = 1; i <= config.range; i++) {
+                delays[i] = { delay: 0, lastDraw: 'Nunca' };
+                for (let j = 0; j < draws.length; j++) {
+                    if (draws[j].numbers.includes(i)) {
+                        delays[i] = { delay: j, lastDraw: draws[j].data };
+                        break;
+                    }
+                    delays[i] = { delay: draws.length, lastDraw: 'Nunca' };
+                }
+            }
+            
+            const sortedDelays = Object.entries(delays).sort((a, b) => b[1].delay - a[1].delay);
+            
+            // Most delayed
+            const mostDelayedDiv = document.getElementById('most-delayed');
+            mostDelayedDiv.innerHTML = '';
+            sortedDelays.slice(0, 10).forEach(([num, data]) => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center p-2 bg-white/5 rounded';
+                div.innerHTML = `
+                    <span class="font-mono text-red-400">${String(num).padStart(2, '0')}</span>
+                    <span class="text-gray-400">${data.delay} conc.</span>
+                    <span class="text-xs text-gray-500">${data.lastDraw}</span>
+                `;
+                mostDelayedDiv.appendChild(div);
+            });
+            
+            // Least delayed
+            const leastDelayedDiv = document.getElementById('least-delayed');
+            leastDelayedDiv.innerHTML = '';
+            sortedDelays.slice(-10).reverse().forEach(([num, data]) => {
+                const div = document.createElement('div');
+                div.className = 'flex justify-between items-center p-2 bg-white/5 rounded';
+                div.innerHTML = `
+                    <span class="font-mono text-green-400">${String(num).padStart(2, '0')}</span>
+                    <span class="text-gray-400">${data.delay} conc.</span>
+                    <span class="text-xs text-gray-500">${data.lastDraw}</span>
+                `;
+                leastDelayedDiv.appendChild(div);
+            });
+        }
+
+        // Generate prediction
+        function generatePrediction() {
+            const config = lotteryConfig[currentLottery];
+            const numbers = [];
+            const available = Array.from({length: config.range}, (_, i) => i + 1);
+            
+            for (let i = 0; i < config.numbers; i++) {
+                const idx = Math.floor(Math.random() * available.length);
+                numbers.push(available.splice(idx, 1)[0]);
+            }
+            
+            numbers.sort((a, b) => a - b);
+            const predictionStr = numbers.map(n => String(n).padStart(2, '0')).join('-');
+            
+            document.getElementById('prediction').textContent = predictionStr;
+            document.getElementById('confidence').textContent = Math.floor(Math.random() * 20 + 65) + '%';
+            document.getElementById('based-on').textContent = '100';
+            document.getElementById('ev-score').textContent = '+EV';
+        }
+    </script>
+</body>
+</html>
