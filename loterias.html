@@ -286,8 +286,37 @@
         let frequencyChart = null;
         let timelineChart = null;
 
-        // Generate mock data
-        function generateLotteryData(lottery, numDraws = 100) {
+        // Load real data from JSON files
+        async function loadLotteryData(lottery, numDraws = 100) {
+            const config = lotteryConfig[lottery];
+            const jsonFileName = lottery.toLowerCase() + '.json';
+            
+            try {
+                const response = await fetch('loterias_data/' + jsonFileName);
+                if (!response.ok) {
+                    throw new Error('Arquivo não encontrado');
+                }
+                
+                const data = await response.json();
+                
+                // Convert JSON data to the format expected by the application
+                const draws = data.slice(0, numDraws).map(item => ({
+                    concurso: item.concurso,
+                    data: item.data,
+                    numbers: item.dezenas,
+                    sum: item.dezenas.reduce((a, b) => a + b, 0)
+                }));
+                
+                return draws;
+            } catch (error) {
+                console.error('Erro ao carregar dados:', error);
+                // Fallback to mock data if JSON fails
+                return generateMockData(lottery, numDraws);
+            }
+        }
+
+        // Fallback mock data generator
+        function generateMockData(lottery, numDraws = 100) {
             const config = lotteryConfig[lottery];
             const draws = [];
             const today = new Date();
@@ -318,7 +347,7 @@
         }
 
         // Select lottery
-        function selectLottery(lottery) {
+        async function selectLottery(lottery) {
             currentLottery = lottery;
             
             // Update card selection
@@ -329,8 +358,8 @@
                 }
             });
             
-            // Generate and display data
-            const draws = generateLotteryData(lottery);
+            // Load and display real data
+            const draws = await loadLotteryData(lottery);
             updateMetrics(draws);
             updateCharts(draws);
             updateTable(draws);
