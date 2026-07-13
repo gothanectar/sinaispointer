@@ -57,81 +57,51 @@ def carregar_dados(query, params=None):
 # PARTE 2: MAPEADOR E SCANNER INTELIGENTE DE DIRETÓRIOS
 # ========================================================
 def gerar_historico_loteria(loteria, num_concursos=100):
-    """Lê os dados históricos reais diretamente de planilhas Excel (.xlsx) de forma posicional automática."""
+    """Lê os dados históricos reais de arquivos JSON (mesmos dados usados pelo site principal)."""
     caminho_script = os.path.dirname(os.path.abspath(__file__))
     
-    # Ajusta dinamicamente se o terminal estiver rodando de dentro da pasta analytics
-    if os.path.basename(caminho_script) == "analytics":
-        pasta_planilhas = os.path.join(os.path.dirname(caminho_script), "historicoresultadosloteriasnacionais")
-    else:
-        pasta_planilhas = os.path.join(caminho_script, "historicoresultadosloteriasnacionais")
-        
-    caminho_completo = None
-
-    # Varre a pasta física procurando um arquivo .xlsx que comece com o nome selecionado
-    if os.path.exists(pasta_planilhas):
-        for arq in os.listdir(pasta_planilhas):
-            if arq.lower().replace("_", "").replace("-", "").startswith(loteria.lower()) and arq.endswith('.xlsx'):
-                caminho_completo = os.path.join(pasta_planilhas, arq)
-                break
-
-    if not caminho_completo or not os.path.exists(caminho_completo):
+    # Tenta encontrar a pasta loterias_data
+    pasta_json = os.path.join(caminho_script, "loterias_data")
+    if not os.path.exists(pasta_json):
+        # Se não encontrar, tenta no diretório pai
+        pasta_json = os.path.join(os.path.dirname(caminho_script), "loterias_data")
+    
+    if not os.path.exists(pasta_json):
         return pd.DataFrame(columns=["concurso", "data", "dezenas", "dezenas_lista"])
-# ========================================================
-# PARTE 3: EXTRATOR POSICIONAL DA MATRIZ DA PLANILHA
-# ========================================================
+    
+    # Mapeamento de nomes de loterias para arquivos JSON
+    mapeamento_json = {
+        "MEGASENA": "megasena.json",
+        "LOTOFACIL": "lotofacil.json", 
+        "QUINA": "quina.json",
+        "LOTOMANIA": "lotomania.json",
+        "TIMEMANIA": "timemania.json",
+        "DIASORTE": "diasorte.json"
+    }
+    
+    arquivo_json = mapeamento_json.get(loteria, f"{loteria.lower()}.json")
+    caminho_completo = os.path.join(pasta_json, arquivo_json)
+    
+    if not os.path.exists(caminho_completo):
+        return pd.DataFrame(columns=["concurso", "data", "dezenas", "dezenas_lista"])
+    
     try:
-        # Lê a planilha Excel de forma bruta ignorando os rótulos de texto textuais
-        df_excel = pd.read_excel(caminho_completo, header=None)
+        import json
+        with open(caminho_completo, 'r', encoding='utf-8') as f:
+            dados = json.load(f)
         
         historico = []
-        for i in range(len(df_excel)):
-            try:
-                # Transforma a linha física em uma lista de valores válidos (pula células vazias)
-                valores_linha = [x for x in list(df_excel.iloc[i].values) if pd.notna(x)]
-                if len(valores_linha) < 4: 
-                    continue
-                
-                # Coleta e limpa caracteres do Concurso (Sempre o primeiro elemento - Índice 0)
-                limpo_concurso = "".join([c for c in str(valores_linha[0]).strip().split('.')[0] if c.isdigit()])
-                if not limpo_concurso: 
-                    continue
-                num_concurso = int(limpo_concurso)
-                
-                # Coleta e limpa o formato de Data (Segundo elemento - Índice 1)
-                val_data = valores_linha[1]
-                dt_concurso = val_data.strftime("%Y-%m-%d") if isinstance(val_data, datetime) else str(val_data).strip()
-                if not dt_concurso or "concurso" in dt_concurso.lower():
-                    continue
-                
-                # Coleta os números inteiros restantes na linha como as dezenas
-                dezenas_lista = []
-                for val in valores_linha[2:]:
-                    limpo_bola = "".join([c for c in str(val).strip().split('.')[0] if c.isdigit()])
-                    if limpo_bola:
-                        num_bola = int(limpo_bola)
-                        if 1 <= num_bola <= 100: 
-                            dezenas_lista.append(num_bola)
-                
-                if len(dezenas_lista) < 3: 
-                    continue
-                    
-                historico.append({
-                    "concurso": num_concurso,
-                    "data": dt_concurso,
-                    "dezenas": "-".join([str(d).zfill(2) for d in sorted(dezenas_lista)]),
-                    "dezenas_lista": sorted(dezenas_lista)
-                })
-            except Exception: 
-                continue
-                
-        df_resultado = pd.DataFrame(historico)
-        if not df_resultado.empty:
-            df_resultado = df_resultado.sort_values(by="concurso", ascending=False).head(num_concursos).reset_index(drop=True)
-        return df_resultado
-
+        for item in dados[:num_concursos]:
+            historico.append({
+                "concurso": item.get("concurso"),
+                "data": item.get("data"),
+                "dezenas": "-".join([str(d).zfill(2) for d in sorted(item.get("dezenas", []))]),
+                "dezenas_lista": sorted(item.get("dezenas", []))
+            })
+        
+        return pd.DataFrame(historico)
     except Exception as e:
-        st.error(f"Erro ao ler a planilha Excel da {loteria}: {e}")
+        st.error(f"Erro ao ler arquivo JSON da {loteria}: {e}")
         return pd.DataFrame(columns=["concurso", "data", "dezenas", "dezenas_lista"])
 # ========================================================
 # PARTE 4: ENGENHARIA DE RENDERIZAÇÃO DE GRÁFICOS (PLOTLY)
