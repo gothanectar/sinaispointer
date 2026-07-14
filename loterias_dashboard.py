@@ -166,6 +166,11 @@ with col2:
         key="sld_concursos_supremo"
     )
 
+# Força recarregamento quando a loteria muda
+if st.session_state.get("ultima_loteria") != loteria_selecionada:
+    st.session_state.ultima_loteria = loteria_selecionada
+    st.rerun()
+
 # Executa a carga posicional
 historico_df = gerar_historico_loteria(loteria_selecionada, num_concursos)
 
