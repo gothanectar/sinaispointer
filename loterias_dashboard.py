@@ -12,11 +12,144 @@ from collections import Counter
 
 # Inicialização da Página
 st.set_page_config(
-    page_title="Dashboard Loterias",
+    page_title="TradePulse Loterias",
     layout="wide",
     page_icon="🎰",
     initial_sidebar_state="expanded"
 )
+
+# Tela de Carregamento Customizada TradePulse Loterias
+if "initialized" not in st.session_state:
+    st.session_state.initialized = True
+    
+    # CSS personalizado para animação de loading
+    st.markdown("""
+    <style>
+    .loader-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+        background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 9999;
+    }
+    
+    .logo-animation {
+        font-size: 48px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    .logo-animation span {
+        color: #ffd700;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 1; }
+        50% { transform: scale(1.05); opacity: 0.8; }
+    }
+    
+    .loading-graph {
+        width: 300px;
+        height: 200px;
+        position: relative;
+        margin: 20px 0;
+    }
+    
+    .bar {
+        position: absolute;
+        bottom: 0;
+        width: 30px;
+        background: linear-gradient(to top, #ffd700, #ffaa00);
+        border-radius: 5px 5px 0 0;
+        animation: grow 1.5s ease-in-out infinite;
+    }
+    
+    .bar:nth-child(1) { left: 20px; height: 60px; animation-delay: 0s; }
+    .bar:nth-child(2) { left: 70px; height: 100px; animation-delay: 0.2s; }
+    .bar:nth-child(3) { left: 120px; height: 80px; animation-delay: 0.4s; }
+    .bar:nth-child(4) { left: 170px; height: 120px; animation-delay: 0.6s; }
+    .bar:nth-child(5) { left: 220px; height: 90px; animation-delay: 0.8s; }
+    
+    @keyframes grow {
+        0%, 100% { transform: scaleY(0.5); }
+        50% { transform: scaleY(1); }
+    }
+    
+    .loading-text {
+        color: #ffd700;
+        font-size: 18px;
+        margin-top: 30px;
+        animation: fadeInOut 2s ease-in-out infinite;
+    }
+    
+    @keyframes fadeInOut {
+        0%, 100% { opacity: 0.5; }
+        50% { opacity: 1; }
+    }
+    
+    .lottery-balls {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+    
+    .ball {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ffd700, #ffaa00);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: #000;
+        animation: bounce 1s ease-in-out infinite;
+    }
+    
+    .ball:nth-child(1) { animation-delay: 0s; }
+    .ball:nth-child(2) { animation-delay: 0.2s; }
+    .ball:nth-child(3) { animation-delay: 0.4s; }
+    .ball:nth-child(4) { animation-delay: 0.6s; }
+    .ball:nth-child(5) { animation-delay: 0.8s; }
+    .ball:nth-child(6) { animation-delay: 1s; }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-20px); }
+    }
+    </style>
+    
+    <div class="loader-container">
+        <div class="logo-animation">Trade<span>Pulse</span> Loterias</div>
+        <div class="loading-graph">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+        <div class="lottery-balls">
+            <div class="ball">06</div>
+            <div class="ball">12</div>
+            <div class="ball">24</div>
+            <div class="ball">37</div>
+            <div class="ball">45</div>
+            <div class="ball">51</div>
+        </div>
+        <div class="loading-text">🎰 Carregando Análise Probabilística...</div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    import time
+    time.sleep(2)
+    st.rerun()
 
 # Injetar links de navegação superiores (Design Original TradePulse)
 st.markdown("""

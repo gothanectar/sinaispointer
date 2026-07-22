@@ -2,8 +2,8 @@
 
 on:
   schedule:
-    # Roda de forma automática todos os dias às 22:30 (Horário de Brasília)
-    - cron: '30 1 * * *'
+    # Roda de forma automática todos os dias às 23:00 (Horário de Brasília = 02:00 UTC)
+    - cron: '0 2 * * *'
   workflow_dispatch: # Permite que você clique em um botão no site do GitHub para rodar quando quiser
 
 jobs:
@@ -30,6 +30,6 @@ jobs:
       run: |
         git config --global user.name "Loterias Bot"
         git config --global user.email "loterias-bot@github.com"
-        git add historicoresultadosloteriasnacionais/* ultima_atualizacao.txt
-        git commit -m "Bot: Planilhas e cache atualizados automaticamente [skip ci]" || echo "Nenhuma alteracao encontrada"
+        git add historicoresultadosloteriasnacionais/*
+        git commit -m "Bot: Planilhas atualizadas automaticamente [skip ci]" || echo "Nenhuma alteracao encontrada"
         git push origin main

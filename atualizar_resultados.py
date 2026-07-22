@@ -5,7 +5,6 @@ import time
 from datetime import datetime
 
 PASTA_PLANILHAS = "./historicoresultadosloteriasnacionais"
-PASTA_CACHE = "./cache_loterias"
 
 MAPA_LOTERIAS = {
     "megasena": "megasena",
@@ -15,30 +14,6 @@ MAPA_LOTERIAS = {
     "timemania": "timemania",
     "diasorte": "diadesorte"
 }
-
-def verificar_se_ja_atualizou_hoje(loteria):
-    """Verifica se a loteria específica já foi atualizada hoje."""
-    if not os.path.exists(PASTA_CACHE):
-        os.makedirs(PASTA_CACHE)
-    
-    arquivo_cache = os.path.join(PASTA_CACHE, f"{loteria}_ultima_atualizacao.txt")
-    data_hoje = datetime.now().strftime("%Y-%m-%d")
-    
-    if os.path.exists(arquivo_cache):
-        with open(arquivo_cache, "r", encoding="utf-8") as f:
-            if f.read().strip() == data_hoje:
-                return True
-    return False
-
-def salvar_registro_de_atualizacao(loteria):
-    """Salva a data de hoje para a loteria específica."""
-    if not os.path.exists(PASTA_CACHE):
-        os.makedirs(PASTA_CACHE)
-    
-    arquivo_cache = os.path.join(PASTA_CACHE, f"{loteria}_ultima_atualizacao.txt")
-    data_hoje = datetime.now().strftime("%Y-%m-%d")
-    with open(arquivo_cache, "w", encoding="utf-8") as f:
-        f.write(data_hoje)
 
 def buscar_arquivo_local(loteria):
     if not os.path.exists(PASTA_PLANILHAS):
@@ -52,10 +27,44 @@ print("🔄 Iniciando atualização automatizada das planilhas...\n")
 erros_detectados = False
 
 for loteria_local, loteria_api in MAPA_LOTERIAS.items():
-    # 🔒 TRAVA DIÁRIA POR LOTERIA: Verifica se esta loteria específica já foi atualizada hoje
-    if verificar_se_ja_atualizou_hoje(loteria_local):
-        print(f"⏸️ {loteria_local.upper()}: Já atualizada hoje ({datetime.now().strftime('%d/%m/%Y')}). Pulando...")
-        continue
+    # 🎯 BASEADO APENAS EM NÚMERO E DATA DO CONCURSO DA API
+    # Sistema usa apenas dados da API (número + data) como fonte de verdade
+    try:
+        url = f"https://api.guidi.dev.br/loteria/{loteria_api}/ultimo"
+        resposta = requests.get(url, timeout=15)
+        
+        if resposta.status_code == 200:
+            dados = resposta.json()
+            num_concurso_api = int(dados.get("numero") or dados.get("concurso"))
+            data_api = dados.get("dataApuracao") or dados.get("data")
+            
+            # Verificar o último concurso no Excel
+            caminho_excel = buscar_arquivo_local(loteria_local)
+            if os.path.exists(caminho_excel):
+                df_atual = pd.read_excel(caminho_excel, header=None)
+                concursos_salvos = []
+                for x in df_atual[0].values:
+                    try:
+                        c_str = str(x).strip().split('.')[0]
+                        if c_str.isdigit():
+                            concursos_salvos.append(int(c_str))
+                    except:
+                        continue
+                
+                ultimo_concurso_excel = max(concursos_salvos) if concursos_salvos else 0
+                
+                print(f"🔍 {loteria_local.upper()}: API={num_concurso_api} (data: {data_api}) | Excel={ultimo_concurso_excel}")
+                
+                # Baseado apenas no número do concurso da API
+                if num_concurso_api > ultimo_concurso_excel:
+                    print(f"🆕 {loteria_local.upper()}: {num_concurso_api - ultimo_concurso_excel} novos concursos disponíveis")
+                else:
+                    print(f"✅ {loteria_local.upper()}: Atualizado (número {num_concurso_api} já está no Excel)")
+            else:
+                print(f"⚠️ {loteria_local.upper()}: Arquivo Excel não encontrado")
+    except Exception as e:
+        print(f"❌ Erro na verificação prévia {loteria_local}: {e}")
+        # Se falhar a verificação, continua para garantir atualização
     
     try:
         url = f"https://api.guidi.dev.br/loteria/{loteria_api}/ultimo"
@@ -94,23 +103,19 @@ for loteria_local, loteria_api in MAPA_LOTERIAS.items():
                         continue
                 
                 if num_concurso in concursos_salvos:
-                    print(f"✅ {loteria_local.upper()}: Concurso {num_concurso} já está atualizado no Excel.")
+                    print(f"✅ {loteria_local.upper()}: Concurso {num_concurso} (data: {data_formatada}) já está no Excel.")
                     continue
                 
                 nova_linha = [num_concurso, data_formatada] + sorted(dezenas_lista)
                 df_nova_linha = pd.DataFrame([nova_linha])
                 df_final = pd.concat([df_nova_linha, df_atual], ignore_index=True)
                 df_final.to_excel(caminho_excel, index=False, header=False)
-                print(f"🚀 {loteria_local.upper()}: Novo Concurso {num_concurso} adicionado com sucesso!")
-                # Salva registro de atualização para esta loteria específica
-                salvar_registro_de_atualizacao(loteria_local)
+                print(f"🚀 {loteria_local.upper()}: Concurso {num_concurso} (data: {data_formatada}) adicionado com sucesso!")
             else:
                 nova_linha = [num_concurso, data_formatada] + sorted(dezenas_lista)
                 df_final = pd.DataFrame([nova_linha])
                 df_final.to_excel(caminho_excel, index=False, header=False)
-                print(f"🆕 {loteria_local.upper()}: Nova planilha criada com o Concurso {num_concurso}!")
-                # Salva registro de atualização para esta loteria específica
-                salvar_registro_de_atualizacao(loteria_local)
+                print(f"🆕 {loteria_local.upper()}: Nova planilha criada com o Concurso {num_concurso} (data: {data_formatada})!")
         else:
             print(f"❌ Erro ao atualizar {loteria_local}: Status HTTP {resposta.status_code}")
             erros_detectados = True
