@@ -22,7 +22,7 @@ API_FOOTBALL_KEY = "SUA_CHAVE_AQUI"
 API_BINANCE = "https://binance.com"
 
 # Grade completa de Loterias Oficiais suportadas pelo ecossistema
-LOTERIAS_SUPORTADAS = ["megasena", "lotofacil", "quina", "lotomania", "timemania", "diadesorte"]
+LOTERIAS_SUPORTADAS = ["megasena", "lotofacil", "quina", "lotomania", "timemania", "diasorte"]
 
 # ========================================================
 # 🖥️ 1. INFRAESTRUTURA DE BANCO DE DADOS RELACIONAL
@@ -216,45 +216,52 @@ def calcular_indice_atraso(dados, numero):
     return contador
 
 def processar_inteligencia_loterias():
-    """Gera matriz estatística e desdobramentos de palpites para as 6 loterias."""
+    """Gera matriz estatística e desdobramentos de palpites para as 6 loterias usando dados JSON locais."""
     conn = sqlite3.connect(DB_NAME)
     cursor = conn.cursor()
     cursor.execute("DELETE FROM analise_loterias")
     
+    # Pasta local com dados JSON atualizados
+    pasta_json = os.path.join(os.path.dirname(os.path.dirname(__file__)), "loterias_data")
+    
     for loteria in LOTERIAS_SUPORTADAS:
         try:
-            url = f"{API_LOTERIA_GITHUB}/{loteria}.json"
-            print(f"📥 Baixando dados oficiais: {loteria}")
-            res = requests.get(url, timeout=10)
+            # Usar dados JSON locais em vez de API externa
+            arquivo_json = os.path.join(pasta_json, f"{loteria}.json")
             
-            if res.status_code == 200:
-                dados = res.json()
-                todos_numeros = [num for conc in dados for num in conc["dezenas"]]
-                contagem = Counter(todos_numeros)
-                
-                # Consolida as 5 dezenas mais quentes e as 5 mais frias
-                quentes = "-".join([str(x[0]).zfill(2) for x in contagem.most_common(5)])
-                frias = "-".join([str(x[0]).zfill(2) for x in contagem.most_common()[:-6:-1]])
-                
-                total_numeros = 60 if loteria == "megasena" else (80 if loteria == "quina" else (100 if loteria == "lotomania" else 25))
-                atrasos = {i: calcular_indice_atraso(dados, i) for i in range(1, total_numeros + 1)}
-                
-                num_mais_atrasado = max(atrasos, key=atrasos.get)
-                quadrante = calcular_quadrante(num_mais_atrasado) if loteria == "megasena" else "N/A nesta modalidade"
-                
-                # Algoritmo de geração de fechamento/palpites equilibrados
-                tamanho_jogo = {"megasena": 6, "lotofacil": 15, "quina": 5, "lotomania": 50, "timemania": 7, "diadesorte": 7}
-                palpite = sorted(random.sample(list(contagem.keys()), tamanho_jogo.get(loteria, 6)))
-                palpite_str = "-".join([str(x).zfill(2) for x in palpite])
-                
-                indice_atraso = f"Dezena {str(num_mais_atrasado).zfill(2)}: {atrasos[num_mais_atrasado]} concursos sem sair"
-                
-                cursor.execute("""
-                    INSERT INTO analise_loterias (loteria, dezenas_quentes, dezenas_frias, quadrante_favorito, palpite_gerado, indice_atraso, ultima_atualizacao)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (loteria.upper(), quentes, frias, quadrante, palpite_str, indice_atraso, datetime.now().strftime("%Y-%m-%d")))
-            else:
-                raise Exception("API indisponível")
+            if not os.path.exists(arquivo_json):
+                print(f"❌ Arquivo não encontrado: {arquivo_json}")
+                raise Exception("Arquivo JSON não encontrado")
+            
+            print(f"📥 Lendo dados locais: {loteria}")
+            
+            with open(arquivo_json, 'r', encoding='utf-8') as f:
+                dados = json.load(f)
+            
+            todos_numeros = [num for conc in dados for num in conc["dezenas"]]
+            contagem = Counter(todos_numeros)
+            
+            # Consolida as 5 dezenas mais quentes e as 5 mais frias
+            quentes = "-".join([str(x[0]).zfill(2) for x in contagem.most_common(5)])
+            frias = "-".join([str(x[0]).zfill(2) for x in contagem.most_common()[:-6:-1]])
+            
+            total_numeros = 60 if loteria == "megasena" else (80 if loteria == "quina" else (100 if loteria == "lotomania" else 25))
+            atrasos = {i: calcular_indice_atraso(dados, i) for i in range(1, total_numeros + 1)}
+            
+            num_mais_atrasado = max(atrasos, key=atrasos.get)
+            quadrante = calcular_quadrante(num_mais_atrasado) if loteria == "megasena" else "N/A nesta modalidade"
+            
+            # Algoritmo de geração de fechamento/palpites equilibrados
+            tamanho_jogo = {"megasena": 6, "lotofacil": 15, "quina": 5, "lotomania": 50, "timemania": 7, "diadesorte": 7}
+            palpite = sorted(random.sample(list(contagem.keys()), tamanho_jogo.get(loteria, 6)))
+            palpite_str = "-".join([str(x).zfill(2) for x in palpite])
+            
+            indice_atraso = f"Dezena {str(num_mais_atrasado).zfill(2)}: {atrasos[num_mais_atrasado]} concursos sem sair"
+            
+            cursor.execute("""
+                INSERT INTO analise_loterias (loteria, dezenas_quentes, dezenas_frias, quadrante_favorito, palpite_gerado, indice_atraso, ultima_atualizacao)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (loteria.upper(), quentes, frias, quadrante, palpite_str, indice_atraso, datetime.now().strftime("%Y-%m-%d")))
                 
         except Exception as e:
             # Fallback físico de segurança para o banco nunca ficar vazio
