@@ -225,28 +225,47 @@
             </div>
         </section>
 
-        <!-- Prediction -->
+        <!-- Prediction Section -->
         <section class="py-8 px-6">
             <div class="max-w-7xl mx-auto">
-                <div class="prediction-box rounded-2xl p-8 text-center">
-                    <h2 class="text-2xl font-bold mb-4">🎯 Palpite Gerado pelo Algoritmo</h2>
-                    <div class="text-4xl font-bold text-yellow-400 mb-4" id="prediction">02-15-23-34-45-58</div>
-                    <div class="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
-                        <div class="tp-card">
-                            <div class="metric-value text-success" id="confidence">78%</div>
-                            <div class="metric-label">Confiança</div>
-                        </div>
-                        <div class="tp-card">
-                            <div class="metric-value" id="based-on">100</div>
-                            <div class="metric-label">Baseado em</div>
-                        </div>
-                        <div class="tp-card">
-                            <div class="metric-value text-warning" id="ev-score">+EV</div>
-                            <div class="metric-label">Score</div>
-                        </div>
+                <h2 class="text-2xl font-bold mb-6">🚀 Seleção de Engenharia Preditiva Avançada</h2>
+                <div class="mb-6">
+                    <label class="block text-sm text-gray-400 mb-2">Selecione o nível analítico desejado:</label>
+                    <select id="analysis-level" class="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-yellow-400 focus:outline-none">
+                        <option value="INTERESTELAR_RADIAL">INTERESTELAR RADIAL</option>
+                        <option value="QUANTUM_MAX">QUANTUM MAX</option>
+                        <option value="FRONTEIRA_SUPREMA_RECH">FRONTEIRA SUPREMA RECH</option>
+                    </select>
+                </div>
+
+                <!-- 3 Prediction Strategies -->
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="tp-card prediction-box rounded-2xl p-6 text-center">
+                        <h3 class="text-lg font-semibold mb-2">🔥 1. Fluxo de Tendência</h3>
+                        <p class="text-sm text-gray-400 mb-4" id="trend-quadrant">Foco no Quadrante NW</p>
+                        <div class="text-3xl font-bold text-yellow-400 mb-4" id="prediction-trend">02-15-23-34-45-58</div>
+                        <div class="metric-value text-success" id="confidence-trend">78%</div>
+                        <div class="metric-label">Aderência Expandida</div>
                     </div>
-                    <button onclick="generatePrediction()" class="btn-gold mt-6 px-8 py-3 rounded-full font-semibold">
-                        🔄 Gerar Novo Palpite
+                    <div class="tp-card rounded-2xl p-6 text-center border border-blue-500/30">
+                        <h3 class="text-lg font-semibold mb-2">🔄 2. Contratendência Vetorial</h3>
+                        <p class="text-sm text-gray-400 mb-4" id="counter-quadrant">Foco no Quadrante SE</p>
+                        <div class="text-3xl font-bold text-blue-400 mb-4" id="prediction-counter">03-18-27-36-49-57</div>
+                        <div class="metric-value text-success" id="confidence-counter">75%</div>
+                        <div class="metric-label">Aderência Expandida</div>
+                    </div>
+                    <div class="tp-card rounded-2xl p-6 text-center border border-purple-500/30">
+                        <h3 class="text-lg font-semibold mb-2">🌌 3. Modulação Harmônica</h3>
+                        <p class="text-sm text-gray-400 mb-4">Dispersão e Simetria Espacial Completa</p>
+                        <div class="text-3xl font-bold text-purple-400 mb-4" id="prediction-radial">05-12-24-33-46-51</div>
+                        <div class="metric-value text-success" id="confidence-radial">82%</div>
+                        <div class="metric-label">Aderência Expandida</div>
+                    </div>
+                </div>
+
+                <div class="text-center">
+                    <button onclick="generateAdvancedPredictions()" class="btn-gold px-8 py-3 rounded-full font-semibold">
+                        🔄 Gerar Novos Palpites
                     </button>
                 </div>
             </div>
@@ -370,7 +389,7 @@
             updateCharts(draws);
             updateTable(draws);
             updateDelayAnalysis(draws);
-            generatePrediction();
+            generateAdvancedPredictions();
         }
 
         // Update metrics
@@ -656,24 +675,146 @@
             });
         }
 
-        // Generate prediction
-        function generatePrediction() {
+        // Generate advanced predictions with quadrant analysis
+        async function generateAdvancedPredictions() {
             const config = lotteryConfig[currentLottery];
-            const numbers = [];
-            const available = Array.from({length: config.range}, (_, i) => i + 1);
+            const draws = await loadLotteryData(currentLottery);
             
-            for (let i = 0; i < config.numbers; i++) {
-                const idx = Math.floor(Math.random() * available.length);
-                numbers.push(available.splice(idx, 1)[0]);
+            // Calculate quadrant analysis
+            const divisor = Math.floor(config.range / 4);
+            const dezenasPorQuadrante = { NW: [], NE: [], SW: [], SE: [] };
+            for (let n = 1; n <= config.range; n++) {
+                if (n <= divisor) dezenasPorQuadrante.NW.push(n);
+                else if (n <= divisor * 2) dezenasPorQuadrante.NE.push(n);
+                else if (n <= divisor * 3) dezenasPorQuadrante.SW.push(n);
+                else dezenasPorQuadrante.SE.push(n);
             }
             
-            numbers.sort((a, b) => a - b);
-            const predictionStr = numbers.map(n => String(n).padStart(2, '0')).join('-');
+            // Find hottest and coldest quadrants from last draw
+            const ultimoConcurso = draws[0];
+            const contagemUltimoQuadrante = { NW: 0, NE: 0, SW: 0, SE: 0 };
+            ultimoConcurso.numbers.forEach(d => {
+                if (d <= divisor) contagemUltimoQuadrante.NW++;
+                else if (d <= divisor * 2) contagemUltimoQuadrante.NE++;
+                else if (d <= divisor * 3) contagemUltimoQuadrante.SW++;
+                else contagemUltimoQuadrante.SE++;
+            });
             
-            document.getElementById('prediction').textContent = predictionStr;
-            document.getElementById('confidence').textContent = Math.floor(Math.random() * 20 + 65) + '%';
-            document.getElementById('based-on').textContent = '100';
-            document.getElementById('ev-score').textContent = '+EV';
+            const quadrantesOrdenados = Object.entries(contagemUltimoQuadrante).sort((a, b) => b[1] - a[1]);
+            const quadranteMaisQuente = quadrantesOrdenados[0][0];
+            const quadranteMaisFrio = quadrantesOrdenados[quadrantesOrdenados.length - 1][0];
+            
+            // Calculate frequency scores
+            const frequency = {};
+            for (let i = 1; i <= config.range; i++) frequency[i] = 0;
+            draws.forEach(draw => draw.numbers.forEach(num => frequency[num]++));
+            
+            const scores = {};
+            const freqValues = Object.values(frequency);
+            const maxFreq = Math.max(...freqValues);
+            const minFreq = Math.min(...freqValues);
+            const rangeFreq = maxFreq - minFreq || 1;
+            
+            for (let num = 1; num <= config.range; num++) {
+                scores[num] = (frequency[num] - minFreq) / rangeFreq;
+            }
+            
+            const metadeBolas = Math.max(1, Math.floor(config.numbers / 2));
+            
+            // Strategy 1: Fluxo de Tendência (hot quadrant)
+            const cQuentes = [...dezenasPorQuadrante[quadranteMaisQuente]].sort((a, b) => scores[b] - scores[a]);
+            const oQuadrantes = Object.entries(dezenasPorQuadrante)
+                .filter(([k]) => k !== quadranteMaisQuente)
+                .flatMap(([, v]) => v);
+            const cAuxQuentes = [...oQuadrantes].sort((a, b) => scores[b] - scores[a]);
+            const poolQ = [...cQuentes.slice(0, metadeBolas * 2), ...cAuxQuentes.slice(0, (config.numbers - metadeBolas) * 2)];
+            const palpiteQuente = generateRandomNumbers(poolQ.length >= config.numbers ? poolQ : Array.from({length: config.range}, (_, i) => i + 1), config.numbers);
+            const probQuente = calculateAdherence(palpiteQuente, draws, 'quente');
+            
+            // Strategy 2: Contratendência Vetorial (cold quadrant)
+            const cFrios = [...dezenasPorQuadrante[quadranteMaisFrio]].sort((a, b) => scores[b] - scores[a]);
+            const oFrios = Object.entries(dezenasPorQuadrante)
+                .filter(([k]) => k !== quadranteMaisFrio)
+                .flatMap(([, v]) => v);
+            const cAuxFrios = [...oFrios].sort((a, b) => scores[b] - scores[a]);
+            const poolF = [...cFrios.slice(0, metadeBolas * 2), ...cAuxFrios.slice(0, (config.numbers - metadeBolas) * 2)];
+            const palpiteFrio = generateRandomNumbers(poolF.length >= config.numbers ? poolF : Array.from({length: config.range}, (_, i) => i + 1), config.numbers);
+            const probFrio = calculateAdherence(palpiteFrio, draws, 'frio');
+            
+            // Strategy 3: Modulação Harmônica (radial)
+            const poolRadial = [];
+            ['NW', 'NE', 'SW', 'SE'].forEach(quad => {
+                const sorted = [...dezenasPorQuadrante[quad]].sort((a, b) => (scores[b] + (a % 2 === 0 ? 0.25 : 0.10)) - (scores[a] + (a % 2 === 0 ? 0.25 : 0.10)));
+                poolRadial.push(...sorted.slice(0, Math.max(2, Math.floor(config.numbers / 3))));
+            });
+            if (poolRadial.length < config.numbers) {
+                const allSorted = Array.from({length: config.range}, (_, i) => i + 1).sort((a, b) => scores[b] - scores[a]);
+                poolRadial.push(...allSorted.slice(0, config.numbers * 2));
+            }
+            const palpiteRadial = generateRandomNumbers(poolRadial, config.numbers);
+            const probRadial = calculateAdherence(palpiteRadial, draws, 'radial');
+            
+            // Update UI
+            document.getElementById('trend-quadrant').textContent = `Foco no Quadrante ${quadranteMaisQuente}`;
+            document.getElementById('prediction-trend').textContent = palpiteQuente.map(n => String(n).padStart(2, '0')).join('-');
+            document.getElementById('confidence-trend').textContent = probQuente.toFixed(2) + '%';
+            
+            document.getElementById('counter-quadrant').textContent = `Foco no Quadrante ${quadranteMaisFrio}`;
+            document.getElementById('prediction-counter').textContent = palpiteFrio.map(n => String(n).padStart(2, '0')).join('-');
+            document.getElementById('confidence-counter').textContent = probFrio.toFixed(2) + '%';
+            
+            document.getElementById('prediction-radial').textContent = palpiteRadial.map(n => String(n).padStart(2, '0')).join('-');
+            document.getElementById('confidence-radial').textContent = probRadial.toFixed(2) + '%';
+            
+            // Update metric labels based on analysis level
+            const level = document.getElementById('analysis-level').value;
+            const metricLabel = level === 'FRONTEIRA_SUPREMA_RECH' ? 'Indicador RECH Máximo' : 
+                              level === 'QUANTUM_MAX' ? 'Aderência Preditiva Max' : 'Aderência Expandida';
+            document.querySelectorAll('.metric-label').forEach(el => {
+                if (el.textContent.includes('Aderência') || el.textContent.includes('Indicador')) {
+                    el.textContent = metricLabel;
+                }
+            });
+        }
+        
+        function generateRandomNumbers(pool, count) {
+            const shuffled = [...pool].sort(() => Math.random() - 0.5);
+            return shuffled.slice(0, count).sort((a, b) => a - b);
+        }
+        
+        function calculateAdherence(palpite, draws, strategy) {
+            const level = document.getElementById('analysis-level').value;
+            let baseFixa, fatorMult, piso, teto, bonusRange;
+            
+            if (level === 'INTERESTELAR_RADIAL') {
+                baseFixa = 40; fatorMult = 40; piso = 85.12; teto = 102.45;
+                bonusRange = strategy === 'radial' ? [11.2, 14.5] : strategy === 'quente' ? [6.8, 9.4] : [2.5, 5.1];
+            } else if (level === 'QUANTUM_MAX') {
+                baseFixa = 45; fatorMult = 38; piso = 92.35; teto = 105.00;
+                bonusRange = strategy === 'radial' ? [18.4, 21.2] : strategy === 'quente' ? [13.1, 15.8] : [8.5, 11.2];
+            } else {
+                baseFixa = 52; fatorMult = 42; piso = 105.15; teto = 118.00;
+                bonusRange = strategy === 'radial' ? [21.4, 23.8] : strategy === 'quente' ? [18.2, 20.5] : [14.3, 16.7];
+            }
+            
+            const bonus = bonusRange[0] + Math.random() * (bonusRange[1] - bonusRange[0]);
+            
+            // Calculate coverage
+            const covered = draws.filter(draw => 
+                palpite.some(n => draw.numbers.includes(n))
+            ).length;
+            const fatorCobertura = covered / draws.length || 0.7;
+            
+            // Calculate average score
+            const avgScore = palpite.reduce((sum, n) => sum + (Math.random() * 0.5 + 0.5), 0) / palpite.length;
+            
+            const probFinal = (avgScore * fatorMult) + (fatorCobertura * 15) + baseFixa + bonus;
+            return Math.min(Math.max(probFinal, piso), teto);
+        }
+        
+        // Generate prediction (legacy function)
+        function generatePrediction() {
+            generateAdvancedPredictions();
         }
     </script>
 </body>
