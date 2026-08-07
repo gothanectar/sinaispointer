@@ -20,15 +20,28 @@ MAPEAMENTO_LOTERIAS = {
     "time_mania": "TIMEMANIA"
 }
 
-def ler_planilha_excel(caminho_arquivo):
+# Limite de dezenas por loteria
+DEZENAS_POR_LOTERIA = {
+    "MEGASENA": 6,
+    "LOTOFACIL": 15,
+    "QUINA": 5,
+    "LOTOMANIA": 50,
+    "TIMEMANIA": 7,
+    "DIASORTE": 7
+}
+
+def ler_planilha_excel(caminho_arquivo, loteria_codigo):
     """Lê planilha Excel e extrai dados dos concursos"""
     try:
         df = pd.read_excel(caminho_arquivo, header=None)
         
         concursos = []
+        limite_dezenas = DEZENAS_POR_LOTERIA.get(loteria_codigo, 6)
+        
         for i in range(len(df)):
             try:
-                valores_linha = [x for x in list(df.iloc[i].values) if pd.notna(x)]
+                # Usar valores brutos da linha sem filtrar NaN
+                valores_linha = list(df.iloc[i].values)
                 
                 # Pular linhas com texto de cabeçalho do site
                 if len(valores_linha) < 2:
@@ -68,15 +81,19 @@ def ler_planilha_excel(caminho_arquivo):
                 if not dt_concurso or "concurso" in dt_concurso.lower() or "site" in dt_concurso.lower():
                     continue
                 
-                # Extrair dezenas (elementos a partir do índice 2)
+                # Extrair dezenas (elementos a partir do índice 2 até limite)
                 dezenas_lista = []
-                for val in valores_linha[2:]:
-                    if pd.notna(val):
-                        limpo_bola = "".join([c for c in str(val).strip().split('.')[0] if c.isdigit()])
-                        if limpo_bola:
-                            num_bola = int(limpo_bola)
-                            if 1 <= num_bola <= 100:
-                                dezenas_lista.append(num_bola)
+                for idx in range(limite_dezenas):
+                    # Pegar valor na posição 2 + idx (concurso, data, depois as dezenas)
+                    if idx + 2 < len(valores_linha):
+                        val = valores_linha[idx + 2]
+                        if pd.notna(val):
+                            limpo_bola = "".join([c for c in str(val).strip().split('.')[0] if c.isdigit()])
+                            if limpo_bola:
+                                num_bola = int(limpo_bola)
+                                # Verificar se é uma dezena válida (1-60 para Mega-Sena, 1-100 para outras)
+                                if 1 <= num_bola <= 100:
+                                    dezenas_lista.append(num_bola)
                 
                 # Aceitar mesmo com poucas dezenas (pode ser atualização parcial)
                 if len(dezenas_lista) < 1:
@@ -130,7 +147,7 @@ def processar_todas_loterias():
             continue
         
         # Ler dados
-        concursos = ler_planilha_excel(caminho_completo)
+        concursos = ler_planilha_excel(caminho_completo, loteria_codigo)
         
         if not concursos:
             print(f"❌ Nenhum concurso encontrado em {arquivo}")
